@@ -10,6 +10,8 @@ type BlurTextProps = {
   threshold?: number;
   rootMargin?: string;
   stepDuration?: number;
+  /** Extra seconds to hold before the reveal starts (used to sync with the preloader veil). */
+  startDelay?: number;
 };
 
 const buildKeyframes = (from: Record<string, string | number>, steps: Array<Record<string, string | number>>) => {
@@ -20,7 +22,7 @@ const buildKeyframes = (from: Record<string, string | number>, steps: Array<Reco
 };
 
 // React Bits BlurText, adapted for this project and Framer Motion.
-export default function BlurText({ text = '', delay = 90, className = '', animateBy = 'words', direction = 'top', threshold = 0.1, rootMargin = '0px', stepDuration = 0.34 }: BlurTextProps) {
+export default function BlurText({ text = '', delay = 90, className = '', animateBy = 'words', direction = 'top', threshold = 0.1, rootMargin = '0px', stepDuration = 0.34, startDelay = 0 }: BlurTextProps) {
   const segments = animateBy === 'words' ? text.split(' ') : text.split('');
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
@@ -50,7 +52,7 @@ export default function BlurText({ text = '', delay = 90, className = '', animat
   return (
     <span ref={ref} className={`blur-text ${className}`} aria-label={text}>
       {segments.map((segment, index) => {
-        const transition: Transition = { duration: totalDuration, times, delay: (index * delay) / 1000, ease: [0.22, 1, 0.36, 1] };
+        const transition: Transition = { duration: totalDuration, times, delay: startDelay + (index * delay) / 1000, ease: [0.22, 1, 0.36, 1] };
         return <motion.span key={`${segment}-${index}`} aria-hidden="true" initial={from} animate={inView ? frames : from} transition={transition} className="blur-word">{segment || '\u00a0'}{animateBy === 'words' && index < segments.length - 1 ? '\u00a0' : ''}</motion.span>;
       })}
     </span>

@@ -5,8 +5,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import Lenis from 'lenis';
 import BlurText from './components/BlurText';
+import { CanvasBoundary } from './components/CanvasBoundary';
 import { BrowserRouter, Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, StoryPage } from './pages';
+import { ProductPage, CheckoutPage } from './pages-commerce';
+import { CartProvider, useCart } from './shop/CartContext';
+import { products } from './shop/products';
+import { ReviewsStrip, ShopGrid } from './shop/ShopSections';
+import CartDrawer from './components/CartDrawer';
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -24,8 +30,121 @@ const notes: Record<Note, { title: string; subtitle: string; copy: string; numbe
   amber: { title: 'Amber', subtitle: 'THE TRACE', copy: 'Golden warmth that rests close to the skin and draws the composition into a long, soft finish.', number: '03' },
 };
 
+/* Cinematic boot veil: counts in, then lifts to reveal the scene. */
+function Preloader({ onDone }: { onDone: () => void }) {
+  const [count, setCount] = useState(0);
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setCount(100);
+      const timer = window.setTimeout(() => { setDone(true); onDone(); }, 250);
+      return () => window.clearTimeout(timer);
+    }
+    let raf = 0;
+    let finish: number | undefined;
+    const started = performance.now();
+    const duration = 1450;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - started) / duration);
+      setCount(Math.round((1 - Math.pow(1 - t, 3)) * 100));
+      if (t < 1) { raf = requestAnimationFrame(tick); return; }
+      finish = window.setTimeout(() => { setDone(true); onDone(); }, 140);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); if (finish) window.clearTimeout(finish); };
+  }, [onDone]);
+  return (
+    <AnimatePresence>
+      {!done && (
+        <motion.div className="preloader" aria-hidden="true"
+          initial={false}
+          exit={{ clipPath: 'inset(0 0 100% 0)', transition: { duration: .95, ease: [0.76, 0, 0.24, 1] } }}>
+          <div className="preloader__grain" />
+          <div className="preloader__top"><span>DAYRAH&nbsp; / &nbsp;FRAGRANCE HOUSE</span><span>SIFR 01 — EAU DE PARFUM</span></div>
+          <div className="preloader__brand">
+            <motion.b initial={{ opacity: 0, y: 22, filter: 'blur(9px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .8, ease: [0.22, 1, 0.36, 1], delay: .12 }}>DAYRAH</motion.b>
+            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .7, delay: .42 }}>THE ART OF PERFUMERY</motion.span>
+          </div>
+          <div className="preloader__bottom">
+            <span>OUD&nbsp; · &nbsp;ROSE&nbsp; · &nbsp;AMBER</span>
+            <span className="preloader__count">{String(count).padStart(3, '0')}</span>
+          </div>
+          <div className="preloader__line" style={{ transform: `scaleX(${count / 100})` }} />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* Trailing cursor: a dot with a lagging ring that expands over interactive elements. */
+function CursorFX() {
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    const dot = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
+    const pointer = { x: -100, y: -100 };
+    const ringPos = { x: -100, y: -100 };
+    let raf = 0;
+    let visible = false;
+    const onMove = (event: PointerEvent) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      if (!visible) { visible = true; dot.style.opacity = '1'; ring.style.opacity = '1'; ringPos.x = pointer.x; ringPos.y = pointer.y; }
+      const interactive = (event.target as HTMLElement | null)?.closest('a,button,[role="tab"],input,textarea');
+      ring.classList.toggle('is-active', Boolean(interactive));
+    };
+    const tick = () => {
+      ringPos.x += (pointer.x - ringPos.x) * 0.14;
+      ringPos.y += (pointer.y - ringPos.y) * 0.14;
+      dot.style.transform = `translate3d(${pointer.x}px,${pointer.y}px,0)`;
+      ring.style.transform = `translate3d(${ringPos.x}px,${ringPos.y}px,0)`;
+      raf = requestAnimationFrame(tick);
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    raf = requestAnimationFrame(tick);
+    return () => { window.removeEventListener('pointermove', onMove); cancelAnimationFrame(raf); };
+  }, []);
+  return (<><div className="cursor-dot" ref={dotRef} aria-hidden="true" /><div className="cursor-ring" ref={ringRef} aria-hidden="true" /></>);
+}
+
+/* Magnetic hover: children gently lean toward the pointer with GSAP inertia. */
+function Magnetic({ children, strength = 0.38, className = '' }: { children: React.ReactNode; strength?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    if (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const xTo = gsap.quickTo(element, 'x', { duration: .45, ease: 'power3' });
+    const yTo = gsap.quickTo(element, 'y', { duration: .45, ease: 'power3' });
+    const onMove = (event: PointerEvent) => {
+      const rect = element.getBoundingClientRect();
+      xTo((event.clientX - (rect.left + rect.width / 2)) * strength);
+      yTo((event.clientY - (rect.top + rect.height / 2)) * strength);
+    };
+    const onLeave = () => { xTo(0); yTo(0); };
+    element.addEventListener('pointermove', onMove);
+    element.addEventListener('pointerleave', onLeave);
+    return () => { element.removeEventListener('pointermove', onMove); element.removeEventListener('pointerleave', onLeave); gsap.set(element, { x: 0, y: 0 }); };
+  }, [strength]);
+  return <div ref={ref} className={`magnetic ${className}`}>{children}</div>;
+}
+
+/* Endless olfactory ribbon that separates the story from the finale. */
+function ScentMarquee() {
+  const phrase = 'OUD \u00b7 ROSE \u00b7 AMBER \u00b7 SIFR / 01 \u00b7 DAYRAH \u00b7 A MODERN RITUAL \u00b7 ';
+  return (
+    <div className="scent-marquee" aria-hidden="true">
+      <div className="scent-marquee__track">{Array.from({ length: 4 }, (_, index) => <span key={index}>{phrase}</span>)}</div>
+    </div>
+  );
+}
+
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { count, openBag } = useCart();
   const close = () => setMenuOpen(false);
   return (
     <header className="site-header">
@@ -36,7 +155,13 @@ function Header() {
         <NavLink to="/atelier">ATELIER</NavLink>
         <NavLink to="/journal">JOURNAL</NavLink>
       </nav>
-      <Link className="header-cta" to="/contact">CONTACT THE HOUSE <span>↗</span></Link>
+      <div className="header-actions">
+        <Magnetic strength={0.32}><Link className="header-cta" to="/contact">CONTACT THE HOUSE <span>↗</span></Link></Magnetic>
+        <button className="bag-button" onClick={openBag} aria-label={count > 0 ? `Open bag, ${count} item${count === 1 ? '' : 's'}` : 'Open bag'}>
+          BAG
+          <motion.span key={count} className="bag-count" initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 22 }}>{count}</motion.span>
+        </button>
+      </div>
       <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button>
       <AnimatePresence>{menuOpen && <motion.nav className="mobile-nav" aria-label="Mobile navigation" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .22 }}>
         <Link to="/collection" onClick={close}>THE COLLECTION</Link><Link to="/story" onClick={close}>THE HOUSE</Link><Link to="/atelier" onClick={close}>THE ATELIER</Link><Link to="/journal" onClick={close}>JOURNAL</Link><Link to="/contact" onClick={close}>CONTACT ↗</Link>
@@ -45,7 +170,7 @@ function Header() {
   );
 }
 
-function ScentExperience({ note, onOpenDetails }: { note: Note; onOpenDetails: () => void }) {
+function ScentExperience({ note, onOpenDetails, booted }: { note: Note; onOpenDetails: () => void; booted: boolean }) {
   const sectionRef = useRef<HTMLElement>(null);
   const progressRef = useRef(0);
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -84,18 +209,20 @@ function ScentExperience({ note, onOpenDetails }: { note: Note; onOpenDetails: (
         <div className="experience-glow" />
         <div className="cinema-vignette" aria-hidden="true" />
         <div className="experience-grain" />
-        <Suspense fallback={<div className="scene-loading" aria-hidden="true" />}><PerfumeScene progress={progressRef} note={note} /></Suspense>
+        <CanvasBoundary fallback={<div className="scene-loading" aria-hidden="true" />}>
+          <Suspense fallback={<div className="scene-loading" aria-hidden="true" />}><PerfumeScene progress={progressRef} note={note} /></Suspense>
+        </CanvasBoundary>
         <div className="experience-topline"><span>DAYRAH&nbsp; / &nbsp;THE ART OF PERFUMERY</span><span>OUD&nbsp; · &nbsp;ROSE&nbsp; · &nbsp;AMBER</span></div>
         <div className="experience-layout">
           <div className="experience-copy" aria-live="polite">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.div className="chapter-copy" key={step} initial={{ opacity: 0, y: 18, filter: 'blur(7px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -12, filter: 'blur(5px)' }} transition={{ duration: .55, ease: [0.22, 1, 0.36, 1] }}>
+              <motion.div className="chapter-copy" key={step} initial={{ opacity: 0, y: 18, filter: 'blur(7px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -12, filter: 'blur(5px)' }} transition={{ duration: .55, ease: [0.22, 1, 0.36, 1], delay: booted ? 0 : 1.5 }}>
                 <p className="chapter-kicker">{active.eyebrow}</p>
-                <h1><span><BlurText text={active.lineOne} /></span><em><BlurText text={active.lineTwo} delay={.12} /></em></h1>
+                <h1><span><BlurText text={active.lineOne} startDelay={booted ? 0 : 1.55} /></span><em><BlurText text={active.lineTwo} delay={.12} startDelay={booted ? 0 : 1.55} /></em></h1>
                 <p className="chapter-copy-text">{active.copy}</p>
               </motion.div>
             </AnimatePresence>
-            <div className="story-actions"><motion.button className="discover-button" onClick={onOpenDetails} whileHover={{ x: 4 }} whileTap={{ scale: .98 }}>EXPLORE THE FRAGRANCE <span>↗</span></motion.button><span className="drag-note">DRAG THE BOTTLE TO TURN</span></div>
+            <div className="story-actions"><Magnetic strength={0.42}><motion.button className="discover-button" onClick={onOpenDetails} whileHover={{ x: 4 }} whileTap={{ scale: .98 }}>EXPLORE THE FRAGRANCE <span>↗</span></motion.button></Magnetic><span className="drag-note">DRAG THE BOTTLE TO TURN</span></div>
           </div>
           <div className="scene-side-copy"><span className="scene-rule" /><p>SCENT AS<br />A SENSORY<br />MEMORY</p></div>
         </div>
@@ -232,20 +359,30 @@ function DetailsModal({ open, onClose }: { open: boolean; onClose: () => void })
   return <AnimatePresence>{open && <motion.div className="modal-scrim" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="fragrance-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()} initial={{ y: 28, opacity: 0, scale: .98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 18, opacity: 0, scale: .985 }} transition={{ duration: .3, ease: [0.22, 1, 0.36, 1] }}><button className="modal-close" onClick={onClose} aria-label="Close fragrance details">×</button><p className="eyebrow"><span /> DAYRAH / SIGNATURE SCENT</p><h2 id="modal-title">Sifr<sup>01</sup></h2><p className="modal-subtitle">A memory, held in glass.</p><div className="modal-notes"><span>OUD <i /> ROSE <i /> AMBER</span></div><p className="modal-copy">A warm, floral-woody composition, inspired by the scents that turn a moment into a place you remember.</p><a className="modal-contact" href="mailto:hello@dayrah.com">ASK THE ATELIER <span>↗</span></a><p className="modal-foot">CONTACT DETAILS AND PRODUCT INFORMATION ARE PLACEHOLDERS.</p></motion.div></motion.div>}</AnimatePresence>;
 }
 
-function HomePage({ note, setNote, onOpenDetails }: { note: Note; setNote: (note: Note) => void; onOpenDetails: () => void }) {
+function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNote: (note: Note) => void; onOpenDetails: () => void; booted: boolean }) {
   return (
     <main className="home-page">
-      <ScentExperience note={note} onOpenDetails={onOpenDetails} />
+      <ScentExperience note={note} onOpenDetails={onOpenDetails} booted={booted} />
       <NoteExplorer note={note} setNote={setNote} />
       <section className="home-signature">
         <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup><br /><em>A memory in motion.</em></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace. Meet the full composition behind Dayrah's signature fragrance.</p><Link to="/sifr-01" className="text-link">ENTER THE FRAGRANCE <span>↗</span></Link></div>
         <Link to="/sifr-01" className="home-signature__image" aria-label="Discover Sifr 01"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image: an amber perfume bottle amid rose petals and golden light" loading="lazy" /><span>01 / SIFR — THE SIGNATURE</span></Link>
       </section>
+      <section className="shelf-section">
+        <div className="shelf-section__head" data-gsap-reveal>
+          <p className="eyebrow"><span /> THE ATELIER SHELF</p>
+          <h2>Wear the house.<br /><em>Choose your note.</em></h2>
+          <Link className="text-link" to="/collection">VIEW THE FULL COLLECTION <span>↗</span></Link>
+        </div>
+        <ShopGrid items={products} />
+      </section>
+      <ReviewsStrip />
       <ScentFinder onChooseNote={setNote} />
       <RitualGuide />
       <Atelier />
       <section className="home-pages"><p className="eyebrow"><span /> CONTINUE EXPLORING</p><div><Link to="/collection">THE COLLECTION <span>↗</span></Link><Link to="/story">THE HOUSE <span>↗</span></Link><Link to="/journal">FIELD NOTES <span>↗</span></Link></div></section>
-      <section className="closing-section"><p className="eyebrow"><span /> DAYRAH&nbsp; / &nbsp;FRAGRANCE HOUSE</p><h2>Let the scent<br /><em>say the rest.</em></h2><Link to="/contact">CONTACT THE HOUSE <span>↗</span></Link></section>
+      <ScentMarquee />
+      <section className="closing-section"><p className="eyebrow"><span /> DAYRAH&nbsp; / &nbsp;FRAGRANCE HOUSE</p><h2>Let the scent<br /><em>say the rest.</em></h2><Magnetic strength={0.4}><Link to="/contact">CONTACT THE HOUSE <span>↗</span></Link></Magnetic></section>
     </main>
   );
 }
@@ -262,6 +399,7 @@ function SiteLayout() {
   const location = useLocation();
   const [note, setNote] = useState<Note>('amber');
   const [modalOpen, setModalOpen] = useState(false);
+  const [booted, setBooted] = useState(false);
   const appRef = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
 
@@ -285,8 +423,11 @@ function SiteLayout() {
       '/atelier': { title: 'The Atelier — Dayrah', description: 'Explore the materials, ideas, and deliberate gestures behind the Dayrah fragrance house.' },
       '/journal': { title: 'Field Notes — Dayrah', description: 'Short reflections on material, memory, and the rituals that give fragrance its place.' },
       '/contact': { title: 'Correspondence — Dayrah', description: 'Write to the Dayrah fragrance house about Sifr 01, the house, or the ritual of scent.' },
+      '/checkout': { title: 'Checkout — Dayrah', description: 'Complete your Dayrah order with complimentary shipping over $250 and two samples of the house.' },
     };
-    const meta = pageMeta[location.pathname] ?? { title: 'Page not found — Dayrah', description: 'Return to Dayrah, the fragrance house.' };
+    const productSlug = location.pathname.startsWith('/product/') ? location.pathname.split('/')[2] : '';
+    const productMeta = productSlug ? { title: `${products.find((item) => item.slug === productSlug)?.name ?? 'Fragrance'} — Dayrah`, description: 'Shop Dayrah eau de parfum: choose your size, add to bag, and check out with cash on delivery.' } : undefined;
+    const meta = productMeta ?? pageMeta[location.pathname] ?? { title: 'Page not found — Dayrah', description: 'Return to Dayrah, the fragrance house.' };
     document.title = meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description);
     const hash = location.hash.slice(1);
@@ -322,10 +463,12 @@ function SiteLayout() {
     <div className="app-shell" ref={appRef}>
       <Header />
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div className="route-stage" key={location.pathname} initial={{ opacity: 0, y: 13, filter: 'blur(3px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -8, filter: 'blur(2px)' }} transition={{ duration: .42, ease: [0.22, 1, .36, 1] }}>
+        <motion.div className="route-stage" key={location.pathname} initial={{ opacity: 0, y: 13, filter: 'blur(3px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -8, filter: 'blur(2px)' }} transition={{ duration: .42, ease: [0.22, 1, .36, 1], delay: booted ? 0 : 1.42 }}>
           <Routes location={location}>
-            <Route path="/" element={<HomePage note={note} setNote={setNote} onOpenDetails={() => setModalOpen(true)} />} />
+            <Route path="/" element={<HomePage note={note} setNote={setNote} onOpenDetails={() => setModalOpen(true)} booted={booted} />} />
             <Route path="/collection" element={<CollectionPage />} />
+            <Route path="/product/:slug" element={<ProductPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/sifr-01" element={<SifrPage note={note} setNote={setNote} />} />
             <Route path="/story" element={<StoryPage />} />
             <Route path="/atelier" element={<AtelierPage />} />
@@ -337,12 +480,15 @@ function SiteLayout() {
       </AnimatePresence>
       <SiteFooter />
       <DetailsModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <CartDrawer />
+      <Preloader onDone={() => setBooted(true)} />
+      <CursorFX />
     </div>
   );
 }
 
 function App() {
-  return <BrowserRouter><SiteLayout /></BrowserRouter>;
+  return <BrowserRouter><CartProvider><SiteLayout /></CartProvider></BrowserRouter>;
 }
 
 export default App;
