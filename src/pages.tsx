@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { CanvasBoundary } from './components/CanvasBoundary';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
@@ -57,7 +58,9 @@ export function ProductFilm({ note }: { note: Note }) {
       <div className="product-film__stage">
         <div className="product-film__wash" />
         <div className="product-film__grain" />
-        <Suspense fallback={<div className="product-film__loading" />}><PerfumeScene progress={progress} note={note} /></Suspense>
+        <CanvasBoundary fallback={<div className="product-film__loading" />}>
+          <Suspense fallback={<div className="product-film__loading" />}><PerfumeScene progress={progress} note={note} /></Suspense>
+        </CanvasBoundary>
         <div className="product-film__top"><span>DAYRAH / SIFR 01</span><span>SCROLL-SCRUBBED 3D FILM</span></div>
         <div className="product-film__layout">
           <div className="product-film__copy" aria-live="polite">

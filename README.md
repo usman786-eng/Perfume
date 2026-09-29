@@ -2,6 +2,16 @@
 
 A multi-page fragrance-house experience with a live, scroll-scrubbed Three.js film on the home page and Sifr 01 detail page. The glass scene uses high-DPI rendering, higher-resolution transmission, shadow maps, procedural studio-light reflections, cinematic color grading, a petal burst, scent ribbon, and light sweep. The films are rendered live in the browser rather than played from pre-recorded video.
 
+### Real effects, rendered in the browser
+
+- **Atomizer mist plume** — a GPU particle shader (custom GLSL point sprites) that breathes out above the bottle as the cap lifts.
+- **Volumetric light shafts** — additive shader planes with drifting internal light bands, scrubbed by scroll.
+- **Note-reactive atmosphere** — accent lights and a bloom-feeding halo glow cross-fade toward oud / rose / amber as you switch accords.
+- **Liquid slosh** — the liquid mass lags and wobbles in response to scroll velocity.
+- **Depth of field + camera breathing** — a physical DoF pass and a scroll-driven FOV pull tighten the frame mid-film (desktop).
+- **Cinematic boot veil** — a counting preloader whose clip-path lift is synced with the hero's blur-in typography.
+- **Custom trailing cursor** (difference-blend dot + lagging ring), **magnetic buttons** with GSAP inertia, and an **endless scent marquee** ribbon.
+
 ## Run locally
 
 ```bash
