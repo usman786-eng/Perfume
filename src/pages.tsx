@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { CanvasBoundary } from './components/CanvasBoundary';
+import { products } from './shop/products';
+import { BuyPanel, ShopGrid } from './shop/ShopSections';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
@@ -90,6 +92,14 @@ export function CollectionPage() {
         <figure className="collection-hero__image"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image with an amber glass bottle and drifting rose petals" /><figcaption>STUDY 01&nbsp; / &nbsp;THE SIGNATURE</figcaption><span className="collection-hero__seal">D<br /><i>01</i></span></figure>
         <div className="collection-hero__side">A MODERN RITUAL<br />ROOTED IN PERFUMERY</div>
       </section>
+      <section className="collection-shelf" id="shop">
+        <div className="collection-shelf__head" data-gsap-reveal>
+          <p className="eyebrow"><span /> THE SHELF / THE DAYRAH WARDROBE</p>
+          <h2>Choose your<br /><em>signature.</em></h2>
+          <p>Four compositions, one point of view. Every bottle ships with two samples of the house — complimentary over $250.</p>
+        </div>
+        <ShopGrid items={products} />
+      </section>
       <section className="accord-collection" id="accords">
         <div className="accord-collection__heading"><p className="eyebrow"><span /> THE OLFACTIVE PALETTE</p><h2>Three notes.<br /><em>One composition.</em></h2><p>Each accord has its own character. Together, they create the arc of Sifr 01.</p></div>
         <div className="accord-grid">{(Object.keys(noteCopy) as Note[]).map((key, index) => <Link to={`/sifr-01#${key}`} className={`accord-card accord-card--${key}`} key={key}><div className="accord-card__art" style={{ '--accord-color': noteCopy[key].color } as CSSProperties}><span className="accord-card__number">0{index + 1}</span><div className="accord-card__orb" /><span className="accord-card__vertical">DAYRAH / OLFACTIVE STUDY</span></div><div className="accord-card__text"><span>{noteCopy[key].role}</span><h3>{noteCopy[key].title}</h3><p>{noteCopy[key].body}</p><i>EXPLORE NOTE&nbsp; ↗</i></div></Link>)}</div>
@@ -108,6 +118,13 @@ export function SifrPage({ note, setNote }: { note: Note; setNote: (note: Note) 
         <div className="sifr-note-story__intro"><p className="eyebrow"><span /> THE COMPOSITION</p><h2>Follow the<br /><em>changing light.</em></h2><p>Explore the three accords and watch the liquid tint shift with your selection.</p></div>
         <div className="sifr-note-story__selector" role="tablist" aria-label="Sifr 01 accords">{(Object.keys(noteCopy) as Note[]).map((key, index) => <button id={key} role="tab" aria-selected={note === key} className={note === key ? 'sifr-note is-active' : 'sifr-note'} onClick={() => setNote(key)} key={key}><span>0{index + 1}</span><b>{noteCopy[key].title}</b><i>{noteCopy[key].role}</i></button>)}</div>
         <AnimatePresence mode="wait"><motion.div key={note} className="sifr-note-story__detail" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .3 }}><span>{noteCopy[note].role}</span><h3>{noteCopy[note].title}</h3><p>{noteCopy[note].body}</p></motion.div></AnimatePresence>
+      </section>
+      <section className="sifr-buy">
+        <figure className="sifr-buy__media" data-gsap-reveal>
+          <img src="/images/dayrah-cinematic-campaign.webp" alt="Sifr 01 amber glass bottle amid rose petals and golden light" loading="lazy" />
+          <figcaption>THE SIGNATURE / SIFR 01</figcaption>
+        </figure>
+        <BuyPanel product={products[0]} />
       </section>
       <section className="sifr-bottle-card"><div className="sifr-bottle-card__image"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image with an amber glass bottle, petals, and volumetric light" loading="lazy" /><span>OBJECT STUDY / SIFR 01</span></div><div className="sifr-bottle-card__copy"><p className="eyebrow"><span /> THE SIGNATURE</p><h2>A memory,<br /><em>held in glass.</em></h2><p>Sifr 01 is the house's point of departure: a study in contrast, with deep woods, a lifted floral heart, and a close amber finish.</p><Link to="/contact" className="text-link">ENQUIRE ABOUT SIFR 01 <span>↗</span></Link></div></section>
       <section className="sifr-final"><span>DAYRAH / SIFR 01</span><h2>Wear the<br /><em>moment.</em></h2><Link to="/contact" className="button-outline">A NOTE TO THE HOUSE <span>↗</span></Link></section>

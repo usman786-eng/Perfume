@@ -8,6 +8,11 @@ import BlurText from './components/BlurText';
 import { CanvasBoundary } from './components/CanvasBoundary';
 import { BrowserRouter, Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, StoryPage } from './pages';
+import { ProductPage, CheckoutPage } from './pages-commerce';
+import { CartProvider, useCart } from './shop/CartContext';
+import { products } from './shop/products';
+import { ReviewsStrip, ShopGrid } from './shop/ShopSections';
+import CartDrawer from './components/CartDrawer';
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -139,6 +144,7 @@ function ScentMarquee() {
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { count, openBag } = useCart();
   const close = () => setMenuOpen(false);
   return (
     <header className="site-header">
@@ -149,7 +155,13 @@ function Header() {
         <NavLink to="/atelier">ATELIER</NavLink>
         <NavLink to="/journal">JOURNAL</NavLink>
       </nav>
-      <Magnetic className="magnetic--end" strength={0.32}><Link className="header-cta" to="/contact">CONTACT THE HOUSE <span>↗</span></Link></Magnetic>
+      <div className="header-actions">
+        <Magnetic strength={0.32}><Link className="header-cta" to="/contact">CONTACT THE HOUSE <span>↗</span></Link></Magnetic>
+        <button className="bag-button" onClick={openBag} aria-label={count > 0 ? `Open bag, ${count} item${count === 1 ? '' : 's'}` : 'Open bag'}>
+          BAG
+          <motion.span key={count} className="bag-count" initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 22 }}>{count}</motion.span>
+        </button>
+      </div>
       <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button>
       <AnimatePresence>{menuOpen && <motion.nav className="mobile-nav" aria-label="Mobile navigation" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .22 }}>
         <Link to="/collection" onClick={close}>THE COLLECTION</Link><Link to="/story" onClick={close}>THE HOUSE</Link><Link to="/atelier" onClick={close}>THE ATELIER</Link><Link to="/journal" onClick={close}>JOURNAL</Link><Link to="/contact" onClick={close}>CONTACT ↗</Link>
@@ -356,6 +368,15 @@ function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNot
         <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup><br /><em>A memory in motion.</em></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace. Meet the full composition behind Dayrah's signature fragrance.</p><Link to="/sifr-01" className="text-link">ENTER THE FRAGRANCE <span>↗</span></Link></div>
         <Link to="/sifr-01" className="home-signature__image" aria-label="Discover Sifr 01"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image: an amber perfume bottle amid rose petals and golden light" loading="lazy" /><span>01 / SIFR — THE SIGNATURE</span></Link>
       </section>
+      <section className="shelf-section">
+        <div className="shelf-section__head" data-gsap-reveal>
+          <p className="eyebrow"><span /> THE ATELIER SHELF</p>
+          <h2>Wear the house.<br /><em>Choose your note.</em></h2>
+          <Link className="text-link" to="/collection">VIEW THE FULL COLLECTION <span>↗</span></Link>
+        </div>
+        <ShopGrid items={products} />
+      </section>
+      <ReviewsStrip />
       <ScentFinder onChooseNote={setNote} />
       <RitualGuide />
       <Atelier />
@@ -402,8 +423,11 @@ function SiteLayout() {
       '/atelier': { title: 'The Atelier — Dayrah', description: 'Explore the materials, ideas, and deliberate gestures behind the Dayrah fragrance house.' },
       '/journal': { title: 'Field Notes — Dayrah', description: 'Short reflections on material, memory, and the rituals that give fragrance its place.' },
       '/contact': { title: 'Correspondence — Dayrah', description: 'Write to the Dayrah fragrance house about Sifr 01, the house, or the ritual of scent.' },
+      '/checkout': { title: 'Checkout — Dayrah', description: 'Complete your Dayrah order with complimentary shipping over $250 and two samples of the house.' },
     };
-    const meta = pageMeta[location.pathname] ?? { title: 'Page not found — Dayrah', description: 'Return to Dayrah, the fragrance house.' };
+    const productSlug = location.pathname.startsWith('/product/') ? location.pathname.split('/')[2] : '';
+    const productMeta = productSlug ? { title: `${products.find((item) => item.slug === productSlug)?.name ?? 'Fragrance'} — Dayrah`, description: 'Shop Dayrah eau de parfum: choose your size, add to bag, and check out with cash on delivery.' } : undefined;
+    const meta = productMeta ?? pageMeta[location.pathname] ?? { title: 'Page not found — Dayrah', description: 'Return to Dayrah, the fragrance house.' };
     document.title = meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description);
     const hash = location.hash.slice(1);
@@ -443,6 +467,8 @@ function SiteLayout() {
           <Routes location={location}>
             <Route path="/" element={<HomePage note={note} setNote={setNote} onOpenDetails={() => setModalOpen(true)} booted={booted} />} />
             <Route path="/collection" element={<CollectionPage />} />
+            <Route path="/product/:slug" element={<ProductPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/sifr-01" element={<SifrPage note={note} setNote={setNote} />} />
             <Route path="/story" element={<StoryPage />} />
             <Route path="/atelier" element={<AtelierPage />} />
@@ -454,6 +480,7 @@ function SiteLayout() {
       </AnimatePresence>
       <SiteFooter />
       <DetailsModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <CartDrawer />
       <Preloader onDone={() => setBooted(true)} />
       <CursorFX />
     </div>
@@ -461,7 +488,7 @@ function SiteLayout() {
 }
 
 function App() {
-  return <BrowserRouter><SiteLayout /></BrowserRouter>;
+  return <BrowserRouter><CartProvider><SiteLayout /></CartProvider></BrowserRouter>;
 }
 
 export default App;
