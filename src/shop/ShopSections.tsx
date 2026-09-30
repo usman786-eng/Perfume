@@ -26,10 +26,10 @@ export function ProductCard({ product, reveal = true }: { product: Product; reve
       <div className="product-card__meta">
         <div className="product-card__name">
           <h3><Link to={`/product/${product.slug}`}>{product.name}</Link></h3>
-          <span>EAU DE PARFUM / FROM {from}</span>
+          <span className="product-card__price">EAU DE PARFUM / FROM {from}</span>
         </div>
         <p className="product-card__notes">{product.notes.join(' · ')}</p>
-        <button className="product-card__add" onClick={quickAdd} aria-live="polite">{added ? 'ADDED TO BAG ✓' : `QUICK ADD — ${from}`}</button>
+        <button className="product-card__add" onClick={quickAdd} aria-live="polite">{added ? 'ADDED TO BAG ✓' : 'QUICK ADD'}</button>
       </div>
     </article>
   );

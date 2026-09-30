@@ -5,6 +5,7 @@ import './styles.css';
 import './pages.css';
 import './shop/shop.css';
 import './sovereign.css';
+import './luxe.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

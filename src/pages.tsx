@@ -1,6 +1,7 @@
 import { lazy, Suspense, useRef, useState, type CSSProperties, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import SovereignFilm from './components/SovereignFilm';
+import EssenceFilm from './components/EssenceFilm';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -11,10 +12,12 @@ import { sovereignFilmFrames, sovereignVisualElements } from './sovereign';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
-const noteCopy: Record<Note, { title: string; role: string; body: string; color: string }> = {
-  oud: { title: 'Oud', role: 'THE FOUNDATION', body: 'Dark, resinous and textured. The grounded opening gives the composition its quiet depth.', color: '#79513c' },
-  rose: { title: 'Rose', role: 'THE HEART', body: 'A petal-bright floral heart brings contrast and lift, held in balance rather than sweetness.', color: '#a95d6f' },
-  amber: { title: 'Amber', role: 'THE TRACE', body: 'A warm, golden finish settles close to the skin and gives the scent its lingering softness.', color: '#b88045' },
+/* Real photography only — no AI renders, no stock. Each note is paired with an
+   existing photographic asset in /public/images (see the asset gap list). */
+const noteCopy: Record<Note, { title: string; role: string; body: string; color: string; image: string; alt: string }> = {
+  oud: { title: 'Oud', role: 'THE FOUNDATION', body: 'Dark, resinous and textured. The grounded opening gives the composition its quiet depth.', color: '#79513c', image: '/images/sovereign-ref-botanicals.jpg', alt: 'Real botanical study of dark resins, wood and dried oud material' },
+  rose: { title: 'Rose', role: 'THE HEART', body: 'A petal-bright floral heart brings contrast and lift, held in balance rather than sweetness.', color: '#a95d6f', image: '/images/sovereign-ref-bottle.jpg', alt: 'Real close photograph of the faceted Dayrah flacon against a dark ground' },
+  amber: { title: 'Amber', role: 'THE TRACE', body: 'A warm, golden finish settles close to the skin and gives the scent its lingering softness.', color: '#b88045', image: '/images/amber-perfume-closeup.jpg', alt: 'Real macro photograph of amber liquid and glass' },
 };
 
 const filmBeats = [
@@ -104,7 +107,7 @@ export function CollectionPage() {
       </section>
       <section className="accord-collection" id="accords">
         <div className="accord-collection__heading"><p className="eyebrow"><span /> THE OLFACTIVE PALETTE</p><h2>Three notes.<br /><em>One composition.</em></h2><p>Each accord has its own character. Together, they create the arc of Sifr 01.</p></div>
-        <div className="accord-grid">{(Object.keys(noteCopy) as Note[]).map((key, index) => <Link to={`/sifr-01#${key}`} className={`accord-card accord-card--${key}`} key={key}><div className="accord-card__art" style={{ '--accord-color': noteCopy[key].color } as CSSProperties}><span className="accord-card__number">0{index + 1}</span><div className="accord-card__orb" /><span className="accord-card__vertical">DAYRAH / OLFACTIVE STUDY</span></div><div className="accord-card__text"><span>{noteCopy[key].role}</span><h3>{noteCopy[key].title}</h3><p>{noteCopy[key].body}</p><i>EXPLORE NOTE&nbsp; ↗</i></div></Link>)}</div>
+        <div className="accord-grid">{(Object.keys(noteCopy) as Note[]).map((key, index) => <Link to={`/sifr-01#${key}`} className={`accord-card accord-card--${key}`} key={key}><div className="accord-card__art" style={{ '--accord-color': noteCopy[key].color } as CSSProperties}><img className="accord-card__photo" src={noteCopy[key].image} alt={noteCopy[key].alt} loading="lazy" /><span className="accord-card__number">0{index + 1}</span><span className="accord-card__vertical">DAYRAH / OLFACTIVE STUDY</span></div><div className="accord-card__text"><span>{noteCopy[key].role}</span><h3>{noteCopy[key].title}</h3><p>{noteCopy[key].body}</p><i>EXPLORE NOTE&nbsp; ↗</i></div></Link>)}</div>
       </section>
       <section className="collection-foot"><p>THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace.</p><Link to="/sifr-01" className="button-outline">ENTER THE FRAGRANCE <span>↗</span></Link></section>
     </motion.div>
@@ -164,7 +167,7 @@ export function SovereignPage() {
         <div className="sovereign-gallery__grid">
           {sovereignFilmFrames.map((frame, index) => (
             <figure className={`sovereign-gallery__figure sovereign-gallery__figure--${index + 1}`} key={frame.src} data-gsap-reveal>
-              <div className="sovereign-gallery__frame"><img src={frame.src} alt={frame.alt} loading="lazy" /></div>
+              <div className="sovereign-gallery__frame"><img src={frame.src} alt={frame.alt} loading="lazy" /><i className="sf-cell" aria-hidden="true" /></div>
               <figcaption><span>FRAME 0{frame.frameNumber} / DAYRAH SCENTS</span><span>{frame.caption}</span></figcaption>
               <div className="sovereign-gallery__meta">
                 <h3>{frame.context}</h3>
@@ -178,6 +181,8 @@ export function SovereignPage() {
           ))}
         </div>
       </section>
+
+      <EssenceFilm />
 
       <section className="sovereign-composition">
         <div className="sovereign-composition__copy">

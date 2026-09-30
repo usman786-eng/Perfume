@@ -1,0 +1,1670 @@
+/* ==========================================================================
+   DAYRAH SCENTS — LUXE OBSIDIAN EDITION
+   Ultra-luxury editorial layer. Imported LAST (after sovereign.css) so it
+   wins the cascade for the entire site without editing a single existing
+   stylesheet.
+
+   --------------------------------------------------------------------------
+   ⚠️  LOCKED ZONE — THE SOVEREIGN FILM  ⚠️
+   The Sovereign film (.sovereign-film, .essence-film and every
+   .sovereign-film__* / .sf-* node) is byte-for-byte untouched. This file
+   NEVER sets layout, colour, size, filter or motion on those selectors.
+   The single exception is the `--serif` re-lock below, which exists purely
+   to keep the film's four `var(--serif)` rules resolving to the same
+   Cormorant Garamond they always used, so the film renders identically.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1 · DESIGN TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* Obsidian palette */
+  --lux-obsidian: #08070a;
+  --lux-surface: #121012;
+  --lux-ivory: #f8f3ea;
+  --lux-gold: #e8d5b5;
+  --lux-bronze: #b68b5a;
+  --lux-amber: #a85a2b;
+  --lux-burgundy: #3d1f1f;
+  /* Aliases for muted / dim text so sections can use one token name. */
+  --lux-muted: rgba(248, 243, 234, 0.56);
+  --lux-faint: rgba(248, 243, 234, 0.38);
+
+  /* Soft golden glows (never solid) */
+  --lux-hairline: rgba(232, 213, 181, 0.2);
+  --lux-hairline-soft: rgba(232, 213, 181, 0.12);
+  --lux-glow-gold: rgba(232, 213, 181, 0.14);
+  --lux-glow-amber: rgba(168, 90, 43, 0.16);
+  --lux-glow-burgundy: rgba(61, 31, 31, 0.4);
+  --lux-shadow: 0 30px 80px rgba(8, 7, 10, 0.55);
+
+  /* Type */
+  /* Italiana — high-fashion display serif (calligraphic Didone flavour) for
+     headlines, wordmark and nav. Distinctive at large sizes, elegant and
+     commercial-safe via Google Fonts. */
+  --display: 'Italiana', 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --body-serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  /* Editorial rhythm */
+  --lux-section-y: 120px;
+  --lux-measure: 36ch;
+
+  /* Re-point legacy tokens used across styles/pages/shop.
+     Deliberately NOT used by the Sovereign film (see lock note). */
+  --paper: #08070a;
+  --ink: #f8f3ea;
+  --muted: rgba(248, 243, 234, 0.56);
+  --line: rgba(232, 213, 181, 0.2);
+  --clay: #e8d5b5;
+  --rose: #b68b5a;
+  --dark: #121012;
+  --plum: #1a1418;
+  /* Site-wide display serif (film re-locks this to Cormorant below). */
+  --serif: 'Italiana', 'Playfair Display', Georgia, serif;
+}
+
+/* --------------------------------------------------------------------------
+   2 · FILM LOCK  (the only rule in this file that names the film)
+   Re-declares --serif on the film root so the film's internal
+   var(--serif) typography is identical to before. Do not extend.
+   -------------------------------------------------------------------------- */
+.sovereign-film,
+.essence-film {
+  --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* --------------------------------------------------------------------------
+   3 · BASE CANVAS — obsidian depth, golden radial glows, vignette
+   -------------------------------------------------------------------------- */
+html {
+  background: var(--lux-obsidian);
+  scrollbar-color: rgba(232, 213, 181, 0.4) var(--lux-obsidian);
+}
+
+body {
+  color: var(--lux-ivory);
+  background:
+    radial-gradient(1200px 720px at 10% -10%, var(--lux-glow-amber), transparent 58%),
+    radial-gradient(1000px 640px at 92% 2%, var(--lux-glow-gold), transparent 60%),
+    radial-gradient(1400px 900px at 50% 112%, var(--lux-glow-burgundy), transparent 68%),
+    var(--lux-obsidian);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--lux-gold);
+  color: var(--lux-obsidian);
+}
+
+:focus-visible {
+  outline: 1px solid var(--lux-gold);
+  outline-offset: 4px;
+}
+
+.route-stage {
+  min-height: 70vh;
+}
+
+/* --------------------------------------------------------------------------
+   4 · TYPOGRAPHY SYSTEM
+   Display: Playfair 300 · labels 11px/.5em · body Cormorant 20px
+   -------------------------------------------------------------------------- */
+
+/* Editorial prose → 20px Cormorant, 1.7, 36ch measure */
+.chapter-copy-text,
+.notes-intro > p:not(.eyebrow),
+.atelier-copy > p:not(.eyebrow),
+.finder-heading > p:last-child,
+.ritual-heading > p:last-child,
+.home-signature__copy > p:not(.eyebrow),
+.shelf-section__head > p:not(.eyebrow),
+.collection-shelf__head > p:last-child,
+.accord-collection__heading > p:last-child,
+.collection-hero__copy > p:not(.eyebrow),
+.story-masthead > p:not(.eyebrow),
+.atelier-masthead > div > p:not(.eyebrow),
+.atelier-materials > div:last-child > p:not(.eyebrow),
+.journal-masthead > p:last-child,
+.contact-intro > p:not(.eyebrow),
+.sifr-note-story__intro > p:last-child,
+.sifr-note-story__detail p,
+.sifr-bottle-card__copy > p:not(.eyebrow),
+.story-pillars p,
+.atelier-process__steps p,
+.buy-panel__description,
+.accordion__inner,
+.checkout-empty p,
+.review-card p,
+.story-masthead__stamp,
+.modal-copy,
+.bag-empty__copy {
+  font-family: var(--body-serif);
+  font-size: 20px !important;
+  line-height: 1.7 !important;
+  letter-spacing: 0.02em;
+  max-width: var(--lux-measure);
+  color: var(--lux-muted);
+}
+
+/* Display headings — Italiana, 7.4vw, -0.05em, 0.85
+   Italiana ships as a single weight, so font-weight must be 400; a 300 request
+   would synthesise faux-light and look muddy at these sizes. */
+.notes-intro h2,
+.atelier-copy h2,
+.closing-section h2,
+.finder-heading h2,
+.ritual-heading h2,
+.home-signature__copy h2,
+.shelf-section__head h2,
+.collection-shelf__head h2,
+.accord-collection__heading h2,
+.collection-hero h1,
+.story-masthead h1,
+.atelier-masthead h1,
+.journal-masthead h1,
+.contact-intro h1,
+.accord-collection__heading h2,
+.sifr-note-story__intro h2,
+.sifr-bottle-card__copy h2,
+.story-end h2,
+.atelier-process__head h2,
+.atelier-materials h2,
+.collection-foot h2,
+.sifr-final h2,
+.journal-bottom > p,
+.buy-panel__name,
+.also-like__head h2,
+.reviews-strip__head h2,
+.checkout-head h1,
+.checkout-done h1,
+.not-found h1,
+.story-image-band > div p {
+  font-family: var(--display) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.05em !important;
+  line-height: 0.85 !important;
+  font-size: clamp(46px, 7.4vw, 116px) !important;
+  color: var(--lux-ivory);
+}
+
+.notes-intro h2 em,
+.atelier-copy h2 em,
+.finder-heading h2 em,
+.ritual-heading h2 em,
+.home-signature__copy h2 em,
+.shelf-section__head h2 em,
+.collection-shelf__head h2 em,
+.accord-collection__heading h2 em,
+.collection-hero h1 em,
+.story-masthead h1 em,
+.atelier-masthead h1 em,
+.journal-masthead h1 em,
+.contact-intro h1 em,
+.sifr-note-story__intro h2 em,
+.sifr-bottle-card__copy h2 em,
+.story-end h2 em,
+.atelier-process__head h2 em,
+.atelier-materials h2 em,
+.also-like__head h2 em,
+.reviews-strip__head h2 em,
+.checkout-head h1 em,
+.checkout-done h1 em,
+.not-found h1 em,
+.story-image-band > div em {
+  color: var(--lux-gold) !important;
+  font-weight: 400 !important;
+}
+
+/* Subtitles / eyebrows — 11px uppercase sans, 0.5em, 0.5 opacity
+   NOTE: container selectors (.product-card__badge, .checkout-field) are
+   deliberately excluded from the shared opacity below — opacity on a wrapper
+   would dim its nested children (inputs, badge text). They are handled in
+   their own sections instead. */
+.eyebrow,
+.chapter-kicker,
+.product-card__index,
+.product-card__cta,
+.product-card__name span,
+.product-card__notes,
+.buy-size span,
+.selected-note > span,
+.notes-image figcaption,
+.atelier-image figcaption,
+.story-pillars article > span,
+.atelier-process__steps article > span,
+.accordion__head span,
+.bag-item__info small,
+.summary-item__info small,
+.review-card footer span,
+.page-breadcrumb,
+.collection-hero__side,
+.home-pages > .eyebrow,
+.checkout-form__section,
+.payment-option small,
+.payment-option i {
+  font-family: var(--sans) !important;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  letter-spacing: 0.5em !important;
+  opacity: 0.5;
+  color: var(--lux-gold);
+}
+
+/* Hero wordmark layer (shared by product / collection / feature heroes) */
+.lux-hero {
+  position: relative;
+  isolation: isolate;
+}
+.lux-hero::before {
+  content: 'DAYRAH';
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 18vw;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: var(--lux-gold);
+  mix-blend-mode: overlay;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+/* Product name riding in front, gold serif */
+.buy-panel__name {
+  font-size: clamp(60px, 8vw, 120px) !important;
+  color: var(--lux-gold) !important;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 6px 40px rgba(8, 7, 10, 0.6);
+}
+.buy-panel__name sup {
+  color: var(--lux-bronze) !important;
+  font-size: 0.22em !important;
+  letter-spacing: 0.2em !important;
+  -webkit-text-fill-color: var(--lux-bronze);
+}
+
+/* --------------------------------------------------------------------------
+   5 · SECTION RHYTHM · HAIRLINES · BROKEN SYMMETRY
+   -------------------------------------------------------------------------- */
+.notes-section,
+.finder-section,
+.ritual-section,
+.atelier-section,
+.shelf-section,
+.collection-shelf,
+.accord-collection,
+.sifr-note-story,
+.sifr-bottle-card,
+.story-pillars,
+.journal-grid,
+.product-hero,
+.checkout-grid,
+.checkout-done,
+.also-like,
+.home-signature,
+.atelier-masthead,
+.atelier-materials,
+.journal-masthead,
+.story-masthead,
+.contact-page,
+.home-pages,
+.not-found {
+  padding-top: var(--lux-section-y) !important;
+  padding-bottom: var(--lux-section-y) !important;
+}
+
+/* Broken-symmetry editorial grids */
+.notes-section {
+  grid-template-columns: minmax(300px, 0.62fr) minmax(380px, 1.38fr);
+}
+.journal-grid {
+  grid-template-columns: 1.2fr 1fr 1.12fr;
+}
+.story-pillars {
+  grid-template-columns: 1fr 1.26fr 0.9fr;
+}
+/* Editorial broken grid — NOT equal cards. First item 60vw, second 35vw
+   pushed right and down, third full-bleed. SSENSE / Aesop asymmetry with
+   large negative space between items. */
+.accord-grid {
+  grid-template-columns: 1fr !important;
+  max-width: 1600px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: 18vh 6vw !important;
+  padding: 0 8vw !important;
+}
+.accord-card {
+  display: block !important;
+  grid-column: 1 !important;
+}
+.accord-card--oud {
+  width: 60vw;
+  max-width: 100%;
+  justify-self: start;
+}
+.accord-card--rose {
+  width: 35vw;
+  max-width: 100%;
+  justify-self: end;
+  margin-top: -6vh;
+}
+.accord-card--amber {
+  width: 100%;
+  justify-self: stretch;
+}
+.accord-card__art {
+  height: auto !important;
+  aspect-ratio: 3 / 2;
+}
+.accord-card--rose .accord-card__art {
+  aspect-ratio: 4 / 5;
+}
+.accord-card--amber .accord-card__art {
+  aspect-ratio: 21 / 9;
+}
+.accord-card__text {
+  padding: 34px 0 0 !important;
+}
+.accord-card__text p {
+  max-width: 46ch;
+}
+
+/* Hairline gold dividers */
+.home-pages > div,
+.story-pillars article,
+.atelier-process__steps,
+.accordion,
+.review-card,
+.product-card,
+.accord-card,
+.journal-card,
+.story-pillars,
+.finder-progress,
+.buy-panel__accordions,
+.contact-detail,
+.scent-marquee,
+.site-footer {
+  border-color: var(--lux-hairline) !important;
+}
+.home-pages > div,
+.story-pillars article,
+.atelier-process__steps,
+.accordion,
+.review-card,
+.product-card__meta,
+.accord-card,
+.journal-card,
+.contact-detail,
+.buy-panel__accordions {
+  border-top: 1px solid var(--lux-hairline);
+}
+
+/* --------------------------------------------------------------------------
+   6 · BUTTONS — gold hairline pill, fills gold on hover
+   -------------------------------------------------------------------------- */
+.button-outline,
+.text-link,
+.atelier-link,
+.product-card__add,
+.buy-add,
+.bag-checkout,
+.checkout-done__actions .button-outline,
+.contact-form .button-outline,
+.product-film__link,
+.discover-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 26px !important;
+  border: 1px solid var(--lux-hairline) !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: var(--lux-gold) !important;
+  font-family: var(--sans) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.34em !important;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.4s, border-color 0.4s, background 0.4s, transform 0.3s;
+}
+.button-outline::before,
+.text-link::before,
+.atelier-link::before,
+.product-card__add::before,
+.buy-add::before,
+.bag-checkout::before,
+.contact-form .button-outline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--lux-gold);
+  transform: translateY(101%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.button-outline:hover,
+.text-link:hover,
+.atelier-link:hover,
+.product-card__add:hover,
+.buy-add:hover,
+.bag-checkout:hover,
+.contact-form .button-outline:hover,
+.checkout-done__actions .button-outline:hover {
+  color: var(--lux-obsidian) !important;
+  border-color: var(--lux-gold) !important;
+}
+.button-outline:hover::before,
+.text-link:hover::before,
+.atelier-link:hover::before,
+.product-card__add:hover::before,
+.buy-add:hover::before,
+.bag-checkout:hover::before,
+.contact-form .button-outline:hover::before {
+  transform: translateY(0);
+}
+.button-outline span,
+.text-link span,
+.atelier-link span,
+.product-card__add i,
+.buy-add span,
+.bag-checkout span {
+  color: inherit !important;
+}
+.buy-add,
+.bag-checkout {
+  justify-content: center;
+  font-weight: 500;
+}
+.discover-button {
+  padding: 0 0 4px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--lux-hairline) !important;
+  border-radius: 0 !important;
+}
+.discover-button:hover {
+  color: var(--lux-gold) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7 · IMAGES — square corners, gold glow, subtle hover scale
+   -------------------------------------------------------------------------- */
+img {
+  border-radius: 0 !important;
+}
+.notes-image-frame,
+.atelier-frame,
+.product-hero__media,
+.sifr-buy__media,
+.sifr-bottle-card__image,
+.home-signature__image,
+.story-image-band,
+.atelier-masthead figure,
+.atelier-materials__image,
+.collection-hero__image,
+.product-card__frame,
+.journal-card__image,
+.accord-card__art,
+.bag-item__image {
+  box-shadow:
+    0 24px 60px rgba(8, 7, 10, 0.6),
+    0 0 0 1px var(--lux-hairline-soft),
+    0 0 80px var(--lux-glow-amber);
+}
+.product-card__frame img,
+.home-signature__image img,
+.journal-card__image img,
+.notes-image-frame img,
+.atelier-frame img,
+.atelier-materials__image img,
+.sifr-bottle-card__image img,
+.product-hero__media img,
+.sifr-buy__media img,
+.story-image-band img,
+.atelier-masthead figure img,
+.accord-card__art {
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.6s;
+}
+.product-card:hover .product-card__frame img,
+.home-signature__image:hover img,
+.journal-card:hover .journal-card__image img,
+.notes-image:hover .notes-image-frame img,
+.atelier-image:hover .atelier-frame img,
+.atelier-materials__image:hover img,
+.sifr-bottle-card__image:hover img,
+.product-hero__media:hover img,
+.sifr-buy__media:hover img,
+.atelier-masthead figure:hover img {
+  transform: scale(1.04);
+}
+
+/* --------------------------------------------------------------------------
+   8 · HEADER — ultra-minimal, small centered logo, hamburger right
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 28px;
+  height: 76px;
+  /* No backdrop-filter here on purpose: it would become the containing
+     block for the fixed full-screen nav overlay and trap it in the bar.
+     Header is transparent over the content per the brief. */
+  background: transparent !important;
+  border-bottom: 1px solid var(--lux-hairline) !important;
+  padding: 0 4.5vw !important;
+}
+.brand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: row;
+  align-items: baseline;
+  gap: 10px;
+}
+/* Wordmark — Italiana reads far more like a fashion-house logotype than a
+   letter-spaced sans, so it carries the display face at a larger optical size. */
+.brand > span,
+.footer-brand {
+  font-family: var(--display) !important;
+  font-weight: 400 !important;
+  font-size: 26px !important;
+  letter-spacing: 0.3em !important;
+  color: var(--lux-ivory) !important;
+}
+.brand small {
+  font-size: 10px !important;
+  letter-spacing: 0.42em !important;
+  color: var(--lux-bronze) !important;
+  text-transform: uppercase;
+}
+.desktop-nav,
+.header-cta {
+  display: none !important;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.bag-button {
+  color: var(--lux-gold) !important;
+  font-family: var(--display) !important;
+  font-size: 14px !important;
+  letter-spacing: 0.3em !important;
+}
+.bag-count {
+  background: var(--lux-gold) !important;
+  color: var(--lux-obsidian) !important;
+}
+.menu-toggle {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+.menu-toggle i {
+  width: 26px;
+  height: 1px;
+  background: var(--lux-gold) !important;
+  transition: transform 0.3s;
+}
+.menu-toggle[aria-expanded='true'] i:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+.menu-toggle[aria-expanded='true'] i:last-child {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+/* Full-screen luxury nav overlay */
+.mobile-nav {
+  position: fixed !important;
+  inset: 0;
+  z-index: 60;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 120px 8vw 60px;
+  background:
+    radial-gradient(900px 600px at 80% 10%, var(--lux-glow-amber), transparent 60%),
+    rgba(8, 7, 10, 0.97);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.mobile-nav a {
+  font-family: var(--display) !important;
+  font-weight: 400 !important;
+  font-size: clamp(34px, 6vw, 62px) !important;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--lux-ivory) !important;
+  border-bottom: 1px solid var(--lux-hairline-soft);
+  padding: 14px 0;
+  transition: color 0.3s, padding-left 0.3s;
+}
+.mobile-nav a:hover {
+  color: var(--lux-gold) !important;
+  padding-left: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   9 · GRAIN + VIGNETTE (per-section, film never covered)
+   -------------------------------------------------------------------------- */
+.notes-section,
+.finder-section,
+.ritual-section,
+.atelier-section,
+.shelf-section,
+.collection-shelf,
+.accord-collection,
+.sifr-note-story,
+.sifr-bottle-card,
+.story-pillars,
+.journal-grid,
+.product-hero,
+.checkout-grid,
+.also-like,
+.home-signature,
+.atelier-masthead,
+.atelier-materials,
+.journal-masthead,
+.story-masthead,
+.contact-page,
+.home-pages,
+.not-found {
+  position: relative;
+}
+.notes-section::after,
+.finder-section::after,
+.ritual-section::after,
+.atelier-section::after,
+.shelf-section::after,
+.collection-shelf::after,
+.accord-collection::after,
+.sifr-note-story::after,
+.sifr-bottle-card::after,
+.story-pillars::after,
+.journal-grid::after,
+.product-hero::after,
+.checkout-grid::after,
+.also-like::after,
+.home-signature::after,
+.atelier-masthead::after,
+.atelier-materials::after,
+.journal-masthead::after,
+.story-masthead::after,
+.contact-page::after,
+.home-pages::after,
+.not-found::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   9b · REAL-IMAGE TREATMENT — vignette, Ken Burns, chromatic aberration
+   Uses inset box-shadow for the vignette rather than a pseudo-element, so it
+   never clobbers the ::after overlays the existing stylesheets already own.
+   -------------------------------------------------------------------------- */
+.notes-image-frame,
+.atelier-frame,
+.product-hero__media,
+.sifr-bottle-card__image,
+.home-signature__image,
+.story-image-band,
+.atelier-masthead figure,
+.atelier-materials__image,
+.collection-hero__image,
+.product-card__frame,
+.journal-card__image,
+.accord-card__art,
+.bag-item__image {
+  box-shadow:
+    inset 0 0 130px 30px rgba(8, 7, 10, 0.5),
+    0 24px 60px rgba(8, 7, 10, 0.6),
+    0 0 0 1px var(--lux-hairline-soft),
+    0 0 80px var(--lux-glow-amber);
+}
+/* Gold hairline border on hover — explicit, because the frame's resting
+   box-shadow hairline does not repaint its colour when the element is
+   hovered (the .accord-card__art frame keeps its own border at 0). */
+.accord-card:hover .accord-card__art {
+  box-shadow:
+    inset 0 0 130px 30px rgba(8, 7, 10, 0.5),
+    0 24px 60px rgba(8, 7, 10, 0.6),
+    0 0 0 1px var(--lux-gold),
+    0 0 80px var(--lux-glow-gold);
+}
+.product-card:hover .product-card__frame,
+.notes-image:hover .notes-image-frame,
+.atelier-image:hover .atelier-frame,
+.journal-card:hover .journal-card__image,
+.accord-card:hover .accord-card__art {
+  filter: drop-shadow(1.4px 0 0 rgba(168, 90, 43, 0.32))
+          drop-shadow(-1.4px 0 0 rgba(61, 31, 31, 0.32));
+}
+/* Ken Burns — very slow continuous drift. Disabled under reduced-motion. */
+@keyframes luxKenBurns {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to { transform: scale(1.09) translate3d(-1.2%, -1.4%, 0); }
+}
+.home-signature__image img,
+.story-image-band img,
+.atelier-masthead figure img,
+.atelier-materials__image img,
+.sifr-bottle-card__image img,
+.collection-hero__image img,
+.journal-card__image img {
+  animation: luxKenBurns 34s ease-in-out infinite alternate;
+}
+
+/* --------------------------------------------------------------------------
+   10 · HOME PAGE — dark editorial conversion
+   -------------------------------------------------------------------------- */
+.scent-experience {
+  background: var(--lux-obsidian) !important;
+  color: var(--lux-ivory);
+}
+.experience-sticky {
+  background:
+    radial-gradient(ellipse at 72% 46%, rgba(168, 90, 43, 0.14), transparent 55%),
+    radial-gradient(ellipse at 30% 80%, rgba(61, 31, 31, 0.4), transparent 60%),
+    var(--lux-obsidian) !important;
+}
+.chapter-copy h1 {
+  font-family: var(--display) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.05em !important;
+  line-height: 0.85 !important;
+}
+.chapter-copy h1 em {
+  color: var(--lux-gold) !important;
+}
+.chapter-copy-text {
+  font-size: 16px !important;
+  color: var(--lux-muted);
+}
+.notes-section,
+.atelier-section,
+.finder-section {
+  background: var(--lux-obsidian);
+}
+.notes-intro h2,
+.atelier-copy h2,
+.finder-heading h2 {
+  color: var(--lux-ivory);
+}
+.notes-intro .eyebrow,
+.atelier-copy .eyebrow,
+.finder-heading .eyebrow,
+.shelf-section__head .eyebrow,
+.reviews-strip__head .eyebrow,
+.buy-panel .eyebrow,
+.also-like__head .eyebrow,
+.accord-collection .eyebrow,
+.sifr-note-story .eyebrow,
+.story-masthead .eyebrow,
+.atelier-masthead .eyebrow,
+.atelier-process .eyebrow,
+.atelier-materials .eyebrow,
+.journal-masthead .eyebrow,
+.contact-intro .eyebrow,
+.collection-hero .eyebrow {
+  color: var(--lux-gold) !important;
+  opacity: 0.6;
+}
+.note-tab {
+  background: transparent;
+  border: 1px solid var(--lux-hairline) !important;
+  color: var(--lux-ivory);
+}
+.note-tab:hover,
+.note-tab.active {
+  background: var(--lux-surface) !important;
+  border-color: var(--lux-gold) !important;
+  color: var(--lux-ivory);
+}
+.selected-note h3 {
+  color: var(--lux-ivory);
+  font-family: var(--display);
+}
+.selected-note p {
+  color: var(--lux-muted);
+  font-size: 18px;
+}
+.image-index {
+  color: var(--lux-gold);
+  font-family: var(--display);
+}
+.atelier-section {
+  background: var(--lux-surface);
+}
+.finder-section {
+  background: var(--lux-surface);
+}
+.finder-panel {
+  background: var(--lux-obsidian) !important;
+  border: 1px solid var(--lux-hairline-soft);
+  box-shadow: var(--lux-shadow);
+}
+.finder-progress {
+  background: rgba(232, 213, 181, 0.14);
+}
+.finder-progress > span {
+  background: var(--lux-gold);
+}
+.finder-option {
+  border-color: var(--lux-hairline) !important;
+}
+.finder-option:hover,
+.finder-option.selected {
+  border-color: var(--lux-gold) !important;
+  background: rgba(232, 213, 181, 0.06);
+}
+.ritual-section {
+  background: var(--lux-obsidian);
+}
+.ritual-card {
+  border-color: var(--lux-hairline) !important;
+}
+.ritual-content h3 {
+  font-family: var(--display);
+  color: var(--lux-ivory);
+}
+.home-signature {
+  background: var(--lux-surface);
+}
+.home-signature__image {
+  background: var(--lux-obsidian);
+}
+.home-pages {
+  background: var(--lux-obsidian);
+}
+.home-pages > div a {
+  color: var(--lux-ivory);
+  font-family: var(--display);
+}
+.home-pages > div a:hover {
+  color: var(--lux-gold);
+}
+.scent-marquee {
+  background: var(--lux-obsidian);
+}
+.scent-marquee__track span {
+  color: var(--lux-gold);
+  font-family: var(--display);
+}
+.closing-section {
+  background: var(--lux-surface) !important;
+  color: var(--lux-ivory);
+}
+.closing-section h2 {
+  color: var(--lux-ivory) !important;
+}
+.reviews-strip {
+  background: var(--lux-surface) !important;
+}
+.review-card {
+  background: rgba(232, 213, 181, 0.04);
+  border-color: var(--lux-hairline) !important;
+}
+.review-card p {
+  color: var(--lux-ivory);
+}
+.review-card footer b {
+  color: var(--lux-gold);
+}
+
+/* --------------------------------------------------------------------------
+   11 · EDITORIAL PAGES — dark conversion
+   -------------------------------------------------------------------------- */
+.editorial-page {
+  background: var(--lux-obsidian);
+}
+.page-breadcrumb {
+  background: var(--lux-obsidian);
+  color: var(--lux-muted);
+}
+.page-breadcrumb a:hover {
+  color: var(--lux-gold);
+}
+
+/* Collection hero (watermark) */
+.collection-hero {
+  padding-top: var(--lux-section-y) !important;
+  padding-bottom: var(--lux-section-y) !important;
+  position: relative;
+  isolation: isolate;
+}
+.collection-hero::before {
+  content: 'DAYRAH';
+  position: absolute;
+  z-index: 0;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 18vw;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: var(--lux-gold);
+  mix-blend-mode: overlay;
+  opacity: 0.26;
+  pointer-events: none;
+}
+.collection-hero__copy,
+.collection-hero__image {
+  position: relative;
+  z-index: 1;
+}
+.collection-hero__image {
+  background: var(--lux-obsidian);
+}
+.collection-shelf,
+.also-like,
+.sovereign-related {
+  background: var(--lux-surface) !important;
+}
+.accord-collection {
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(182, 139, 90, 0.08), transparent 70%),
+    var(--lux-obsidian);
+  padding: var(--lux-section-y) 0 !important;
+}
+.accord-card {
+  background: var(--lux-obsidian) !important;
+  border: 1px solid var(--lux-hairline-soft);
+  box-shadow: var(--lux-shadow);
+}
+.accord-card:hover {
+  box-shadow: 0 30px 70px rgba(8, 7, 10, 0.7);
+  border-color: var(--lux-gold);
+}
+.accord-card__art {
+  background: var(--lux-obsidian);
+  border: 0 !important;
+}
+.accord-card__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92) contrast(1.04);
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.6s;
+}
+.accord-card:hover .accord-card__photo {
+  transform: scale(1.08);
+  filter: saturate(1) contrast(1.06);
+}
+.accord-card__text h3 {
+  color: var(--lux-ivory);
+  font-family: var(--display) !important;
+  font-weight: 400 !important;
+  font-size: clamp(34px, 4vw, 64px) !important;
+  letter-spacing: -0.04em !important;
+  line-height: 0.9 !important;
+}
+.accord-card__text > span {
+  font-size: 11px !important;
+  letter-spacing: 0.4em !important;
+  text-transform: uppercase;
+  font-family: var(--sans) !important;
+  color: var(--lux-gold);
+}
+.accord-card__text p {
+  color: var(--lux-muted);
+  font-size: 15px;
+}
+.collection-foot,
+.sifr-final {
+  background: var(--lux-obsidian) !important;
+}
+.collection-foot h2,
+.sifr-final h2 {
+  color: var(--lux-ivory);
+}
+.collection-foot h2 sup {
+  color: var(--lux-gold);
+}
+
+/* Sifr 01 */
+.sifr-note-story {
+  background: var(--lux-obsidian);
+}
+.sifr-note-story__selector {
+  border-color: var(--lux-hairline) !important;
+}
+.sifr-note {
+  border-color: var(--lux-hairline) !important;
+  color: var(--lux-ivory);
+}
+.sifr-note b {
+  font-family: var(--display);
+}
+.sifr-note-story__detail {
+  border-color: var(--lux-gold) !important;
+}
+.sifr-note-story__detail h3 {
+  color: var(--lux-ivory);
+  font-family: var(--display);
+}
+.sifr-bottle-card {
+  background: var(--lux-surface);
+}
+.sifr-bottle-card__image {
+  background: var(--lux-obsidian);
+}
+.product-film {
+  background: var(--lux-obsidian) !important;
+}
+.product-film__stage {
+  background:
+    radial-gradient(ellipse at 72% 47%, rgba(168, 90, 43, 0.12), transparent 55%),
+    var(--lux-obsidian) !important;
+}
+.product-film__copy h1 {
+  font-family: var(--display) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.05em !important;
+}
+.product-film__copy h1 em {
+  color: var(--lux-gold) !important;
+}
+/* SIFR 3-D stage is a pinned scroll film: the copy column is absolutely
+   positioned on mobile and shares the viewport with the canvas, so this
+   stays below the 20px site prose scale to avoid crowding the bottle. */
+.product-film__description {
+  font-family: var(--body-serif);
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 320px;
+  color: var(--lux-muted);
+}
+@media (max-width: 700px) {
+  .product-film__description {
+    font-size: 13px;
+    line-height: 1.7;
+    max-width: 290px;
+  }
+}
+
+/* Story */
+.story-masthead,
+.journal-masthead,
+.atelier-masthead,
+.contact-page,
+.not-found {
+  background: var(--lux-obsidian);
+}
+.story-masthead__stamp {
+  border-color: var(--lux-hairline) !important;
+  color: var(--lux-gold);
+}
+.story-image-band > div {
+  color: var(--lux-ivory);
+}
+.story-manifesto {
+  background: var(--lux-surface) !important;
+}
+.story-manifesto blockquote {
+  font-family: var(--display);
+}
+.story-pillars {
+  background: var(--lux-obsidian);
+}
+.story-end {
+  background: var(--lux-surface) !important;
+}
+.story-end h2 {
+  color: var(--lux-ivory) !important;
+}
+
+/* Atelier */
+.atelier-masthead {
+  background: var(--lux-obsidian);
+}
+.atelier-process {
+  background: var(--lux-surface) !important;
+}
+.atelier-materials {
+  background: var(--lux-obsidian);
+}
+
+/* Journal */
+.journal-grid {
+  background: var(--lux-obsidian);
+}
+.journal-card {
+  background: var(--lux-surface) !important;
+  border: 1px solid var(--lux-hairline-soft);
+  box-shadow: var(--lux-shadow);
+}
+.journal-card__copy h2 {
+  color: var(--lux-ivory);
+  font-family: var(--display);
+}
+.journal-card__copy > span {
+  color: var(--lux-muted);
+  font-size: 16px;
+}
+.journal-bottom {
+  background: var(--lux-surface) !important;
+}
+
+/* Contact */
+.contact-form {
+  background: var(--lux-surface) !important;
+  border: 1px solid var(--lux-hairline) !important;
+  box-shadow: var(--lux-shadow);
+}
+.contact-form label {
+  color: var(--lux-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+}
+.contact-form input,
+.contact-form textarea {
+  color: var(--lux-ivory) !important;
+  border-bottom-color: var(--lux-hairline) !important;
+  font-family: var(--body-serif);
+  font-size: 19px;
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: rgba(248, 243, 234, 0.3);
+}
+.contact-detail {
+  border-color: var(--lux-hairline) !important;
+}
+.contact-detail a {
+  color: var(--lux-gold);
+  font-family: var(--display);
+}
+.contact-close {
+  border-color: var(--lux-hairline) !important;
+}
+.contact-close > p {
+  font-family: var(--display);
+  color: var(--lux-ivory);
+}
+
+/* --------------------------------------------------------------------------
+   12 · SHOP / COMMERCE — dark conversion
+   -------------------------------------------------------------------------- */
+.shelf-section,
+.collection-shelf {
+  background: var(--lux-surface) !important;
+}
+.product-card__badge {
+  background: rgba(232, 213, 181, 0.92) !important;
+  color: var(--lux-obsidian) !important;
+  opacity: 1;
+}
+.product-card__index,
+.product-card__cta {
+  color: var(--lux-ivory) !important;
+}
+.product-card__name h3 {
+  font-family: var(--display);
+  color: var(--lux-ivory);
+  font-weight: 400 !important;
+  font-size: clamp(26px, 2.1vw, 34px) !important;
+  letter-spacing: -0.03em !important;
+}
+.product-card__name h3 a:hover {
+  color: var(--lux-gold);
+}
+/* "No price tags visible until hover — luxury quiet." The price stays in the
+   DOM (and for screen readers) but is visually masked until hover/focus.
+   !important is required: the shared eyebrow rule above sets opacity .5 with
+   !important on .product-card__name span, and this selector is a subset of it. */
+.product-card__price {
+  opacity: 0 !important;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.5s ease, max-height 0.5s ease;
+}
+.product-card:hover .product-card__price,
+.product-card:focus-within .product-card__price {
+  opacity: 0.5 !important;
+  max-height: 30px;
+}
+.product-hero {
+  background: var(--lux-surface);
+  position: relative;
+  isolation: isolate;
+}
+.product-hero::before {
+  content: 'DAYRAH';
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 18vw;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: var(--lux-gold);
+  mix-blend-mode: overlay;
+  opacity: 0.24;
+  pointer-events: none;
+}
+.product-hero > * {
+  position: relative;
+  z-index: 1;
+}
+.product-hero__media {
+  background: var(--lux-obsidian);
+}
+.buy-panel {
+  position: relative;
+  z-index: 2;
+}
+.buy-panel__tagline {
+  font-family: var(--body-serif);
+  color: var(--lux-gold);
+}
+.buy-size {
+  border-color: var(--lux-hairline) !important;
+  background: transparent;
+  border-radius: 999px;
+}
+.buy-size b {
+  color: var(--lux-ivory);
+}
+.buy-size.is-active {
+  background: var(--lux-gold) !important;
+  border-color: var(--lux-gold) !important;
+}
+.buy-size.is-active b,
+.buy-size.is-active span {
+  color: var(--lux-obsidian) !important;
+}
+.accordion__inner {
+  color: var(--lux-muted);
+}
+.qty-stepper {
+  border-color: var(--lux-hairline) !important;
+  border-radius: 999px;
+}
+.qty-stepper button,
+.qty-stepper span {
+  color: var(--lux-ivory) !important;
+}
+.sifr-buy {
+  background: var(--lux-surface) !important;
+}
+.sifr-buy__media {
+  background: var(--lux-obsidian);
+}
+
+/* Bag drawer */
+.bag-drawer {
+  background: var(--lux-surface) !important;
+  color: var(--lux-ivory) !important;
+}
+.bag-drawer__head,
+.bag-drawer__foot {
+  border-color: var(--lux-hairline) !important;
+  background: var(--lux-obsidian);
+}
+.bag-drawer__head p,
+.bag-subtotal span,
+.bag-continue,
+.bag-item__info small {
+  color: var(--lux-muted) !important;
+}
+.bag-empty__title {
+  color: var(--lux-ivory);
+  font-family: var(--display);
+}
+.bag-item__top b,
+.bag-subtotal b {
+  color: var(--lux-ivory);
+  font-family: var(--display);
+}
+.bag-item__top span {
+  color: var(--lux-gold);
+}
+.bag-item__image {
+  background: var(--lux-obsidian) !important;
+}
+.bag-shipping__track {
+  background: rgba(232, 213, 181, 0.14);
+}
+.bag-shipping__fill {
+  background: linear-gradient(90deg, var(--lux-gold), var(--lux-bronze));
+}
+.bag-item__remove {
+  color: var(--lux-muted) !important;
+}
+.bag-drawer__close {
+  color: var(--lux-ivory);
+}
+
+/* Checkout */
+.checkout-grid,
+.checkout-done {
+  background: var(--lux-surface);
+}
+/* Label styled as an eyebrow, but WITHOUT opacity: it wraps the input, so a
+   group opacity would dim what the user is typing. */
+.checkout-field {
+  font-family: var(--sans) !important;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  letter-spacing: 0.5em !important;
+  color: var(--lux-gold);
+  opacity: 1;
+}
+.checkout-field input {
+  color: var(--lux-ivory) !important;
+  border-bottom-color: var(--lux-hairline) !important;
+  font-family: var(--body-serif);
+  font-size: 19px;
+  opacity: 1;
+}
+.checkout-field input::placeholder {
+  color: rgba(248, 243, 234, 0.3);
+}
+.payment-option {
+  border-color: var(--lux-hairline) !important;
+  border-radius: 14px;
+}
+.payment-option:has(input:checked) {
+  border-color: var(--lux-gold) !important;
+  background: rgba(232, 213, 181, 0.05);
+}
+.payment-option b {
+  color: var(--lux-ivory);
+  font-family: var(--display);
+}
+.checkout-summary {
+  background: var(--lux-obsidian) !important;
+  border: 1px solid var(--lux-hairline-soft);
+}
+.summary-item,
+.summary-total {
+  border-color: var(--lux-hairline) !important;
+}
+.checkout-done__card {
+  background: var(--lux-obsidian) !important;
+  border: 1px solid var(--lux-hairline) !important;
+}
+.checkout-done__card b {
+  color: var(--lux-gold);
+  font-family: var(--display);
+}
+
+/* --------------------------------------------------------------------------
+   13 · SOVEREIGN PAGE — non-film sections only (film untouched)
+   -------------------------------------------------------------------------- */
+.sovereign-page .eyebrow,
+.sovereign-elements .eyebrow {
+  font-size: 7px !important;
+  letter-spacing: 0.17em !important;
+  opacity: 1;
+  text-transform: none;
+}
+.sovereign-elements {
+  background: var(--lux-obsidian) !important;
+}
+.sovereign-elements__head h2,
+.sovereign-element-card__body h3,
+.sovereign-feature__copy h2,
+.sovereign-composition__copy h2 {
+  font-family: var(--display) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.05em !important;
+}
+.sovereign-gallery {
+  background: var(--lux-surface) !important;
+  color: var(--lux-ivory) !important;
+}
+.sovereign-gallery__head h2 {
+  color: var(--lux-ivory) !important;
+}
+.sovereign-gallery__head h2 em,
+.sovereign-gallery__meta h3 {
+  color: var(--lux-gold) !important;
+}
+.sovereign-gallery__figure {
+  background: var(--lux-obsidian) !important;
+  border: 1px solid var(--lux-hairline-soft);
+  box-shadow: var(--lux-shadow);
+}
+.sovereign-gallery__figure figcaption {
+  color: var(--lux-muted);
+  border-bottom-color: var(--lux-hairline) !important;
+}
+.sovereign-gallery__narration {
+  color: var(--lux-muted) !important;
+  font-family: var(--body-serif);
+  font-size: 16px;
+}
+.sovereign-composition {
+  background: var(--lux-obsidian) !important;
+}
+.sovereign-composition__note {
+  border-color: var(--lux-hairline) !important;
+}
+.sovereign-buy {
+  background: var(--lux-surface) !important;
+}
+.sovereign-buy__image {
+  background: var(--lux-obsidian) !important;
+}
+.sovereign-feature {
+  background: var(--lux-obsidian) !important;
+  position: relative;
+  isolation: isolate;
+}
+.sovereign-feature__copy h2 {
+  color: var(--lux-ivory) !important;
+}
+.sovereign-feature__copy h2 em {
+  color: var(--lux-gold) !important;
+}
+
+/* --------------------------------------------------------------------------
+   14 · MODAL · PRELOADER · FOOTER
+   -------------------------------------------------------------------------- */
+.fragrance-modal {
+  background: var(--lux-surface) !important;
+  color: var(--lux-ivory) !important;
+  border: 1px solid var(--lux-hairline);
+  box-shadow: var(--lux-shadow);
+}
+.fragrance-modal h2 {
+  color: var(--lux-ivory) !important;
+  font-family: var(--display) !important;
+}
+.modal-close {
+  color: var(--lux-ivory);
+}
+.modal-notes {
+  border-color: var(--lux-hairline) !important;
+  color: var(--lux-gold);
+}
+.modal-foot {
+  color: var(--lux-muted);
+}
+.preloader {
+  background:
+    radial-gradient(900px 600px at 50% 40%, var(--lux-glow-amber), transparent 60%),
+    var(--lux-obsidian) !important;
+  color: var(--lux-ivory);
+}
+.preloader__brand b {
+  font-family: var(--display) !important;
+  color: var(--lux-ivory);
+}
+.preloader__brand span {
+  color: var(--lux-gold);
+}
+.preloader__line {
+  background: var(--lux-gold);
+}
+/* Footer — links were 5px in the base sheet, far too small to read as a
+   considered footer. Lifted to a legible 12px with generous tracking. */
+.site-footer {
+  background: var(--lux-obsidian);
+  color: var(--lux-muted);
+  border-top: 1px solid var(--lux-hairline);
+  font-family: var(--sans);
+  font-size: 12px !important;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  padding-top: 34px;
+  padding-bottom: 34px;
+}
+.site-footer .footer-brand {
+  color: var(--lux-gold) !important;
+  font-family: var(--display) !important;
+  text-transform: none;
+  font-size: 24px !important;
+  letter-spacing: 0.3em !important;
+}
+.site-footer > a:not(.footer-brand) {
+  font-size: 12px !important;
+  letter-spacing: 0.26em;
+  transition: color 0.25s;
+}
+.site-footer > a:hover {
+  color: var(--lux-gold);
+}
+
+/* --------------------------------------------------------------------------
+   15 · RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 1020px) {
+  :root {
+    --lux-section-y: 90px;
+  }
+  /* Broken grid collapses to a single quiet column. */
+  .accord-grid {
+    gap: 90px !important;
+    padding: 0 7vw !important;
+  }
+  .accord-card--oud,
+  .accord-card--rose,
+  .accord-card--amber {
+    width: 100%;
+    justify-self: stretch;
+    margin-top: 0;
+  }
+  .accord-card--rose .accord-card__art,
+  .accord-card--amber .accord-card__art {
+    aspect-ratio: 3 / 2;
+  }
+  .notes-section,
+  .journal-grid,
+  .story-pillars,
+  .accord-grid {
+    grid-template-columns: 1fr;
+  }
+  .accord-grid {
+    gap: 72px !important;
+    padding: 0 20px !important;
+  }
+  .eyebrow,
+  .chapter-kicker,
+  .product-card__index,
+  .product-card__cta,
+  .product-card__badge,
+  .product-card__name span,
+  .product-card__notes,
+  .buy-size span,
+  .selected-note > span {
+    letter-spacing: 0.34em !important;
+  }
+}
+@media (max-width: 700px) {
+  :root {
+    --lux-section-y: 72px;
+  }
+  .site-header {
+    height: 66px;
+    padding: 0 20px !important;
+  }
+  .brand > span {
+    font-size: 20px !important;
+  }
+  .brand small {
+    display: none;
+  }
+  .site-footer,
+  .site-footer > a:not(.footer-brand) {
+    font-size: 11px !important;
+  }
+  .site-footer .footer-brand {
+    font-size: 20px !important;
+  }
+  .eyebrow,
+  .chapter-kicker,
+  .product-card__index,
+  .product-card__cta,
+  .product-card__badge,
+  .product-card__name span,
+  .product-card__notes,
+  .buy-size span,
+  .selected-note > span,
+  .page-breadcrumb,
+  .checkout-field,
+  .payment-option small {
+    font-size: 9px !important;
+    letter-spacing: 0.28em !important;
+  }
+  .buy-panel__name {
+    font-size: clamp(48px, 14vw, 68px) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   16 · REDUCED MOTION
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .button-outline::before,
+  .text-link::before,
+  .atelier-link::before,
+  .product-card__add::before,
+  .buy-add::before,
+  .bag-checkout::before,
+  .contact-form .button-outline::before {
+    transition: none;
+  }
+  .home-signature__image img,
+  .story-image-band img,
+  .atelier-masthead figure img,
+  .atelier-materials__image img,
+  .sifr-bottle-card__image img,
+  .collection-hero__image img,
+  .journal-card__image img {
+    animation: none;
+  }
+}

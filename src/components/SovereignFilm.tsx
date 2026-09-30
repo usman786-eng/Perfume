@@ -257,11 +257,15 @@ export default function SovereignFilm({
     const onPointerMove = (e: PointerEvent) => {
       pointerRef.current.x = (e.clientX / Math.max(1, window.innerWidth) - 0.5) * 2;
       pointerRef.current.y = (e.clientY / Math.max(1, window.innerHeight) - 0.5) * 2;
+      // Gallery mouse drift: page-level vars consumed only by gallery frames.
+      document.documentElement.style.setProperty('--gmx', `${(pointerRef.current.x * 12).toFixed(1)}px`);
+      document.documentElement.style.setProperty('--gmy', `${(pointerRef.current.y * 10).toFixed(1)}px`);
     };
     window.addEventListener('pointermove', onPointerMove, { passive: true });
 
     let raf = 0;
     const startTime = performance.now();
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const drawStarFlare = (
       x: number,
@@ -350,12 +354,14 @@ export default function SovereignFilm({
           Math.sin(elapsed * 1.4 + tSec * 1.8) * (7.5 * f1Env + 2.2) -
           (tSec >= 2 && tSec <= 4 ? (tSec - 2) * 3.5 : 0);
         // Camera zoom tightens on nozzle/interior in Frames 2-4, pulls back to full view in Frame 5.
-        // Ken Burns dolly: the bottle grows 1.0 -> 1.15 across the pinned scroll.
+        // Ken Burns dolly: the bottle grows 1.0 -> 1.15 across the pinned scroll,
+        // with a slow ±1.2% breathing loop so frames feel projected, not fixed.
         const zoomBell =
           (1 +
             0.035 * Math.sin(Math.min(1, Math.max(0, (tSec - 1.5) / 6.8)) * Math.PI) +
             velocityRef.current * 0.015) *
-          (1 + p * 0.15);
+          (1 + p * 0.15) *
+          (reduceMotion ? 1 : 1 + 0.012 * Math.sin(elapsed * 0.9));
         // Velocity-reactive anamorphic energy: skew + motion blur on fast scroll.
         const vMag = Math.min(1, velocityRef.current);
         const vDir = diff >= 0 ? 1 : -1;
@@ -901,6 +907,8 @@ export default function SovereignFilm({
           <i className="sf-fg__bokeh b3" />
           <i className="sf-fg__bokeh b4" />
           <i className="sf-fg__bokeh b5" />
+          <i className="sf-leak l1" />
+          <i className="sf-leak l2" />
           <div className="sf-flare" ref={flareRef} />
         </div>
         <div className="sf-halation" ref={halationRef} aria-hidden="true" />
