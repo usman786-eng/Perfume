@@ -9,6 +9,7 @@ import { CanvasBoundary } from './components/CanvasBoundary';
 import { BrowserRouter, Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, SovereignPage, SovereignVisualElementsSection, StoryPage } from './pages';
 import SovereignFilm from './components/SovereignFilm';
+import EssenceFilm from './components/EssenceFilm';
 import { ProductPage, CheckoutPage } from './pages-commerce';
 import { CartProvider, useCart } from './shop/CartContext';
 import { products } from './shop/products';
@@ -384,7 +385,7 @@ function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNot
       <SovereignFilm galleryId="sovereign-feature-section" elementsId="sovereign-elements-home" />
       <SovereignVisualElementsSection id="sovereign-elements-home" />
       <SovereignFeature />
-      <ScentExperience note={note} onOpenDetails={onOpenDetails} booted={booted} />
+      <EssenceFilm scrollTo="#notes" preload="metadata" />
       <NoteExplorer note={note} setNote={setNote} />
       <section className="home-signature">
         <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup><br /><em>A memory in motion.</em></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace. Meet the full composition behind Dayrah's signature fragrance.</p><Link to="/sifr-01" className="text-link">ENTER THE FRAGRANCE <span>↗</span></Link></div>
@@ -398,6 +399,7 @@ function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNot
         </div>
         <ShopGrid items={products} />
       </section>
+      <ScentExperience note={note} onOpenDetails={onOpenDetails} booted={booted} />
       <ReviewsStrip />
       <ScentFinder onChooseNote={setNote} />
       <RitualGuide />

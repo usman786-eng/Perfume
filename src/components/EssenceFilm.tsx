@@ -61,7 +61,15 @@ function formatLoopTimecode(sec: number): string {
   return `00:${String(whole).padStart(2, '0')}:${String(frames).padStart(2, '0')}`;
 }
 
-export default function EssenceFilm() {
+export default function EssenceFilm({
+  scrollTo = '#sovereign-buy',
+  preload = 'auto',
+}: {
+  /** Anchor the bottom scroll-mark points at. Defaults to the /sovereign layout. */
+  scrollTo?: string;
+  /** Use a lighter preload when the section sits below the fold. */
+  preload?: 'auto' | 'metadata' | 'none';
+} = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const framesRef = useRef<HTMLDivElement>(null);
@@ -243,7 +251,7 @@ export default function EssenceFilm() {
             loop
             muted
             playsInline
-            preload="auto"
+            preload={preload}
             disablePictureInPicture
           />
         </div>
@@ -363,7 +371,7 @@ export default function EssenceFilm() {
         </div>
 
         <div className="sovereign-film__bottom">
-          <a href="#sovereign-buy" className="sovereign-film__scroll-mark" aria-label="Scroll to continue">
+          <a href={scrollTo} className="sovereign-film__scroll-mark" aria-label="Scroll to continue">
             ↓
           </a>
           <div className="sovereign-film__timeline-stops" role="group" aria-label="Move to essence chapter">

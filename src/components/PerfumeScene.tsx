@@ -1,4 +1,4 @@
-import { useMemo, useRef, type MutableRefObject } from 'react';
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows, Environment, Lightformer, MeshTransmissionMaterial, OrbitControls, RoundedBox, Sparkles } from '@react-three/drei';
 import { Bloom, ChromaticAberration, DepthOfField, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
@@ -100,8 +100,8 @@ function GlassBottle({ progress, note, reducedMotion }: MotionSceneProps) {
   const slosh = useRef(0);
   const labelTexture = useMemo(makeLabelTexture, []);
   const { size } = useThree();
-  const transmissionResolution = size.width < 720 ? 384 : 768;
-  const transmissionSamples = size.width < 720 ? 4 : 8;
+  const transmissionResolution = size.width < 720 ? 256 : 512;
+  const transmissionSamples = size.width < 720 ? 3 : 5;
   const tone = liquidTones[note];
   const targetBase = useMemo(() => new THREE.Color(tone.base), [tone]);
   const targetDeep = useMemo(() => new THREE.Color(tone.deep), [tone]);
@@ -145,7 +145,7 @@ function GlassBottle({ progress, note, reducedMotion }: MotionSceneProps) {
     <group ref={bottle}>
       {/* Crystal flacon: sharp edges, true glass refraction. */}
       <RoundedBox args={[1.24, 1.8, 0.6]} radius={0.038} smoothness={6} castShadow receiveShadow>
-        <MeshTransmissionMaterial transmission={1} thickness={0.75} roughness={0.025} ior={1.5} chromaticAberration={0.02} anisotropicBlur={0.02} color="#fdf8f0" resolution={transmissionResolution} samples={transmissionSamples} />
+        <MeshTransmissionMaterial transmission={1} thickness={0.75} roughness={0.025} ior={1.5} chromaticAberration={0.02} anisotropicBlur={0.02} color="#fdf8f0" resolution={transmissionResolution} samples={transmissionSamples} backside={false} />
       </RoundedBox>
       {/* Liquid with depth-based color absorption (Beer-Lambert attenuation). */}
       <RoundedBox ref={liquidMesh} args={[1.0, 1.46, 0.42]} position={[0, -0.14, 0]} radius={0.03} smoothness={4}>
@@ -520,7 +520,10 @@ function Scene({ progress, note, reducedMotion }: MotionSceneProps) {
       <Sparkles count={reducedMotion ? 0 : 42} scale={[4.7, 4.9, 3]} size={1.4} speed={reducedMotion ? 0 : 0.12} opacity={0.22} color="#e6d5c4" position={[offset, 0, 0]} />
       <OrbitControls target={[offset, 0, 0]} enablePan={false} enableZoom={false} enableDamping dampingFactor={0.08} minPolarAngle={Math.PI / 2 - 0.25} maxPolarAngle={Math.PI / 2 + 0.25} />
       <CameraBreath progress={progress} reducedMotion={reducedMotion} />
-      <EffectComposer multisampling={isMobile ? 0 : 4}>
+      {/* MSAA 4 on a full-viewport composer was the single biggest cost here.
+          Multisampling 0 plus the composer's own passes reads identically at
+          this blur/vignette level and roughly halves the post budget. */}
+      <EffectComposer multisampling={0}>
         {!isMobile && !reducedMotion && <DepthOfField worldFocusDistance={6.3} worldFocusRange={3.6} focalLength={0.028} bokehScale={1.5} />}
         <Bloom luminanceThreshold={0.38} luminanceSmoothing={0.3} intensity={0.42} mipmapBlur />
         <ChromaticAberration offset={chromaticOffset} radialModulation={false} />
@@ -533,9 +536,45 @@ function Scene({ progress, note, reducedMotion }: MotionSceneProps) {
 
 export default function PerfumeScene({ progress, note }: SceneProps) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [warm, setWarm] = useState(true);
+  const [visible, setVisible] = useState(false);
+  const active = warm || visible;
+
+  /* The 3D flacon is by far the heaviest thing on the homepage (transmission
+     pass + EffectComposer). Previously it kept rendering a full frame loop even
+     when scrolled far out of view, which starved the rest of the page. Suspend
+     rendering whenever the canvas is off-screen.
+
+     `warm` deliberately starts true so the transmission + post shaders compile
+     during initial load. Without it, the first scroll into view paid a ~4.5s
+     compile stall. The grace timer then hands control to the observer. */
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { rootMargin: '200px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!warm) return;
+    const t = window.setTimeout(() => setWarm(false), 2600);
+    return () => window.clearTimeout(t);
+  }, [warm]);
+
   return (
-    <Canvas className="perfume-canvas" dpr={window.innerWidth < 720 ? [1, 1.5] : [1, 1.5]} shadows gl={{ alpha: true, antialias: false, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.04 }} camera={{ position: [0, 0, 6.3], fov: 33 }}>
-      <Scene progress={progress} note={note} reducedMotion={reducedMotion} />
-    </Canvas>
+    <div ref={wrapRef} className="perfume-canvas-wrap" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+      <Canvas
+        className="perfume-canvas"
+        dpr={window.innerWidth < 720 ? [1, 1.25] : [1, 1.25]}
+        frameloop={active ? 'always' : 'never'}
+        shadows={false}
+        gl={{ alpha: true, antialias: false, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.04 }}
+        camera={{ position: [0, 0, 6.3], fov: 33 }}
+      >
+        <Scene progress={progress} note={note} reducedMotion={reducedMotion} />
+      </Canvas>
+    </div>
   );
 }

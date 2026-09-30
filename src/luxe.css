@@ -778,6 +778,10 @@ img {
 .collection-hero__image img,
 .journal-card__image img {
   animation: luxKenBurns 34s ease-in-out infinite alternate;
+  /* Promote to its own compositor layer so the drift is composited on the GPU
+     instead of re-rasterising the image every frame. */
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* --------------------------------------------------------------------------
