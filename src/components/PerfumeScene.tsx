@@ -66,9 +66,9 @@ function makeLabelTexture() {
   ctx.strokeRect(60, 60, 904, 648);
   ctx.textAlign = 'center';
   ctx.fillStyle = '#2f2720';
-  ctx.font = '500 96px Georgia';
-  ctx.letterSpacing = '26px';
-  ctx.fillText('DAYRAH', 512, 310);
+  ctx.font = '500 68px Georgia';
+  ctx.letterSpacing = '18px';
+  ctx.fillText('DAYRAH SCENTS', 512, 310);
   ctx.strokeStyle = '#a5855c';
   ctx.beginPath();
   ctx.moveTo(442, 368);

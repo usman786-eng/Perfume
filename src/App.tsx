@@ -7,7 +7,8 @@ import Lenis from 'lenis';
 import BlurText from './components/BlurText';
 import { CanvasBoundary } from './components/CanvasBoundary';
 import { BrowserRouter, Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
-import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, SovereignPage, StoryPage } from './pages';
+import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, SovereignPage, SovereignVisualElementsSection, StoryPage } from './pages';
+import SovereignFilm from './components/SovereignFilm';
 import { ProductPage, CheckoutPage } from './pages-commerce';
 import { CartProvider, useCart } from './shop/CartContext';
 import { products } from './shop/products';
@@ -60,10 +61,10 @@ function Preloader({ onDone }: { onDone: () => void }) {
           initial={false}
           exit={{ clipPath: 'inset(0 0 100% 0)', transition: { duration: .95, ease: [0.76, 0, 0.24, 1] } }}>
           <div className="preloader__grain" />
-          <div className="preloader__top"><span>DAYRAH&nbsp; / &nbsp;FRAGRANCE HOUSE</span><span>SIFR 01 — EAU DE PARFUM</span></div>
+          <div className="preloader__top"><span>DAYRAH SCENTS&nbsp; / &nbsp;FRAGRANCE HOUSE</span><span>THE SOVEREIGN — EAU DE PARFUM</span></div>
           <div className="preloader__brand">
-            <motion.b initial={{ opacity: 0, y: 22, filter: 'blur(9px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .8, ease: [0.22, 1, 0.36, 1], delay: .12 }}>DAYRAH</motion.b>
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .7, delay: .42 }}>THE ART OF PERFUMERY</motion.span>
+            <motion.b initial={{ opacity: 0, y: 22, filter: 'blur(9px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .8, ease: [0.22, 1, 0.36, 1], delay: .12 }}>DAYRAH SCENTS</motion.b>
+            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .7, delay: .42 }}>THE SOVEREIGN · OBSIDIAN VOID</motion.span>
           </div>
           <div className="preloader__bottom">
             <span>OUD&nbsp; · &nbsp;ROSE&nbsp; · &nbsp;AMBER</span>
@@ -148,7 +149,7 @@ function Header() {
   const close = () => setMenuOpen(false);
   return (
     <header className="site-header">
-      <Link className="brand" to="/" aria-label="Dayrah home" onClick={close}><span>DAYRAH</span><small>FRAGRANCE HOUSE</small></Link>
+      <Link className="brand" to="/" aria-label="Dayrah Scents home" onClick={close}><span>DAYRAH SCENTS</span><small>FRAGRANCE HOUSE</small></Link>
       <nav className="desktop-nav" aria-label="Main navigation">
         <NavLink to="/sovereign">SOVEREIGN</NavLink>
         <NavLink to="/collection">COLLECTION</NavLink>
@@ -362,16 +363,16 @@ function DetailsModal({ open, onClose }: { open: boolean; onClose: () => void })
 
 function SovereignFeature() {
   return (
-    <section className="sovereign-feature" aria-labelledby="sovereign-feature-title">
+    <section className="sovereign-feature" id="sovereign-feature-section" aria-labelledby="sovereign-feature-title">
       <Link to="/sovereign" className="sovereign-feature__visual" aria-label="Enter the Sovereign film">
-        <img src="/images/sovereign-01.jpg" alt="Sovereign smoked-amber perfume flacon in warm diffusion mist" loading="lazy" />
-        <span>NEW COMPOSITION&nbsp; / &nbsp;NO. 04</span>
+        <img src="/images/sovereign-05.jpg" alt="DAYRAH SCENTS The Sovereign geometric crystal perfume flacon glowing with amber liquid in the Obsidian Void" loading="lazy" />
+        <span>DAYRAH SCENTS&nbsp; / &nbsp;THE SOVEREIGN (0–10S FILM)</span>
       </Link>
       <div className="sovereign-feature__copy" data-gsap-reveal>
-        <p className="eyebrow"><span /> THE NEW COMPOSITION</p>
-        <h2 id="sovereign-feature-title">Quiet power.<br /><em>Lasting presence.</em></h2>
-        <p>Dark oud, saffron, and amber move through a fine, warm diffusion. Meet Sovereign, the newest study from the house.</p>
-        <Link to="/sovereign" className="text-link">ENTER THE SOVEREIGN FILM <span>↗</span></Link>
+        <p className="eyebrow"><span /> THE SOVEREIGN / ETERNAL. REFINED.</p>
+        <h2 id="sovereign-feature-title">Experience the<br /><em>weight of light.</em></h2>
+        <p>Suspended in the Obsidian Void under a 3200K volumetric beam, velvet-red rose petals, green cardamom, bergamot slices, and sandalwood shift from crystal clear to blushing rose gold and deep luxurious amber.</p>
+        <Link to="/sovereign" className="text-link">OPEN FULL SOVEREIGN STORYBOARD &amp; SHOP <span>↗</span></Link>
       </div>
     </section>
   );
@@ -380,9 +381,11 @@ function SovereignFeature() {
 function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNote: (note: Note) => void; onOpenDetails: () => void; booted: boolean }) {
   return (
     <main className="home-page">
+      <SovereignFilm galleryId="sovereign-feature-section" elementsId="sovereign-elements-home" />
+      <SovereignVisualElementsSection id="sovereign-elements-home" />
+      <SovereignFeature />
       <ScentExperience note={note} onOpenDetails={onOpenDetails} booted={booted} />
       <NoteExplorer note={note} setNote={setNote} />
-      <SovereignFeature />
       <section className="home-signature">
         <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup><br /><em>A memory in motion.</em></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace. Meet the full composition behind Dayrah's signature fragrance.</p><Link to="/sifr-01" className="text-link">ENTER THE FRAGRANCE <span>↗</span></Link></div>
         <Link to="/sifr-01" className="home-signature__image" aria-label="Discover Sifr 01"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image: an amber perfume bottle amid rose petals and golden light" loading="lazy" /><span>01 / SIFR — THE SIGNATURE</span></Link>
