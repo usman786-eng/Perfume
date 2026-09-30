@@ -1,11 +1,13 @@
 import { lazy, Suspense, useRef, useState, type CSSProperties, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import SovereignFilm from './components/SovereignFilm';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { CanvasBoundary } from './components/CanvasBoundary';
 import { products } from './shop/products';
-import { BuyPanel, ShopGrid } from './shop/ShopSections';
+import { BuyPanel, ProductCard, ShopGrid } from './shop/ShopSections';
+import { sovereignFilmFrames } from './sovereign';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
@@ -96,7 +98,7 @@ export function CollectionPage() {
         <div className="collection-shelf__head" data-gsap-reveal>
           <p className="eyebrow"><span /> THE SHELF / THE DAYRAH WARDROBE</p>
           <h2>Choose your<br /><em>signature.</em></h2>
-          <p>Four compositions, one point of view. Every bottle ships with two samples of the house — complimentary over $250.</p>
+          <p>Five compositions, one point of view. Every bottle ships with two samples of the house — complimentary over $250.</p>
         </div>
         <ShopGrid items={products} />
       </section>
@@ -105,6 +107,62 @@ export function CollectionPage() {
         <div className="accord-grid">{(Object.keys(noteCopy) as Note[]).map((key, index) => <Link to={`/sifr-01#${key}`} className={`accord-card accord-card--${key}`} key={key}><div className="accord-card__art" style={{ '--accord-color': noteCopy[key].color } as CSSProperties}><span className="accord-card__number">0{index + 1}</span><div className="accord-card__orb" /><span className="accord-card__vertical">DAYRAH / OLFACTIVE STUDY</span></div><div className="accord-card__text"><span>{noteCopy[key].role}</span><h3>{noteCopy[key].title}</h3><p>{noteCopy[key].body}</p><i>EXPLORE NOTE&nbsp; ↗</i></div></Link>)}</div>
       </section>
       <section className="collection-foot"><p>THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace.</p><Link to="/sifr-01" className="button-outline">ENTER THE FRAGRANCE <span>↗</span></Link></section>
+    </motion.div>
+  );
+}
+
+export function SovereignPage() {
+  const product = products.find((item) => item.slug === 'sovereign');
+  if (!product) return null;
+  const otherProducts = products.filter((item) => item.slug !== product.slug);
+
+  return (
+    <motion.div className="editorial-page sovereign-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .65 }}>
+      <div className="page-breadcrumb"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>SOVEREIGN</span></div>
+      <SovereignFilm galleryId="sovereign-gallery" />
+
+      <section className="sovereign-gallery" id="sovereign-gallery" aria-labelledby="sovereign-gallery-title">
+        <div className="sovereign-gallery__head" data-gsap-reveal>
+          <p className="eyebrow"><span /> FIVE STUDIES / THE SOVEREIGN FILM</p>
+          <h2 id="sovereign-gallery-title">A presence,<br /><em>in five movements.</em></h2>
+          <p>From the first glint of smoked glass to the last trace of amber, each still holds one part of the composition.</p>
+        </div>
+        <div className="sovereign-gallery__grid">
+          {sovereignFilmFrames.map((frame, index) => (
+            <figure className={`sovereign-gallery__figure sovereign-gallery__figure--${index + 1}`} key={frame.src} data-gsap-reveal>
+              <div className="sovereign-gallery__frame"><img src={frame.src} alt={frame.alt} loading="lazy" /></div>
+              <figcaption><span>0{index + 1} / DAYRAH</span><span>{frame.caption}</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <section className="sovereign-composition">
+        <div className="sovereign-composition__copy">
+          <p className="eyebrow"><span /> THE COMPOSITION / NO. 04</p>
+          <h2>Strength,<br /><em>without noise.</em></h2>
+          <p>Dark woods meet the fine heat of saffron. As the first warmth settles, resin and amber gather close to the skin — a quietly assured finish made to stay.</p>
+          <Link to="#sovereign-buy" className="sovereign-composition__link">MEET THE FRAGRANCE <span>↓</span></Link>
+        </div>
+        <div className="sovereign-composition__notes" aria-label="Sovereign fragrance notes">
+          {[['01', 'BLACK OUD', 'THE FOUNDATION'], ['02', 'SAFFRON', 'THE SPARK'], ['03', 'AMBER', 'THE TRACE']].map(([number, note, role]) => (
+            <div className="sovereign-composition__note" key={number}><span>{number}</span><b>{note}</b><i>{role}</i></div>
+          ))}
+        </div>
+      </section>
+
+      <section className="sovereign-buy" id="sovereign-buy">
+        <figure className="sovereign-buy__image" data-gsap-reveal>
+          <img src="/images/sovereign-04.jpg" alt="Sovereign dark amber bottle reflected in a polished black surface beneath fading bronze light" loading="lazy" />
+          <figcaption>THE LASTING TRACE&nbsp; / &nbsp;SOVEREIGN</figcaption>
+        </figure>
+        <BuyPanel product={product} />
+      </section>
+
+      <section className="also-like sovereign-related">
+        <div className="also-like__head"><p className="eyebrow"><span /> CONTINUE THE WARDROBE</p><h2>Another note<br /><em>to discover.</em></h2></div>
+        <div className="shop-grid">{otherProducts.map((item) => <ProductCard key={item.slug} product={item} reveal={false} />)}</div>
+      </section>
     </motion.div>
   );
 }
