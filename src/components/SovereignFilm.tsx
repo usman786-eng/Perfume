@@ -39,32 +39,40 @@ type VortexParticle = {
 };
 
 /**
- * Six-stage image sequence mapping the 0–10s timeline:
- * 0–2s: Frame 1 (Suspended Sovereign)
- * 2–4s: Frame 2 (Cap Release Ascension)
- * 4–6s: Frame 3 (Atomizer Mist Diffusion)
- * 6–8s: Frame 4 (Internal Botanical Vortex)
- * 8–9s: Frame 5A (Alchemical Transition — Blushing Rose Gold & Descending Cap)
- * 9–10s: Frame 5B (Alchemical Transition — Deep Rich Amber & Magnetic Cap Click)
+ * Ten-stage locked-off cinema sequence mapping every second of the 0–10s timeline:
+ * 0–1s: Frame 1A (Poised in the Obsidian Void under 3200K spotlight)
+ * 1–2s: Frame 1B (Suspended Sovereign levitating & rotating with prismatic flares)
+ * 2–3s: Frame 2A (Cap Release — 24k gold cap begins unscrewing in a tight spiral)
+ * 3–4s: Frame 2B (Cap Release — 24k gold cap levitates high, revealing chrome atomizer)
+ * 4–5s: Frame 3A (The Diffusion — Chrome atomizer depresses, explosive diamond micro-droplet burst)
+ * 5–6s: Frame 3B (The Diffusion — Backlit perfume mist forms lingering volumetric swirls)
+ * 6–7s: Frame 4A (The Reveal — Hyper-translucent crystal glass reveals internal botanicals in clear liquid)
+ * 7–8s: Frame 4B (The Reveal — Rose, cardamom, bergamot & sandalwood swirl in a luminous vortex)
+ * 8–9s: Frame 5A (Alchemical Transition — Liquid shifts to soft blushing rose gold as cap descends)
+ * 9–10s: Frame 5B (Alchemical Transition — Deep rich glowing amber light-box & 24k gold cap 'click')
  */
 const SEQUENCE_STAGES = [
-  { src: '/images/sovereign-01.jpg', peakStart: 0.0, peakEnd: 1.65 },
-  { src: '/images/sovereign-02.jpg', peakStart: 2.15, peakEnd: 3.65 },
-  { src: '/images/sovereign-03.jpg', peakStart: 4.15, peakEnd: 5.65 },
-  { src: '/images/sovereign-04.jpg', peakStart: 6.15, peakEnd: 7.65 },
-  { src: '/images/sovereign-04b-rosegold.jpg', peakStart: 8.1, peakEnd: 8.85 },
-  { src: '/images/sovereign-05.jpg', peakStart: 9.2, peakEnd: 10.0 },
+  { src: '/images/sovereign-ref-bottle.jpg', centerSec: 0.45 },
+  { src: '/images/sovereign-01.jpg', centerSec: 1.45 },
+  { src: '/images/sovereign-02a.jpg', centerSec: 2.45 },
+  { src: '/images/sovereign-02.jpg', centerSec: 3.45 },
+  { src: '/images/sovereign-03.jpg', centerSec: 4.45 },
+  { src: '/images/sovereign-03b.jpg', centerSec: 5.5 },
+  { src: '/images/sovereign-04.jpg', centerSec: 6.45 },
+  { src: '/images/sovereign-04c.jpg', centerSec: 7.45 },
+  { src: '/images/sovereign-04b-rosegold.jpg', centerSec: 8.45 },
+  { src: '/images/sovereign-05.jpg', centerSec: 9.6 },
 ] as const;
 
 function computeStageWeights(tSec: number): number[] {
-  const centers = [1.0, 3.0, 5.0, 7.0, 8.45, 9.65];
-  const widths = [1.25, 1.2, 1.2, 1.15, 0.78, 0.85];
-  const raw = centers.map((c, idx) => {
-    if (idx === 0 && tSec <= 1.1) return 1;
-    if (idx === centers.length - 1 && tSec >= 9.45) return 1;
-    const dist = Math.abs(tSec - c) / widths[idx];
-    const v = Math.max(0, 1 - dist * dist * (3 - 2 * Math.min(1, dist)));
-    return Math.pow(v, 1.35);
+  const width = 0.92;
+  const raw = SEQUENCE_STAGES.map((stage, idx) => {
+    if (idx === 0 && tSec <= stage.centerSec) return 1;
+    if (idx === SEQUENCE_STAGES.length - 1 && tSec >= stage.centerSec) return 1;
+    const dist = Math.abs(tSec - stage.centerSec) / width;
+    if (dist >= 1) return 0;
+    const smooth = 1 - dist * dist * (3 - 2 * dist);
+    return Math.pow(smooth, 1.4);
   });
   const sum = raw.reduce((a, b) => a + b, 0) || 1;
   return raw.map((v) => v / sum);
