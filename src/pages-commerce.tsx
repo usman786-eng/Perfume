@@ -24,7 +24,7 @@ export function ProductPage() {
         </figure>
         <BuyPanel product={product} />
       </section>
-      <ReviewsStrip />
+      <ReviewsStrip product={product} />
       <section className="also-like">
         <div className="also-like__head"><p className="eyebrow"><span /> CONTINUE THE WARDROBE</p><h2>You may<br /><em>also wear.</em></h2></div>
         <div className="shop-grid">{others.map((item) => <ProductCard key={item.slug} product={item} />)}</div>
