@@ -6,8 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { CanvasBoundary } from './components/CanvasBoundary';
 import { products } from './shop/products';
-import { BuyPanel, ProductCard, ShopGrid } from './shop/ShopSections';
-import { sovereignFilmFrames, sovereignVisualElements } from './sovereign';
+import { BuyPanel, ProductCard, ReviewsStrip, ShopGrid } from './shop/ShopSections';
+import { sovereignFilmFrames } from './sovereign';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
@@ -206,6 +206,8 @@ export function SovereignPage() {
         </figure>
         <BuyPanel product={product} />
       </section>
+
+      <ReviewsStrip product={product} />
 
       <section className="also-like sovereign-related">
         <div className="also-like__head"><p className="eyebrow"><span /> CONTINUE THE WARDROBE</p><h2>Another note<br /><em>to discover.</em></h2></div>

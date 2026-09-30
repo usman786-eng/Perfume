@@ -111,22 +111,51 @@ export function BuyPanel({ product, compact = false }: { product: Product; compa
 }
 
 /* ---------- Social proof ---------- */
-const reviews = [
-  { quote: 'The oud opens like a room you remember. Two hours in, it becomes something close and entirely yours.', name: 'Amira K.', detail: 'SIFR 01 / 100 ML' },
-  { quote: 'Layl is the first evening scent I finish to the last drop. The smoke never overwhelms — it settles.', name: 'Yusuf R.', detail: 'LAYL 02 / 50 ML' },
-  { quote: 'Noor wears like morning light. People lean in to ask what it is, and I never tell them straight away.', name: 'Leena S.', detail: 'NOOR 03 / 100 ML' },
+type Review = { slug: string; quote: string; name: string; detail: string };
+
+/**
+ * Reviews are keyed to a product slug so a fragrance page can lead with its own
+ * social proof instead of borrowing another composition's.
+ */
+const reviews: Review[] = [
+  { slug: 'sifr-01', quote: 'The oud opens like a room you remember. Two hours in, it becomes something close and entirely yours.', name: 'Amira K.', detail: 'SIFR 01 / 100 ML' },
+  { slug: 'layl-02', quote: 'Layl is the first evening scent I finish to the last drop. The smoke never overwhelms — it settles.', name: 'Yusuf R.', detail: 'LAYL 02 / 50 ML' },
+  { slug: 'noor-03', quote: 'Noor wears like morning light. People lean in to ask what it is, and I never tell them straight away.', name: 'Leena S.', detail: 'NOOR 03 / 100 ML' },
+  { slug: 'sovereign', quote: 'Sovereign never announces itself. An hour in it is simply there — a weight at the collar, a thread of saffron still holding the oud.', name: 'Khalid A.', detail: 'SOVEREIGN / 100 ML' },
+  { slug: 'sovereign', quote: 'I wore it to a wedding and three people asked, quietly, at the end of the night. That is exactly the register I wanted.', name: 'Noura H.', detail: 'SOVEREIGN / 50 ML' },
+  { slug: 'discovery-trilogy', quote: 'Three vials and a decision I still have not made. The walnut case has outlasted my indecision.', name: 'Sara M.', detail: 'THE TRILOGY / 3 × 10 ML' },
 ];
 
-export function ReviewsStrip() {
+/** The house trio shown on the home page, where no single fragrance is in focus. */
+const houseReviewSlugs = ['sifr-01', 'layl-02', 'noor-03'];
+
+const REVIEW_COLUMNS = 3;
+
+/**
+ * Orders reviews for the strip. With a product in focus its own reviews come
+ * first, then the rest of the house fills the grid up to three columns.
+ * Without one, the house trio is shown.
+ */
+function reviewsFor(product?: Product): Review[] {
+  if (!product) return reviews.filter((review) => houseReviewSlugs.includes(review.slug)).slice(0, REVIEW_COLUMNS);
+  const own = reviews.filter((review) => review.slug === product.slug);
+  const rest = reviews.filter((review) => review.slug !== product.slug);
+  return [...own, ...rest].slice(0, REVIEW_COLUMNS);
+}
+
+export function ReviewsStrip({ product }: { product?: Product } = {}) {
+  const shown = reviewsFor(product);
+  if (shown.length === 0) return null;
+
   return (
-    <section className="reviews-strip" data-gsap-reveal>
+    <section className="reviews-strip" data-gsap-reveal aria-label={product ? `${product.name} reviews` : 'Dayrah reviews'}>
       <div className="reviews-strip__head">
-        <p className="eyebrow"><span /> WORN & REMEMBERED</p>
+        <p className="eyebrow"><span /> WORN & REMEMBERED{product ? ` / ${product.name.toUpperCase()}` : ''}</p>
         <h2>From those<br /><em>who wear it.</em></h2>
       </div>
       <div className="reviews-strip__grid">
-        {reviews.map((review) => (
-          <blockquote key={review.name} className="review-card">
+        {shown.map((review) => (
+          <blockquote key={`${review.slug}-${review.name}`} className="review-card">
             <p>“{review.quote}”</p>
             <footer><b>{review.name}</b><span>{review.detail}</span></footer>
           </blockquote>
