@@ -7,7 +7,7 @@ import { useGSAP } from '@gsap/react';
 import { CanvasBoundary } from './components/CanvasBoundary';
 import { products } from './shop/products';
 import { BuyPanel, ProductCard, ReviewsStrip, ShopGrid } from './shop/ShopSections';
-import { sovereignFilmFrames } from './sovereign';
+import { sovereignFilmFrames, sovereignVisualElements } from './sovereign';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
