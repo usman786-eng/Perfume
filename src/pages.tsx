@@ -7,7 +7,7 @@ import { useGSAP } from '@gsap/react';
 import { CanvasBoundary } from './components/CanvasBoundary';
 import { products } from './shop/products';
 import { BuyPanel, ProductCard, ShopGrid } from './shop/ShopSections';
-import { sovereignFilmFrames } from './sovereign';
+import { sovereignFilmFrames, sovereignVisualElements } from './sovereign';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
@@ -111,6 +111,38 @@ export function CollectionPage() {
   );
 }
 
+export function SovereignVisualElementsSection({ id = 'sovereign-elements' }: { id?: string }) {
+  return (
+    <section className="sovereign-elements" id={id} aria-labelledby="sovereign-elements-title">
+      <div className="sovereign-elements__head" data-gsap-reveal>
+        <p className="eyebrow"><span /> VISUAL ELEMENTS ESTABLISHED FIRST</p>
+        <h2 id="sovereign-elements-title">The Obsidian Void &amp;<br /><em>Sovereign Architecture.</em></h2>
+        <p>Before generating the five scene frames, reference studies establish the location, the faceted DAYRAH SCENTS crystal flacon, the hyper-realistic botanical infusions, and the 3200K overhead volumetric lighting rig.</p>
+      </div>
+      <div className="sovereign-elements__grid">
+        {sovereignVisualElements.map((element) => (
+          <article className="sovereign-element-card" key={element.id} data-gsap-reveal>
+            <div className="sovereign-element-card__media">
+              <img src={element.src} alt={element.alt} loading="lazy" />
+              <span className="sovereign-element-card__badge">{element.category}</span>
+            </div>
+            <div className="sovereign-element-card__body">
+              <span className="sovereign-element-card__subtitle">{element.subtitle}</span>
+              <h3>{element.name}</h3>
+              <p>{element.description}</p>
+              <div className="sovereign-element-card__specs">
+                {element.specs.map((spec) => (
+                  <span key={spec}>{spec}</span>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function SovereignPage() {
   const product = products.find((item) => item.slug === 'sovereign');
   if (!product) return null;
@@ -118,20 +150,31 @@ export function SovereignPage() {
 
   return (
     <motion.div className="editorial-page sovereign-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .65 }}>
-      <div className="page-breadcrumb"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>SOVEREIGN</span></div>
-      <SovereignFilm galleryId="sovereign-gallery" />
+      <div className="page-breadcrumb"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>DAYRAH SCENTS — THE SOVEREIGN FILM</span></div>
+      <SovereignFilm galleryId="sovereign-gallery" elementsId="sovereign-elements" />
+
+      <SovereignVisualElementsSection id="sovereign-elements" />
 
       <section className="sovereign-gallery" id="sovereign-gallery" aria-labelledby="sovereign-gallery-title">
         <div className="sovereign-gallery__head" data-gsap-reveal>
-          <p className="eyebrow"><span /> FIVE STUDIES / THE SOVEREIGN FILM</p>
-          <h2 id="sovereign-gallery-title">A presence,<br /><em>in five movements.</em></h2>
-          <p>From the first glint of smoked glass to the last trace of amber, each still holds one part of the composition.</p>
+          <p className="eyebrow"><span /> SCENE FRAMES (0–10 SECONDS) / THE SOVEREIGN FILM</p>
+          <h2 id="sovereign-gallery-title">Five frames,<br /><em>one alchemical arc.</em></h2>
+          <p>From the suspended crystal flacon in the Obsidian Void to the final glowing amber light-box and magnetic 24k gold cap click, every scene frame is inscribed with DAYRAH SCENTS.</p>
         </div>
         <div className="sovereign-gallery__grid">
           {sovereignFilmFrames.map((frame, index) => (
             <figure className={`sovereign-gallery__figure sovereign-gallery__figure--${index + 1}`} key={frame.src} data-gsap-reveal>
               <div className="sovereign-gallery__frame"><img src={frame.src} alt={frame.alt} loading="lazy" /></div>
-              <figcaption><span>0{index + 1} / DAYRAH</span><span>{frame.caption}</span></figcaption>
+              <figcaption><span>FRAME 0{frame.frameNumber} / DAYRAH SCENTS</span><span>{frame.caption}</span></figcaption>
+              <div className="sovereign-gallery__meta">
+                <h3>{frame.context}</h3>
+                <p className="sovereign-gallery__narration">NARRATION: “{frame.narration}”</p>
+                <p>{frame.action}</p>
+                <div className="sovereign-gallery__specs">
+                  <div><b>CAMERA ANGLE</b>{frame.cameraAngle}</div>
+                  <div><b>LIGHTING</b>{frame.lighting}</div>
+                </div>
+              </div>
             </figure>
           ))}
         </div>
@@ -139,13 +182,18 @@ export function SovereignPage() {
 
       <section className="sovereign-composition">
         <div className="sovereign-composition__copy">
-          <p className="eyebrow"><span /> THE COMPOSITION / NO. 04</p>
-          <h2>Strength,<br /><em>without noise.</em></h2>
-          <p>Dark woods meet the fine heat of saffron. As the first warmth settles, resin and amber gather close to the skin — a quietly assured finish made to stay.</p>
-          <Link to="#sovereign-buy" className="sovereign-composition__link">MEET THE FRAGRANCE <span>↓</span></Link>
+          <p className="eyebrow"><span /> BOTANICAL INFUSIONS &amp; ALCHEMY / NO. 04</p>
+          <h2>Nature, captured<br /><em>in crystal.</em></h2>
+          <p>Deep velvet-red rose petals, textured green cardamom pods, translucent green bergamot slices, and raw aromatic sandalwood swirl in crystal-clear liquid before shifting through blushing rose gold into a deep, glowing amber.</p>
+          <Link to="#sovereign-buy" className="sovereign-composition__link">ACQUIRE THE SOVEREIGN <span>↓</span></Link>
         </div>
-        <div className="sovereign-composition__notes" aria-label="Sovereign fragrance notes">
-          {[['01', 'BLACK OUD', 'THE FOUNDATION'], ['02', 'SAFFRON', 'THE SPARK'], ['03', 'AMBER', 'THE TRACE']].map(([number, note, role]) => (
+        <div className="sovereign-composition__notes" aria-label="Sovereign botanical infusions">
+          {[
+            ['01', 'VELVET-RED ROSE PETALS', 'DEEP FLORAL HEART · INTERNAL VORTEX'],
+            ['02', 'GREEN CARDAMOM PODS', 'VISIBLE FIBERS · WARM AROMATIC SPICE'],
+            ['03', 'GREEN BERGAMOT SLICES', 'TRANSLUCENT ZEST PORES · TOP RADIANCE'],
+            ['04', 'RAW SANDALWOOD & AMBER', 'BLUSHING ROSE GOLD TO DEEP AMBER GLOW'],
+          ].map(([number, note, role]) => (
             <div className="sovereign-composition__note" key={number}><span>{number}</span><b>{note}</b><i>{role}</i></div>
           ))}
         </div>
@@ -153,8 +201,8 @@ export function SovereignPage() {
 
       <section className="sovereign-buy" id="sovereign-buy">
         <figure className="sovereign-buy__image" data-gsap-reveal>
-          <img src="/images/sovereign-04.jpg" alt="Sovereign dark amber bottle reflected in a polished black surface beneath fading bronze light" loading="lazy" />
-          <figcaption>THE LASTING TRACE&nbsp; / &nbsp;SOVEREIGN</figcaption>
+          <img src="/images/sovereign-05.jpg" alt="DAYRAH SCENTS The Sovereign glowing amber crystal bottle reflected in the polished dark obsidian floor" loading="lazy" />
+          <figcaption>DAYRAH SCENTS&nbsp; / &nbsp;THE SOVEREIGN — ETERNAL. REFINED.</figcaption>
         </figure>
         <BuyPanel product={product} />
       </section>
