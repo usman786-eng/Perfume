@@ -168,7 +168,6 @@ export function SovereignPage() {
               <figcaption><span>FRAME 0{frame.frameNumber} / DAYRAH SCENTS</span><span>{frame.caption}</span></figcaption>
               <div className="sovereign-gallery__meta">
                 <h3>{frame.context}</h3>
-                <p className="sovereign-gallery__narration">NARRATION: “{frame.narration}”</p>
                 <p>{frame.action}</p>
                 <div className="sovereign-gallery__specs">
                   <div><b>CAMERA ANGLE</b>{frame.cameraAngle}</div>

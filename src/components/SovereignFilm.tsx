@@ -103,8 +103,6 @@ export default function SovereignFilm({
   const smoothProgressRef = useRef(0);
   const velocityRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
-  const lastChapterSpokenRef = useRef<number>(-1);
-  const clickPlayedRef = useRef(false);
   // Tracks whether any part of the film section is on screen so the heavy
   // canvas FX loop can sleep while the user is elsewhere on the page.
   const visibleRef = useRef(true);
@@ -123,85 +121,8 @@ export default function SovereignFilm({
   const [chapter, setChapter] = useState(0);
   const [alchemicalStage, setAlchemicalStage] = useState<'CLEAR' | 'ROSE GOLD' | 'AMBER'>('CLEAR');
   const [capClicked, setCapClicked] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showRefsDrawer, setShowRefsDrawer] = useState(false);
-
-  // Synthesize subtle Web Audio sound effects + narration on chapter change when soundEnabled is true
-  const playChapterAudio = (chapterIndex: number, narrationText: string) => {
-    if (!soundEnabled || typeof window === 'undefined') return;
-    try {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(narrationText);
-        utter.rate = 0.88;
-        utter.pitch = 0.86;
-        utter.volume = 0.85;
-        window.speechSynthesis.speak(utter);
-      }
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const now = ctx.currentTime;
-
-      if (chapterIndex === 2) {
-        // Frame 3: Atomizer mist spritz noise burst
-        const bufferSize = ctx.sampleRate * 0.45;
-        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.16));
-        }
-        const noise = ctx.createBufferSource();
-        noise.buffer = buffer;
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(3200, now);
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.14, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.44);
-        noise.connect(filter).connect(gain).connect(ctx.destination);
-        noise.start(now);
-      } else {
-        // Warm harmonic crystal chime
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        const freqs = [220, 277.18, 329.63, 369.99, 440];
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freqs[chapterIndex % freqs.length], now);
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.06, now + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.9);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.95);
-      }
-    } catch {
-      // Ignore audio context restrictions
-    }
-  };
-
-  const playMagneticClickSound = () => {
-    if (!soundEnabled || typeof window === 'undefined') return;
-    try {
-      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(1480, now);
-      osc.frequency.exponentialRampToValueAtTime(190, now + 0.065);
-      gain.gain.setValueAtTime(0.22, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.08);
-    } catch {
-      // Ignore
-    }
-  };
 
   // ScrollTrigger binding
   useGSAP(
@@ -242,23 +163,7 @@ export default function SovereignFilm({
     { scope: sectionRef }
   );
 
-  // Trigger audio narration on chapter changes when sound is enabled
-  useEffect(() => {
-    if (!soundEnabled) return;
-    if (lastChapterSpokenRef.current !== chapter) {
-      lastChapterSpokenRef.current = chapter;
-      playChapterAudio(chapter, sovereignFilmFrames[chapter].narration);
-    }
-  }, [chapter, soundEnabled]);
 
-  useEffect(() => {
-    if (capClicked && !clickPlayedRef.current) {
-      clickPlayedRef.current = true;
-      playMagneticClickSound();
-    } else if (!capClicked) {
-      clickPlayedRef.current = false;
-    }
-  }, [capClicked, soundEnabled]);
 
   // Auto-play scroll loop when user clicks "AUTO-PLAY FILM"
   useEffect(() => {
@@ -944,17 +849,7 @@ export default function SovereignFilm({
             >
               {isPlaying ? '❚❚ PAUSE FILM' : '▶ AUTO-PLAY 10S FILM'}
             </button>
-            <button
-              type="button"
-              className={`sovereign-film__ctrl-btn ${soundEnabled ? 'is-on' : ''}`}
-              onClick={() => {
-                const next = !soundEnabled;
-                setSoundEnabled(next);
-                if (next) playChapterAudio(chapter, active.narration);
-              }}
-            >
-              {soundEnabled ? '◉ NARRATION & FX AUDIO: ON' : '◎ NARRATION & FX AUDIO: OFF'}
-            </button>
+
           </div>
         </div>
 
@@ -1009,10 +904,6 @@ export default function SovereignFilm({
                   <br />
                   <em>{active.emphasis}</em>
                 </h1>
-                <div className="sovereign-film__dialog-box">
-                  <span>DIALOG / NARRATION</span>
-                  <blockquote>“{active.narration}”</blockquote>
-                </div>
                 <p className="sovereign-film__description">{active.action}</p>
                 <div className="sovereign-film__fx-pills">
                   {active.fxBadges.map((badge) => (
@@ -1109,12 +1000,6 @@ export default function SovereignFilm({
               <i />
             </button>
           ))}
-        </div>
-
-        {/* Center-Bottom Cinema Narration Subtitle & Timeline Scrubber */}
-        <div className="sovereign-film__subtitle-bar" aria-hidden="true">
-          <span className="sovereign-film__subtitle-tag">NARRATION</span>
-          <p>“{active.narration}”</p>
         </div>
 
         <div className="sovereign-film__bottom">
