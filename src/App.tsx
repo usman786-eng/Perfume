@@ -427,7 +427,7 @@ function SiteLayout() {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true, touchMultiplier: 1.12 });
+    const lenis = new Lenis({ lerp: 0.08, smoothWheel: true, touchMultiplier: 1.12 });
     lenisRef.current = lenis;
     const onTick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(onTick);

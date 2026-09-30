@@ -103,6 +103,16 @@ export default function SovereignFilm({
   const smoothProgressRef = useRef(0);
   const velocityRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
+  // 35mm depth-rig refs — all driven via transform/opacity only.
+  const bgRef = useRef<HTMLDivElement>(null);
+  const fgRef = useRef<HTMLDivElement>(null);
+  const abyssRef = useRef<HTMLDivElement>(null);
+  const halationRef = useRef<HTMLDivElement>(null);
+  const flareRef = useRef<HTMLDivElement>(null);
+  const barTopRef = useRef<HTMLDivElement>(null);
+  const barBotRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const blurOnRef = useRef(false);
   // Tracks whether any part of the film section is on screen so the heavy
   // canvas FX loop can sleep while the user is elsewhere on the page.
   const visibleRef = useRef(true);
@@ -339,12 +349,58 @@ export default function SovereignFilm({
         const floatY =
           Math.sin(elapsed * 1.4 + tSec * 1.8) * (7.5 * f1Env + 2.2) -
           (tSec >= 2 && tSec <= 4 ? (tSec - 2) * 3.5 : 0);
-        // Camera zoom tightens on nozzle/interior in Frames 2-4, pulls back to full view in Frame 5
+        // Camera zoom tightens on nozzle/interior in Frames 2-4, pulls back to full view in Frame 5.
+        // Ken Burns dolly: the bottle grows 1.0 -> 1.15 across the pinned scroll.
         const zoomBell =
-          1 +
-          0.035 * Math.sin(Math.min(1, Math.max(0, (tSec - 1.5) / 6.8)) * Math.PI) +
-          velocityRef.current * 0.015;
-        bottleStageRef.current.style.transform = `perspective(1200px) translate3d(${(pointerRef.current.x * -6).toFixed(2)}px, ${floatY.toFixed(2)}px, 0) rotateY(${rotY.toFixed(2)}deg) scale(${zoomBell.toFixed(4)})`;
+          (1 +
+            0.035 * Math.sin(Math.min(1, Math.max(0, (tSec - 1.5) / 6.8)) * Math.PI) +
+            velocityRef.current * 0.015) *
+          (1 + p * 0.15);
+        // Velocity-reactive anamorphic energy: skew + motion blur on fast scroll.
+        const vMag = Math.min(1, velocityRef.current);
+        const vDir = diff >= 0 ? 1 : -1;
+        const skew = vDir * Math.min(2, vMag * 5);
+        bottleStageRef.current.style.transform = `perspective(1200px) translate3d(${(pointerRef.current.x * -6).toFixed(2)}px, ${floatY.toFixed(2)}px, 0) rotateY(${rotY.toFixed(2)}deg) scale(${zoomBell.toFixed(4)}) skewY(${(skew * 0.4).toFixed(2)}deg)`;
+        const wantBlur = vMag > 0.32;
+        if (wantBlur !== blurOnRef.current) {
+          blurOnRef.current = wantBlur;
+          bottleStageRef.current.style.filter = wantBlur
+            ? `blur(${Math.min(0.8, (vMag - 0.32) * 2).toFixed(2)}px) saturate(1.08)`
+            : '';
+        }
+      }
+
+      // 35mm depth rig: background strata drift at 0.3x, foreground at 1.2x.
+      // All writes are transform/opacity — no layout, no paint properties.
+      {
+        const vMag = Math.min(1, velocityRef.current);
+        const vDir = diff >= 0 ? 1 : -1;
+        const skew = vDir * Math.min(2, vMag * 5);
+        if (bgRef.current) {
+          bgRef.current.style.transform = `perspective(1200px) translateZ(-260px) scale(1.28) translate3d(0, ${(p * 110).toFixed(1)}px, 0)`;
+        }
+        if (fgRef.current) {
+          fgRef.current.style.transform = `perspective(1200px) translateZ(210px) scale(0.88) translate3d(0, ${(-p * 190).toFixed(1)}px, 0) skewY(${(skew * 1.6).toFixed(2)}deg)`;
+        }
+        // The void deepens to #020202 while the gold core intensifies.
+        if (abyssRef.current) {
+          abyssRef.current.style.opacity = (0.08 + p * 0.92).toFixed(3);
+        }
+        // Halation breathes with progress and flares with scroll velocity.
+        if (halationRef.current) {
+          halationRef.current.style.opacity = (0.22 + p * 0.5 + Math.min(0.25, vMag * 0.5)).toFixed(3);
+        }
+        // 2.39:1 bars glide in over the first 7% of the film.
+        const barS = Math.min(1, p / 0.07).toFixed(3);
+        if (barTopRef.current) barTopRef.current.style.transform = `scaleY(${barS})`;
+        if (barBotRef.current) barBotRef.current.style.transform = `scaleY(${barS})`;
+        // Anamorphic streak stretches and brightens with motion.
+        if (flareRef.current) {
+          flareRef.current.style.transform = `scaleX(${(1 + vMag * 1.8).toFixed(3)})`;
+          flareRef.current.style.opacity = (0.3 + p * 0.45).toFixed(3);
+        }
+        // 0.5px chromatic split on display type while scrubbing fast.
+        if (copyRef.current) copyRef.current.classList.toggle('is-fast', vMag > 0.45);
       }
 
       if (progressRef.current) {
@@ -803,6 +859,15 @@ export default function SovereignFilm({
       aria-label="DAYRAH SCENTS — The Sovereign 10-second scroll-scrubbed fragrance film"
     >
       <div className="sovereign-film__stage" ref={stageRef}>
+        {/* 35mm depth rig: abyss + background strata drift at 0.3x behind the bottle */}
+        <div className="sf-abyss" ref={abyssRef} aria-hidden="true" />
+        <div className="sf-bg" ref={bgRef} aria-hidden="true">
+          <i className="sf-bg__nebula n1" />
+          <i className="sf-bg__nebula n2" />
+          <i className="sf-bg__petal p1" />
+          <i className="sf-bg__petal p2" />
+          <i className="sf-bg__petal p3" />
+        </div>
         {/* Multi-keyframe locked-off cinema stage with 3D perspective & alchemical sub-frames */}
         <div className="sovereign-film__frames" ref={bottleStageRef} aria-hidden="true">
           {SEQUENCE_STAGES.map((stage, index) => (
@@ -824,9 +889,30 @@ export default function SovereignFilm({
         {/* Real-time 60fps Volumetric Light, Dust Motes, Floor Caustics, Diamond Mist & Alchemical FX Canvas */}
         <canvas className="sovereign-film__fx-canvas" ref={fxCanvasRef} aria-hidden="true" />
 
+        {/* Foreground strata at 1.2x: out-of-focus petals, bokeh, anamorphic flare */}
+        <div className="sf-fg" ref={fgRef} aria-hidden="true">
+          <i className="sf-fg__vignette" />
+          <i className="sf-fg__petal f1" />
+          <i className="sf-fg__petal f2" />
+          <i className="sf-fg__petal f3" />
+          <i className="sf-fg__petal f4" />
+          <i className="sf-fg__bokeh b1" />
+          <i className="sf-fg__bokeh b2" />
+          <i className="sf-fg__bokeh b3" />
+          <i className="sf-fg__bokeh b4" />
+          <i className="sf-fg__bokeh b5" />
+          <div className="sf-flare" ref={flareRef} />
+        </div>
+        <div className="sf-halation" ref={halationRef} aria-hidden="true" />
+
         {/* Subtle obsidian edge vignette that leaves the centered DAYRAH SCENTS bottle 100% clear */}
         <div className="sovereign-film__wash" aria-hidden="true" />
-        <div className="sovereign-film__grain" aria-hidden="true" />
+        <div className="sovereign-film__grain sf-grain" aria-hidden="true" />
+
+        {/* 2.39:1 letterbox + projector flicker */}
+        <div className="sf-bar sf-bar--top" ref={barTopRef} aria-hidden="true" />
+        <div className="sf-bar sf-bar--bot" ref={barBotRef} aria-hidden="true" />
+        <div className="sf-flicker" aria-hidden="true" />
 
         {/* Top Director's Header Bar */}
         <div className="sovereign-film__topline">
@@ -888,7 +974,7 @@ export default function SovereignFilm({
         {/* Main Left + Right Cinema HUD flanking the centered DAYRAH SCENTS bottle */}
         <div className="sovereign-film__layout">
           {/* Left Column: Context, Narration & Action */}
-          <div className="sovereign-film__copy" aria-live="polite">
+          <div className="sovereign-film__copy" aria-live="polite" ref={copyRef}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={chapter}

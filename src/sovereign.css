@@ -1358,3 +1358,240 @@
 .editorial-page.sifr-page {
   overflow: clip;
 }
+
+/* ==========================================================================
+   35MM ANAMORPHIC RIG — parallax depth strata, letterbox, grain, flicker.
+   JS owns transform/opacity on these layers; CSS owns everything static.
+   ========================================================================== */
+.sf-abyss,
+.sf-bg,
+.sf-fg,
+.sf-halation,
+.sf-bar,
+.sf-flicker {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* The void deepening to #020202 with an intensifying gold core. */
+.sf-abyss {
+  inset: 0;
+  z-index: 0;
+  opacity: 0.08;
+  background:
+    radial-gradient(38% 34% at 50% 46%, rgba(212, 163, 92, 0.34), rgba(120, 70, 26, 0.12) 55%, transparent 75%),
+    radial-gradient(120% 100% at 50% 50%, transparent 40%, #020202 92%),
+    #020202;
+  will-change: opacity;
+}
+
+/* Background strata: deep-space nebulae + far out-of-focus petals (0.3x). */
+.sf-bg {
+  inset: -12%;
+  z-index: 0;
+  will-change: transform;
+}
+.sf-bg__nebula {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+}
+.sf-bg__nebula.n1 {
+  width: 52vw;
+  height: 52vw;
+  left: 24vw;
+  top: 6vh;
+  background: radial-gradient(circle, rgba(193, 122, 68, 0.16), transparent 70%);
+}
+.sf-bg__nebula.n2 {
+  width: 40vw;
+  height: 40vw;
+  left: -8vw;
+  bottom: -6vh;
+  background: radial-gradient(circle, rgba(124, 34, 48, 0.12), transparent 70%);
+}
+.sf-bg__petal {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(7px);
+  opacity: 0.5;
+}
+.sf-bg__petal.p1 {
+  width: 200px;
+  height: 260px;
+  left: 6vw;
+  top: 16vh;
+  background: radial-gradient(ellipse, rgba(124, 34, 48, 0.5), transparent 70%);
+}
+.sf-bg__petal.p2 {
+  width: 240px;
+  height: 180px;
+  right: 4vw;
+  top: 58vh;
+  background: radial-gradient(ellipse, rgba(193, 122, 68, 0.42), transparent 70%);
+}
+.sf-bg__petal.p3 {
+  width: 160px;
+  height: 220px;
+  left: 38vw;
+  bottom: 4vh;
+  background: radial-gradient(ellipse, rgba(90, 24, 34, 0.5), transparent 70%);
+}
+
+/* Foreground strata at 1.2x: near petals, bokeh, flare (translateZ depth). */
+.sf-fg {
+  inset: -15%;
+  z-index: 5;
+  will-change: transform;
+}
+.sf-fg__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(115% 90% at 50% 48%, transparent 54%, rgba(0, 0, 0, 0.6) 100%);
+}
+.sf-fg__petal {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(14px);
+}
+.sf-fg__petal.f1 {
+  width: 300px;
+  height: 380px;
+  left: -70px;
+  top: 8vh;
+  background: radial-gradient(ellipse, rgba(96, 22, 32, 0.62), transparent 70%);
+}
+.sf-fg__petal.f2 {
+  width: 260px;
+  height: 340px;
+  right: -60px;
+  top: 44vh;
+  background: radial-gradient(ellipse, rgba(160, 90, 36, 0.5), transparent 70%);
+}
+.sf-fg__petal.f3 {
+  width: 220px;
+  height: 200px;
+  left: 12vw;
+  bottom: -50px;
+  background: radial-gradient(ellipse, rgba(70, 16, 24, 0.6), transparent 70%);
+}
+.sf-fg__petal.f4 {
+  width: 180px;
+  height: 260px;
+  right: 16vw;
+  top: -40px;
+  background: radial-gradient(ellipse, rgba(193, 122, 68, 0.34), transparent 70%);
+}
+.sf-fg__bokeh {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(243, 220, 170, 0.85), rgba(212, 163, 92, 0.25) 60%, transparent 75%);
+  filter: blur(3px);
+}
+.sf-fg__bokeh.b1 { width: 22px; height: 22px; left: 22vw; top: 30vh; opacity: 0.5; }
+.sf-fg__bokeh.b2 { width: 12px; height: 12px; left: 70vw; top: 22vh; opacity: 0.6; }
+.sf-fg__bokeh.b3 { width: 26px; height: 26px; left: 82vw; top: 66vh; opacity: 0.4; }
+.sf-fg__bokeh.b4 { width: 10px; height: 10px; left: 12vw; top: 72vh; opacity: 0.55; }
+.sf-fg__bokeh.b5 { width: 16px; height: 16px; left: 58vw; top: 84vh; opacity: 0.45; }
+
+/* Anamorphic horizontal streak at bottle height. */
+.sf-flare {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 44%;
+  height: 3px;
+  opacity: 0.3;
+  background: linear-gradient(90deg, transparent 8%, rgba(255, 214, 150, 0.55) 42%, rgba(255, 236, 200, 0.9) 50%, rgba(255, 214, 150, 0.55) 58%, transparent 92%);
+  filter: blur(1px);
+  will-change: transform, opacity;
+}
+
+/* Halation: soft gold bloom breathing around the bright core. */
+.sf-halation {
+  inset: 0;
+  z-index: 2;
+  opacity: 0.22;
+  background: radial-gradient(30% 26% at 50% 46%, rgba(255, 226, 170, 0.5), rgba(212, 163, 92, 0.14) 55%, transparent 75%);
+  will-change: opacity;
+}
+
+/* Animated film grain at 0.08 — the pattern drifts via transform (cheap). */
+.sovereign-film__grain.sf-grain {
+  opacity: 0.08;
+  animation: sf-grain-drift 1.2s steps(4) infinite;
+}
+@keyframes sf-grain-drift {
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(-18px, 12px, 0); }
+  50% { transform: translate3d(14px, -16px, 0); }
+  75% { transform: translate3d(-10px, -8px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* 2.39:1 letterbox bars glide in over the first 7% of scroll. */
+.sf-bar {
+  left: 0;
+  right: 0;
+  height: 12vh;
+  background: #000;
+  z-index: 6;
+  will-change: transform;
+}
+.sf-bar--top {
+  top: 0;
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+}
+.sf-bar--bot {
+  bottom: 0;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+}
+
+/* Projector flicker: 0.98–1.0 opacity shimmer, compositor only. */
+.sf-flicker {
+  inset: 0;
+  z-index: 6;
+  background: #fff8ea;
+  opacity: 0;
+  animation: sf-flicker 1.15s linear infinite;
+}
+@keyframes sf-flicker {
+  0%, 100% { opacity: 0; }
+  8% { opacity: 0.014; }
+  24% { opacity: 0; }
+  41% { opacity: 0.02; }
+  55% { opacity: 0.006; }
+  72% { opacity: 0.017; }
+  88% { opacity: 0; }
+}
+
+/* 0.5px chromatic split on display type while scrubbing fast. */
+.sovereign-film__copy.is-fast h1 {
+  text-shadow:
+    -0.5px 0 rgba(255, 70, 90, 0.65),
+    0.5px 0 rgba(0, 220, 255, 0.65),
+    0 0 60px rgba(212, 183, 143, 0.25);
+}
+
+@media (max-width: 700px) {
+  .sf-bar {
+    height: 8vh;
+  }
+  .sf-fg__petal.f1,
+  .sf-fg__petal.f2 {
+    filter: blur(18px);
+    opacity: 0.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sovereign-film__grain.sf-grain,
+  .sf-flicker {
+    animation: none;
+  }
+  .sf-flicker {
+    opacity: 0;
+  }
+}
