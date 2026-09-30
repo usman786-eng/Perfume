@@ -1350,3 +1350,11 @@
     min-height: 640px;
   }
 }
+
+/* The film stages pin via position: sticky, which dies inside an
+   overflow: hidden ancestor (.editorial-page). overflow: clip keeps the
+   exact same clipping but is not a scroll container, so sticky works. */
+.editorial-page.sovereign-page,
+.editorial-page.sifr-page {
+  overflow: clip;
+}
