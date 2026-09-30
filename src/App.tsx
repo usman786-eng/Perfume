@@ -7,7 +7,7 @@ import Lenis from 'lenis';
 import BlurText from './components/BlurText';
 import { CanvasBoundary } from './components/CanvasBoundary';
 import { BrowserRouter, Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
-import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, StoryPage } from './pages';
+import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, SovereignPage, StoryPage } from './pages';
 import { ProductPage, CheckoutPage } from './pages-commerce';
 import { CartProvider, useCart } from './shop/CartContext';
 import { products } from './shop/products';
@@ -150,6 +150,7 @@ function Header() {
     <header className="site-header">
       <Link className="brand" to="/" aria-label="Dayrah home" onClick={close}><span>DAYRAH</span><small>FRAGRANCE HOUSE</small></Link>
       <nav className="desktop-nav" aria-label="Main navigation">
+        <NavLink to="/sovereign">SOVEREIGN</NavLink>
         <NavLink to="/collection">COLLECTION</NavLink>
         <NavLink to="/story">THE HOUSE</NavLink>
         <NavLink to="/atelier">ATELIER</NavLink>
@@ -164,7 +165,7 @@ function Header() {
       </div>
       <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button>
       <AnimatePresence>{menuOpen && <motion.nav className="mobile-nav" aria-label="Mobile navigation" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .22 }}>
-        <Link to="/collection" onClick={close}>THE COLLECTION</Link><Link to="/story" onClick={close}>THE HOUSE</Link><Link to="/atelier" onClick={close}>THE ATELIER</Link><Link to="/journal" onClick={close}>JOURNAL</Link><Link to="/contact" onClick={close}>CONTACT ↗</Link>
+        <Link to="/sovereign" onClick={close}>SOVEREIGN / NEW</Link><Link to="/collection" onClick={close}>THE COLLECTION</Link><Link to="/story" onClick={close}>THE HOUSE</Link><Link to="/atelier" onClick={close}>THE ATELIER</Link><Link to="/journal" onClick={close}>JOURNAL</Link><Link to="/contact" onClick={close}>CONTACT ↗</Link>
       </motion.nav>}</AnimatePresence>
     </header>
   );
@@ -359,11 +360,29 @@ function DetailsModal({ open, onClose }: { open: boolean; onClose: () => void })
   return <AnimatePresence>{open && <motion.div className="modal-scrim" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="fragrance-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()} initial={{ y: 28, opacity: 0, scale: .98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 18, opacity: 0, scale: .985 }} transition={{ duration: .3, ease: [0.22, 1, 0.36, 1] }}><button className="modal-close" onClick={onClose} aria-label="Close fragrance details">×</button><p className="eyebrow"><span /> DAYRAH / SIGNATURE SCENT</p><h2 id="modal-title">Sifr<sup>01</sup></h2><p className="modal-subtitle">A memory, held in glass.</p><div className="modal-notes"><span>OUD <i /> ROSE <i /> AMBER</span></div><p className="modal-copy">A warm, floral-woody composition, inspired by the scents that turn a moment into a place you remember.</p><a className="modal-contact" href="mailto:hello@dayrah.com">ASK THE ATELIER <span>↗</span></a><p className="modal-foot">CONTACT DETAILS AND PRODUCT INFORMATION ARE PLACEHOLDERS.</p></motion.div></motion.div>}</AnimatePresence>;
 }
 
+function SovereignFeature() {
+  return (
+    <section className="sovereign-feature" aria-labelledby="sovereign-feature-title">
+      <Link to="/sovereign" className="sovereign-feature__visual" aria-label="Enter the Sovereign film">
+        <img src="/images/sovereign-01.jpg" alt="Sovereign smoked-amber perfume flacon in warm diffusion mist" loading="lazy" />
+        <span>NEW COMPOSITION&nbsp; / &nbsp;NO. 04</span>
+      </Link>
+      <div className="sovereign-feature__copy" data-gsap-reveal>
+        <p className="eyebrow"><span /> THE NEW COMPOSITION</p>
+        <h2 id="sovereign-feature-title">Quiet power.<br /><em>Lasting presence.</em></h2>
+        <p>Dark oud, saffron, and amber move through a fine, warm diffusion. Meet Sovereign, the newest study from the house.</p>
+        <Link to="/sovereign" className="text-link">ENTER THE SOVEREIGN FILM <span>↗</span></Link>
+      </div>
+    </section>
+  );
+}
+
 function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNote: (note: Note) => void; onOpenDetails: () => void; booted: boolean }) {
   return (
     <main className="home-page">
       <ScentExperience note={note} onOpenDetails={onOpenDetails} booted={booted} />
       <NoteExplorer note={note} setNote={setNote} />
+      <SovereignFeature />
       <section className="home-signature">
         <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup><br /><em>A memory in motion.</em></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace. Meet the full composition behind Dayrah's signature fragrance.</p><Link to="/sifr-01" className="text-link">ENTER THE FRAGRANCE <span>↗</span></Link></div>
         <Link to="/sifr-01" className="home-signature__image" aria-label="Discover Sifr 01"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image: an amber perfume bottle amid rose petals and golden light" loading="lazy" /><span>01 / SIFR — THE SIGNATURE</span></Link>
@@ -388,7 +407,7 @@ function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNot
 }
 
 function SiteFooter() {
-  return <footer className="site-footer"><Link className="footer-brand" to="/">DAYRAH</Link><span>ARABIAN PERFUMERY&nbsp; / &nbsp;A MODERN RITUAL</span><Link to="/collection">COLLECTION</Link><Link to="/story">THE HOUSE</Link><Link to="/atelier">ATELIER</Link><Link to="/contact">CONTACT ↗</Link></footer>;
+  return <footer className="site-footer"><Link className="footer-brand" to="/">DAYRAH</Link><span>ARABIAN PERFUMERY&nbsp; / &nbsp;A MODERN RITUAL</span><Link to="/sovereign">SOVEREIGN</Link><Link to="/collection">COLLECTION</Link><Link to="/story">THE HOUSE</Link><Link to="/atelier">ATELIER</Link><Link to="/contact">CONTACT ↗</Link></footer>;
 }
 
 function NotFoundPage() {
@@ -416,8 +435,9 @@ function SiteLayout() {
 
   useEffect(() => {
     const pageMeta: Record<string, { title: string; description: string }> = {
-      '/': { title: 'Dayrah — The Art of Perfumery', description: 'Discover Dayrah through a cinematic 3D fragrance film, the Sifr 01 composition, and the rituals of scent.' },
-      '/collection': { title: 'The Collection — Dayrah', description: 'Explore the Dayrah signature fragrance and the oud, rose, and amber accords of Sifr 01.' },
+      '/': { title: 'Dayrah — The Art of Perfumery', description: 'Discover Dayrah through the Sifr 01 3D fragrance film, the new Sovereign campaign, and the rituals of scent.' },
+      '/collection': { title: 'The Collection — Dayrah', description: 'Explore Dayrah fragrances, including the new Sovereign composition and the Sifr 01 signature.' },
+      '/sovereign': { title: 'Sovereign — Dayrah', description: 'Enter Sovereign, a new Dayrah eau de parfum, through a five-scene cinematic fragrance film with diffused amber mist.' },
       '/sifr-01': { title: 'Sifr 01 — Dayrah', description: 'Experience Sifr 01 through a scroll-controlled 3D fragrance film and an interactive accord palette.' },
       '/story': { title: 'The House — Dayrah', description: 'Discover the Dayrah point of view: memory, Arabic perfumery, and scent worn personally.' },
       '/atelier': { title: 'The Atelier — Dayrah', description: 'Explore the materials, ideas, and deliberate gestures behind the Dayrah fragrance house.' },
@@ -467,6 +487,7 @@ function SiteLayout() {
           <Routes location={location}>
             <Route path="/" element={<HomePage note={note} setNote={setNote} onOpenDetails={() => setModalOpen(true)} booted={booted} />} />
             <Route path="/collection" element={<CollectionPage />} />
+            <Route path="/sovereign" element={<SovereignPage />} />
             <Route path="/product/:slug" element={<ProductPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/sifr-01" element={<SifrPage note={note} setNote={setNote} />} />

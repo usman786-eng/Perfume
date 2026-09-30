@@ -10,6 +10,7 @@ export function ProductPage() {
   const { slug = '' } = useParams();
   const product = getProduct(slug);
   if (!product) return <Navigate to="/collection" replace />;
+  if (product.slug === 'sovereign') return <Navigate to="/sovereign" replace />;
   const others = products.filter((item) => item.slug !== product.slug);
 
   return (
