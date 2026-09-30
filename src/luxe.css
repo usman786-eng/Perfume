@@ -39,10 +39,11 @@
   --lux-shadow: 0 30px 80px rgba(8, 7, 10, 0.55);
 
   /* Type */
-  /* Italiana — high-fashion display serif (calligraphic Didone flavour) for
-     headlines, wordmark and nav. Distinctive at large sizes, elegant and
-     commercial-safe via Google Fonts. */
-  --display: 'Italiana', 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  /* Gilda Display — high-contrast display serif with flared Art Deco
+     terminals. Chosen as a more distinctive luxury logotype face than the
+     previous Italiana; single 400 weight, so headings must request 400.
+     Commercial-safe via Google Fonts (OFL). */
+  --display: 'Gilda Display', 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
   --body-serif: 'Cormorant Garamond', Georgia, serif;
   --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
 
@@ -61,7 +62,7 @@
   --dark: #121012;
   --plum: #1a1418;
   /* Site-wide display serif (film re-locks this to Cormorant below). */
-  --serif: 'Italiana', 'Playfair Display', Georgia, serif;
+  --serif: 'Gilda Display', 'Playfair Display', Georgia, serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -147,9 +148,9 @@ body {
   color: var(--lux-muted);
 }
 
-/* Display headings — Italiana, 7.4vw, -0.05em, 0.85
-   Italiana ships as a single weight, so font-weight must be 400; a 300 request
-   would synthesise faux-light and look muddy at these sizes. */
+/* Display headings — Gilda Display, 7.4vw, -0.032em, 0.85
+   Gilda Display ships as a single weight, so font-weight must be 400; a 300
+   request would synthesise faux-light and look muddy at these sizes. */
 .notes-intro h2,
 .atelier-copy h2,
 .closing-section h2,
@@ -182,7 +183,7 @@ body {
 .story-image-band > div p {
   font-family: var(--display) !important;
   font-weight: 400 !important;
-  letter-spacing: -0.05em !important;
+  letter-spacing: -0.032em !important;
   line-height: 0.85 !important;
   font-size: clamp(46px, 7.4vw, 116px) !important;
   color: var(--lux-ivory);
@@ -200,20 +201,20 @@ body {
 .story-masthead h1 em,
 .atelier-masthead h1 em,
 .journal-masthead h1 em,
-.contact-intro h1 em,
-.sifr-note-story__intro h2 em,
-.sifr-bottle-card__copy h2 em,
-.story-end h2 em,
-.atelier-process__head h2 em,
-.atelier-materials h2 em,
-.also-like__head h2 em,
-.reviews-strip__head h2 em,
-.checkout-head h1 em,
-.checkout-done h1 em,
 .not-found h1 em,
 .story-image-band > div em {
   color: var(--lux-gold) !important;
   font-weight: 400 !important;
+}
+
+/* Gilda Display runs wider than the previous face, so these columns holding
+   the longest unbreakable headline tokens step down a size to stay inside
+   their measure at the standard display scale. */
+.contact-intro h1,
+.atelier-process__head h2,
+.atelier-materials h2 {
+  letter-spacing: -0.032em !important;
+  font-size: clamp(42px, 6.2vw, 96px) !important;
 }
 
 /* Subtitles / eyebrows — 11px uppercase sans, 0.5em, 0.5 opacity
@@ -574,14 +575,14 @@ img {
   align-items: baseline;
   gap: 10px;
 }
-/* Wordmark — Italiana reads far more like a fashion-house logotype than a
-   letter-spaced sans, so it carries the display face at a larger optical size. */
+/* Wordmark — Gilda Display has a more defined terminal and higher contrast,
+   so it reads distinctly luxe at the brand size with subtle letter-spacing. */
 .brand > span,
 .footer-brand {
   font-family: var(--display) !important;
   font-weight: 400 !important;
-  font-size: 26px !important;
-  letter-spacing: 0.3em !important;
+  font-size: 25px !important;
+  letter-spacing: 0.24em !important;
   color: var(--lux-ivory) !important;
 }
 .brand small {
