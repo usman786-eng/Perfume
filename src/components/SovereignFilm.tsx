@@ -105,6 +105,20 @@ export default function SovereignFilm({
   const pointerRef = useRef({ x: 0, y: 0 });
   const lastChapterSpokenRef = useRef<number>(-1);
   const clickPlayedRef = useRef(false);
+  // Tracks whether any part of the film section is on screen so the heavy
+  // canvas FX loop can sleep while the user is elsewhere on the page.
+  const visibleRef = useRef(true);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   const [chapter, setChapter] = useState(0);
   const [alchemicalStage, setAlchemicalStage] = useState<'CLEAR' | 'ROSE GOLD' | 'AMBER'>('CLEAR');
@@ -277,7 +291,10 @@ export default function SovereignFilm({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const dustMotes: DustMote[] = Array.from({ length: 140 }, () => ({
+    // Scale particle budgets down on narrow screens where the canvas is small
+    // and mobile GPUs are fill-rate limited.
+    const isSmallScreen = window.innerWidth < 720;
+    const dustMotes: DustMote[] = Array.from({ length: isSmallScreen ? 70 : 140 }, () => ({
       x: Math.random(),
       y: Math.random(),
       z: 0.2 + Math.random() * 0.8,
@@ -287,7 +304,7 @@ export default function SovereignFilm({
       phase: Math.random() * Math.PI * 2,
     }));
 
-    const mistDroplets: MistDroplet[] = Array.from({ length: 320 }, (_, i) => ({
+    const mistDroplets: MistDroplet[] = Array.from({ length: isSmallScreen ? 150 : 320 }, (_, i) => ({
       angle: -Math.PI * 0.5 + (Math.random() - 0.5) * 1.95,
       speed: 0.22 + Math.random() * 0.95,
       spread: 0.05 + Math.random() * 0.36,
@@ -298,9 +315,10 @@ export default function SovereignFilm({
     }));
 
     const vortexColors = ['#d6324a', '#b8253c', '#7ab85c', '#a3d977', '#d89b48', '#f5dca8'];
-    const vortexParticles: VortexParticle[] = Array.from({ length: 68 }, (_, i) => ({
+    const vortexCount = isSmallScreen ? 36 : 68;
+    const vortexParticles: VortexParticle[] = Array.from({ length: vortexCount }, (_, i) => ({
       radius: 0.02 + Math.random() * 0.085,
-      angle: (i / 68) * Math.PI * 2,
+      angle: (i / vortexCount) * Math.PI * 2,
       height: (Math.random() - 0.5) * 0.22,
       speed: 0.9 + Math.random() * 1.4,
       color: vortexColors[i % vortexColors.length],
@@ -311,7 +329,7 @@ export default function SovereignFilm({
     let height = 0;
     let dpr = 1;
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, isSmallScreen ? 1.5 : 2);
       width = canvas.clientWidth || window.innerWidth;
       height = canvas.clientHeight || window.innerHeight;
       canvas.width = Math.floor(width * dpr);
@@ -382,6 +400,11 @@ export default function SovereignFilm({
     };
 
     const render = (now: number) => {
+      // Sleep the expensive canvas work while the film is fully off screen.
+      if (!visibleRef.current) {
+        raf = requestAnimationFrame(render);
+        return;
+      }
       const elapsed = (now - startTime) * 0.001;
 
       // Smoothly damp scroll progress so frames scrub like a 60fps cinema video
@@ -886,6 +909,8 @@ export default function SovereignFilm({
               src={stage.src}
               alt=""
               fetchPriority={index === 0 ? 'high' : 'auto'}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
               style={{ opacity: index === 0 ? 1 : 0 }}
             />
           ))}

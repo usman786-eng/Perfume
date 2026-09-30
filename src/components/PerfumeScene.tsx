@@ -520,7 +520,7 @@ function Scene({ progress, note, reducedMotion }: MotionSceneProps) {
       <Sparkles count={reducedMotion ? 0 : 42} scale={[4.7, 4.9, 3]} size={1.4} speed={reducedMotion ? 0 : 0.12} opacity={0.22} color="#e6d5c4" position={[offset, 0, 0]} />
       <OrbitControls target={[offset, 0, 0]} enablePan={false} enableZoom={false} enableDamping dampingFactor={0.08} minPolarAngle={Math.PI / 2 - 0.25} maxPolarAngle={Math.PI / 2 + 0.25} />
       <CameraBreath progress={progress} reducedMotion={reducedMotion} />
-      <EffectComposer multisampling={isMobile ? 0 : 8}>
+      <EffectComposer multisampling={isMobile ? 0 : 4}>
         {!isMobile && !reducedMotion && <DepthOfField worldFocusDistance={6.3} worldFocusRange={3.6} focalLength={0.028} bokehScale={1.5} />}
         <Bloom luminanceThreshold={0.38} luminanceSmoothing={0.3} intensity={0.42} mipmapBlur />
         <ChromaticAberration offset={chromaticOffset} radialModulation={false} />
@@ -534,7 +534,7 @@ function Scene({ progress, note, reducedMotion }: MotionSceneProps) {
 export default function PerfumeScene({ progress, note }: SceneProps) {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   return (
-    <Canvas className="perfume-canvas" dpr={window.innerWidth < 720 ? [1, 1.5] : [1.5, 2]} shadows gl={{ alpha: true, antialias: true, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.04 }} camera={{ position: [0, 0, 6.3], fov: 33 }}>
+    <Canvas className="perfume-canvas" dpr={window.innerWidth < 720 ? [1, 1.5] : [1, 1.5]} shadows gl={{ alpha: true, antialias: false, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.04 }} camera={{ position: [0, 0, 6.3], fov: 33 }}>
       <Scene progress={progress} note={note} reducedMotion={reducedMotion} />
     </Canvas>
   );
