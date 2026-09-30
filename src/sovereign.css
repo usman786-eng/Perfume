@@ -3,7 +3,7 @@
 .sovereign-film__stage{position:sticky;top:0;height:100svh;min-height:680px;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 72% 45%,#382720 0%,#211a1c 43%,#100e10 100%);--mist-energy:.38}
 .sovereign-film__frames,.sovereign-film__wash,.sovereign-film__diffusion,.sovereign-film__grain{position:absolute;inset:0;pointer-events:none}
 .sovereign-film__frames{z-index:0;overflow:hidden;background:#100e10}
-.sovereign-film__frames img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:67% center;transform:scale(1.035);filter:brightness(.75) saturate(.84);will-change:opacity}
+.sovereign-film__frames img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:67% center;transform:scale(1.035);filter:brightness(.75) saturate(.84);will-change:opacity,transform}
 .sovereign-film__wash{z-index:1;background:linear-gradient(90deg,#100d10e8 0%,#100d10bd 24%,#100d1069 43%,#100d1010 76%),linear-gradient(0deg,#100d10a8 0%,transparent 31%,#100d1038 100%),radial-gradient(ellipse at 72% 47%,transparent 28%,#09080aa6 100%)}
 .sovereign-film__diffusion{z-index:2;inset:7% 2% 7% 30%;overflow:hidden;opacity:var(--mist-energy);mix-blend-mode:screen;mask-image:radial-gradient(ellipse at 62% 47%,#000 10%,#0009 47%,transparent 78%)}
 .sovereign-film__diffusion:before,.sovereign-film__diffusion:after,.sovereign-film__diffusion i{content:'';position:absolute;display:block;border-radius:50%;filter:blur(35px);background:radial-gradient(ellipse at 50% 50%,#e8c19a52 0%,#c08c6940 28%,#a87a5c1e 52%,transparent 73%);will-change:transform,opacity;animation:sovereignDiffusion 15s ease-in-out infinite alternate}
@@ -39,6 +39,41 @@
 .sovereign-film__progress{position:absolute;z-index:10;left:0;right:0;bottom:0;height:3px;background:repeating-linear-gradient(90deg,#ffffff38 0 1px,transparent 1px 9px)}
 .sovereign-film__progress>div{width:100%;height:100%;background:#d5a474;transform:scaleX(0);transform-origin:left;will-change:transform;box-shadow:0 0 9px #d5a47488}
 @keyframes sovereignDiffusion{0%{transform:translate3d(-5%,4%,0) scale(.88) rotate(-6deg);opacity:.58}50%{opacity:.92}100%{transform:translate3d(6%,-5%,0) scale(1.12) rotate(5deg);opacity:.7}}
+
+/* ——— Real optics: volumetric beam, caustics, flare, spray, botanicals, amber ——— */
+.sovereign-film__beam{position:absolute;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.52}
+.sovereign-film__beam:before{content:'';position:absolute;top:-8%;left:33%;width:60%;height:117%;clip-path:polygon(44% 0,57% 0,89% 100%,8% 100%);background:linear-gradient(180deg,#ffe9c47d 0%,#f6cd9252 28%,#d9a96736 56%,#b98d541a 82%,transparent 97%);filter:blur(22px);transform-origin:50% 0;animation:sovereignBeam 8s ease-in-out infinite alternate}
+.sovereign-film__beam:after{content:'';position:absolute;top:-4%;left:46%;width:32%;height:92%;clip-path:polygon(47% 0,53% 0,80% 100%,18% 100%);background:repeating-linear-gradient(180deg,#fff2d836 0 2px,transparent 2px 54px);filter:blur(5px);animation:sovereignRays 11s linear infinite}
+@keyframes sovereignBeam{from{opacity:.72;transform:scaleX(.96)}to{opacity:1;transform:scaleX(1.05)}}
+@keyframes sovereignRays{from{background-position:0 0;opacity:.55}to{background-position:0 108px;opacity:1}}
+
+.sovereign-film__caustics{position:absolute;left:0;right:0;bottom:0;height:36%;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:.4;background:radial-gradient(44% 60% at 64% 90%,#f2c68c3d 0%,#e7b26f22 36%,transparent 74%),radial-gradient(30% 48% at 75% 98%,#ffe1a630 0%,transparent 70%),radial-gradient(26% 42% at 51% 100%,#d9a86526 0%,transparent 72%);filter:blur(7px);mask-image:linear-gradient(0deg,#000 6%,transparent 94%);animation:sovereignCausticDrift 11s ease-in-out infinite alternate}
+.sovereign-film__caustics:after{content:'';position:absolute;inset:-40%;background:repeating-conic-gradient(from 12deg at 66% 92%,#ffe9c226 0 3deg,transparent 3deg 11deg);filter:blur(9px);opacity:.55;animation:sovereignCausticSpin 26s linear infinite}
+@keyframes sovereignCausticDrift{from{transform:translateX(-1.5%) scale(1)}to{transform:translateX(1.7%) scale(1.05)}}
+@keyframes sovereignCausticSpin{to{transform:rotate(360deg)}}
+
+.sovereign-film__flare{position:absolute;top:30%;left:0;width:100%;height:15%;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:var(--flare-o,0);transform:translate3d(var(--flare-x,-75%),0,0);filter:blur(9px) saturate(1.4);will-change:transform,opacity;background:linear-gradient(90deg,transparent 0%,#ff9a4526 14%,#ffe6b0b8 38%,#fffaf0ee 50%,#a8e4ff30 63%,#ff7ab826 79%,transparent 100%)}
+.sovereign-film__flare:after{content:'';position:absolute;left:50%;top:50%;width:110px;height:110px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fffaf0f0 0%,#ffd9a3bb 32%,transparent 72%);filter:blur(3px)}
+
+.sovereign-film__spray{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity .55s ease;background:radial-gradient(40% 34% at 68% 33%,#ffe9c75c 0%,#f3cf9a38 32%,#d9a96717 55%,transparent 74%);animation:sovereignSpray 2.8s ease-in-out infinite alternate}
+.sovereign-film__stage[data-frame='2'] .sovereign-film__spray{opacity:var(--spray,0)}
+@keyframes sovereignSpray{from{transform:scale(.97) translateX(1%)}to{transform:scale(1.05) translateX(-1%)}}
+
+.sovereign-film__internal{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity .55s ease;background:radial-gradient(22% 30% at 64% 46%,#a8231f57 0%,transparent 72%),radial-gradient(16% 20% at 71% 60%,#2f6f334a 0%,transparent 74%),radial-gradient(20% 24% at 59% 63%,#c98e3a52 0%,transparent 75%),radial-gradient(26% 32% at 66% 52%,#f0c88a3d 0%,transparent 78%);animation:sovereignInner 5.5s ease-in-out infinite alternate}
+.sovereign-film__stage[data-frame='3'] .sovereign-film__internal{opacity:var(--glow,0)}
+@keyframes sovereignInner{from{filter:blur(14px);transform:scale(.98)}to{filter:blur(21px);transform:scale(1.04)}}
+
+.sovereign-film__amber{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:0;transition:opacity .5s ease;background:radial-gradient(48% 44% at 66% 58%,#ffb85155 0%,#ef8f2e40 38%,transparent 72%),radial-gradient(30% 26% at 63% 40%,#ffdfad45 0%,transparent 70%),linear-gradient(0deg,#c8751f33 0%,transparent 52%);animation:sovereignAmber 6s ease-in-out infinite alternate}
+.sovereign-film__stage[data-frame='4'] .sovereign-film__amber{opacity:var(--amber,0)}
+@keyframes sovereignAmber{from{filter:brightness(.92)}to{filter:brightness(1.14)}}
+
+.sovereign-film__particles{position:absolute;inset:0;z-index:4;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
+
+/* Narration subtitle — the film's voice over each scene */
+.sovereign-film__narration{position:absolute;z-index:6;left:50%;bottom:56px;transform:translateX(-50%);width:min(660px,84vw);text-align:center;pointer-events:none}
+.sovereign-film__narration p{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;color:#f7ead8;font:italic 400 clamp(15px,1.6vw,22px)/1.4 var(--serif);letter-spacing:.01em;text-shadow:0 1px 18px #000000d1,0 0 44px #000000a6}
+.sovereign-film__narration span{font:500 5.5px/1 'DM Sans',sans-serif;letter-spacing:.36em;color:#d9ab77;text-transform:uppercase;font-style:normal}
+.sovereign-film__kicker i{font-style:normal;color:#a4917f;letter-spacing:.13em}
 
 /* Sovereign introduction on the home page */
 .sovereign-feature{position:relative;overflow:hidden;display:grid;grid-template-columns:1.08fr .92fr;align-items:center;gap:clamp(45px,8vw,120px);padding:105px 9vw 112px;background:#21191c;color:#f1ebe3}
@@ -112,6 +147,14 @@
   .sovereign-film__wash{background:linear-gradient(180deg,#100d10c9 0%,#100d108f 24%,#100d1030 47%,#100d108c 100%),linear-gradient(90deg,#100d1056,transparent 70%),radial-gradient(ellipse at 68% 50%,transparent 22%,#09080a92 100%)}
   .sovereign-film__diffusion{inset:10% -21% 7% 16%;opacity:var(--mist-energy,.38)}
   .sovereign-film__diffusion:before,.sovereign-film__diffusion:after,.sovereign-film__diffusion i{filter:blur(28px)}
+  .sovereign-film__beam{opacity:.42}
+  .sovereign-film__beam:before{left:34%;width:66%;filter:blur(15px)}
+  .sovereign-film__beam:after{left:44%;width:40%}
+  .sovereign-film__caustics{height:27%}
+  .sovereign-film__flare{top:24%;height:12%}
+  .sovereign-film__narration{bottom:44px;width:calc(100vw - 116px)}
+  .sovereign-film__narration p{font-size:13px;gap:6px}
+  .sovereign-film__narration span{font-size:4.5px}
   .sovereign-film__topline{top:15px;left:19px;right:19px;font-size:5px;letter-spacing:.09em}
   .sovereign-film__layout{padding:63px 20px 74px;display:block}
   .sovereign-film__copy{position:absolute;top:10%;left:20px;right:47px;max-width:300px}
@@ -163,5 +206,6 @@
   .sovereign-film{height:auto}
   .sovereign-film__stage{position:relative;top:auto;height:100svh;min-height:620px}
   .sovereign-film__diffusion:before,.sovereign-film__diffusion:after,.sovereign-film__diffusion i{animation:none}
+  .sovereign-film__beam:before,.sovereign-film__beam:after,.sovereign-film__caustics,.sovereign-film__caustics:after,.sovereign-film__spray,.sovereign-film__internal,.sovereign-film__amber{animation:none}
   .sovereign-feature__visual img,.sovereign-gallery__frame img{transition:none}
 }

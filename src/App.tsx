@@ -364,7 +364,7 @@ function SovereignFeature() {
   return (
     <section className="sovereign-feature" aria-labelledby="sovereign-feature-title">
       <Link to="/sovereign" className="sovereign-feature__visual" aria-label="Enter the Sovereign film">
-        <img src="/images/sovereign-01.jpg" alt="Sovereign smoked-amber perfume flacon in warm diffusion mist" loading="lazy" />
+        <img src="/images/sovereign-film-01.jpg" alt="The faceted DAYRAH SCENTS crystal bottle suspended in a golden beam above a sharp obsidian reflection" loading="lazy" />
         <span>NEW COMPOSITION&nbsp; / &nbsp;NO. 04</span>
       </Link>
       <div className="sovereign-feature__copy" data-gsap-reveal>

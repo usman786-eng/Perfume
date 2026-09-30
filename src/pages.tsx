@@ -123,9 +123,9 @@ export function SovereignPage() {
 
       <section className="sovereign-gallery" id="sovereign-gallery" aria-labelledby="sovereign-gallery-title">
         <div className="sovereign-gallery__head" data-gsap-reveal>
-          <p className="eyebrow"><span /> FIVE STUDIES / THE SOVEREIGN FILM</p>
+          <p className="eyebrow"><span /> FIVE SCENES / THE SOVEREIGN FILM</p>
           <h2 id="sovereign-gallery-title">A presence,<br /><em>in five movements.</em></h2>
-          <p>From the first glint of smoked glass to the last trace of amber, each still holds one part of the composition.</p>
+          <p>From the suspension in the void to the final click of the cap, each still holds one scene of the ten-second film.</p>
         </div>
         <div className="sovereign-gallery__grid">
           {sovereignFilmFrames.map((frame, index) => (
@@ -153,7 +153,7 @@ export function SovereignPage() {
 
       <section className="sovereign-buy" id="sovereign-buy">
         <figure className="sovereign-buy__image" data-gsap-reveal>
-          <img src="/images/sovereign-04.jpg" alt="Sovereign dark amber bottle reflected in a polished black surface beneath fading bronze light" loading="lazy" />
+          <img src="/images/sovereign-film-05.jpg" alt="The DAYRAH SCENTS bottle glowing with deep amber liquid on polished obsidian beneath a warm golden-hour light" loading="lazy" />
           <figcaption>THE LASTING TRACE&nbsp; / &nbsp;SOVEREIGN</figcaption>
         </figure>
         <BuyPanel product={product} />
