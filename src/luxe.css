@@ -573,6 +573,8 @@ img {
   transform: translate(-50%, -50%);
   flex-direction: row;
   align-items: baseline;
+  /* Keeps the wordmark link a comfortable tap target on touch. */
+  min-height: 44px;
   gap: 10px;
 }
 /* Wordmark — Gilda Display has a more defined terminal and higher contrast,
@@ -605,6 +607,9 @@ img {
   font-family: var(--display) !important;
   font-size: 14px !important;
   letter-spacing: 0.3em !important;
+  /* Comfortable tap target without altering the visual type size. */
+  min-height: 44px;
+  padding: 0 6px;
 }
 .bag-count {
   background: var(--lux-gold) !important;
@@ -615,8 +620,9 @@ img {
   flex-direction: column;
   justify-content: center;
   gap: 7px;
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
+  margin-right: -7px;
   border: 0;
   background: none;
   padding: 0;
@@ -1256,6 +1262,16 @@ img {
 .product-card:focus-within .product-card__price {
   opacity: 0.5 !important;
   max-height: 30px;
+}
+/* Touch devices have no hover, so the reveal above would never fire and the
+   price would stay permanently hidden. Show it outright instead of relying on
+   a pointer that does not exist. */
+@media (hover: none) {
+  .product-card__price {
+    opacity: 0.5 !important;
+    /* Two lines at narrow card widths, so allow more than one line of height. */
+    max-height: 44px;
+  }
 }
 .product-hero {
   background: var(--lux-surface);

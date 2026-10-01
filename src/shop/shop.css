@@ -65,12 +65,26 @@
 .product-card__cta{position:absolute;bottom:16px;right:16px;color:#f5eee7;font-size:6px;letter-spacing:.14em;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s}
 .product-card__cta i{font-style:normal;color:#ddb489}
 .product-card:hover .product-card__cta{opacity:1;transform:none}
+/* Touch devices never fire :hover, so the "DISCOVER" affordance would stay
+   invisible. Show it outright rather than depending on a missing pointer. */
+@media (hover:none){.product-card__cta{opacity:1;transform:none}}
+/* With the CTA always present on touch, it collides with the index label on
+   narrow cards. Stack them instead of letting them overlap. */
+@media (hover:none){.product-card__cta{bottom:auto;top:14px}}
+/* Cards narrower than ~270px cannot fit the decorative index beside the
+   "DISCOVER" CTA, so the index is dropped (it carries no information) rather
+   than allowed to overlap. That affects the two-column phone grid and the
+   tablet/desktop grids; the 700-1020px two-column range keeps the index. */
+@media (max-width:700px){.product-card__index{display:none}}
+@media (min-width:1021px){.product-card__index{display:none}}
 .product-card__meta{padding:16px 2px 0}
 .product-card__name{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.product-card__price{min-width:0;text-align:right;line-height:1.5}
 .product-card__name h3{margin:0;font:400 23px/1.05 var(--serif)}
 .product-card__name h3 a{transition:color .2s}
 .product-card__name h3 a:hover{color:#a16c53}
-.product-card__name span{font-size:6px;letter-spacing:.13em;color:#a3907c;white-space:nowrap}
+/* nowrap clipped the price on narrow cards — it wraps to two lines instead. */
+.product-card__name span{font-size:6px;letter-spacing:.13em;color:#a3907c}
 .product-card__notes{margin:7px 0 13px;font-size:6px;letter-spacing:.14em;color:#90755c}
 .product-card__add{width:100%;padding:12px 0;border:1px solid #29241f26;background:transparent;font-size:6px;letter-spacing:.16em;color:#4a4034;cursor:pointer;transition:background .25s,color .25s,border-color .25s}
 .product-card__add:hover{background:#241d20;border-color:#241d20;color:#f2ece4}
@@ -208,6 +222,19 @@
 .checkout-done__actions .button-outline:hover{background:#2c2223;color:#f2ece4}
 
 /* ---------- Mobile ---------- */
+/* Tablets sit above the 1020px breakpoint but are far too narrow for five
+   columns — cards dropped to ~155px and clipped the price line. Step down to
+   three columns before that happens. */
+@media(max-width:1300px){
+  .shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .also-like .shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+/* Five columns only clear ~280px per card above 1600px; below that they
+   squeeze the frame and the card labels overlap. */
+@media(min-width:1301px) and (max-width:1600px){
+  .shop-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .also-like .shop-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 @media(max-width:1020px){
   .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .also-like .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
