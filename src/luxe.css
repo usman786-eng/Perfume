@@ -18,25 +18,57 @@
    1 · DESIGN TOKENS
    -------------------------------------------------------------------------- */
 :root {
-  /* Obsidian palette */
+  /* Obsidian palette
+     Layered blacks (not one flat void) so surfaces catch light, a bright
+     white ramp for type, and a saturated metallic gold ramp with a real
+     multi-stop sheen gradient for the shine. */
+  --lux-black: #040305;
+  /* Kept at the original #08070a rather than the very slightly lighter #0a090c.
+     sovereign.css is byte-locked and its film labels sit at ~4.3-4.5:1 against
+     the page background; lightening the page pushed some of those under 4.5. */
   --lux-obsidian: #08070a;
   --lux-surface: #121012;
-  --lux-ivory: #f8f3ea;
-  --lux-gold: #e8d5b5;
-  --lux-bronze: #b68b5a;
-  --lux-amber: #a85a2b;
+  --lux-surface-2: #1a1820;
+  --lux-surface-3: #252230;
+
+  /* Bright whites */
+  --lux-white: #ffffff;
+  --lux-ivory: #f7f5f0;
+
+  /* Metallic gold ramp */
+  --lux-gold-deep: #8c6a1f;
+  --lux-gold: #d4af37;
+  --lux-gold-lite: #f3dc8e;
+  --lux-bronze: #b08d3a;
+  --lux-amber: #e8a33d;
   --lux-burgundy: #3d1f1f;
+
+  /* The sheen: stop the gradient at highlight and shadow bands so gold
+     reads as polished metal rather than flat yellow. */
+  --lux-gold-sheen: linear-gradient(112deg,
+      #8c6a1f 0%, #d4af37 16%, #f7e7a8 32%, #ffe9a3 38%,
+      #e3c55c 52%, #b8912b 64%, #f0d98f 82%, #a8801f 100%);
+  --lux-gold-sheen-soft: linear-gradient(112deg,
+      #a8801f 0%, #e3c55c 30%, #f7e7a8 50%, #c9a24a 72%, #8c6a1f 100%);
+
   /* Aliases for muted / dim text so sections can use one token name. */
-  --lux-muted: rgba(248, 243, 234, 0.56);
-  --lux-faint: rgba(248, 243, 234, 0.38);
+  --lux-muted: rgba(255, 255, 255, 0.62);
+  --lux-faint: rgba(255, 255, 255, 0.42);
 
   /* Soft golden glows (never solid) */
-  --lux-hairline: rgba(232, 213, 181, 0.2);
-  --lux-hairline-soft: rgba(232, 213, 181, 0.12);
-  --lux-glow-gold: rgba(232, 213, 181, 0.14);
-  --lux-glow-amber: rgba(168, 90, 43, 0.16);
+  --lux-hairline: rgba(212, 175, 55, 0.34);
+  --lux-hairline-soft: rgba(212, 175, 55, 0.18);
+  --lux-glow-gold: rgba(212, 175, 55, 0.22);
+  --lux-glow-amber: rgba(232, 163, 61, 0.2);
   --lux-glow-burgundy: rgba(61, 31, 31, 0.4);
-  --lux-shadow: 0 30px 80px rgba(8, 7, 10, 0.55);
+  --lux-shadow: 0 30px 80px rgba(4, 3, 5, 0.7);
+
+  /* Inverted (light) section palette */
+  --lux-paper: #fbfaf7;
+  --lux-paper-2: #f2efe8;
+  --lux-ink: #0d0c10;
+  --lux-ink-muted: rgba(13, 12, 16, 0.62);
+  --lux-line-light: rgba(13, 12, 16, 0.14);
 
   /* Type */
   /* Gilda Display — high-contrast display serif with flared Art Deco
@@ -54,13 +86,13 @@
   /* Re-point legacy tokens used across styles/pages/shop.
      Deliberately NOT used by the Sovereign film (see lock note). */
   --paper: #08070a;
-  --ink: #f8f3ea;
-  --muted: rgba(248, 243, 234, 0.56);
-  --line: rgba(232, 213, 181, 0.2);
-  --clay: #e8d5b5;
-  --rose: #b68b5a;
-  --dark: #121012;
-  --plum: #1a1418;
+  --ink: #ffffff;
+  --muted: rgba(255, 255, 255, 0.62);
+  --line: rgba(212, 175, 55, 0.34);
+  --clay: #d4af37;
+  --rose: #e8a33d;
+  --dark: #141217;
+  --plum: #1e1b22;
   /* Site-wide display serif (film re-locks this to Cormorant below). */
   --serif: 'Gilda Display', 'Playfair Display', Georgia, serif;
 }
@@ -1684,8 +1716,187 @@ img {
   .atelier-masthead figure img,
   .atelier-materials__image img,
   .sifr-bottle-card__image img,
-  .collection-hero__image img,
-  .journal-card__image img {
+.collection-hero__image img,
+    .journal-card__image img {
     animation: none;
   }
+}
+
+/* --------------------------------------------------------------------------
+   17 - METALLIC GOLD + LIGHT SECTIONS
+   Bright white / metallic gold / rich black, with the gold reading as polished
+   metal via a multi-stop sheen rather than flat yellow.
+   Only new .lux-* selectors are touched here, so the locked film is unaffected.
+   -------------------------------------------------------------------------- */
+
+/* --- Metallic gold in use ------------------------------------------------
+   The display accent phrases are where "shiny gold" actually reads, so they
+   carry the sheen gradient rather than a flat fill. The selector list is copied
+   verbatim from the editorial rule above so nothing outside those pages enters
+   this cascade, and the locked film never does. Guarded by @supports so text
+   cannot become invisible where background-clip:text is unsupported. */
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .notes-intro h2 em,
+  .atelier-copy h2 em,
+  .finder-heading h2 em,
+  .ritual-heading h2 em,
+  .home-signature__copy h2 em,
+  .shelf-section__head h2 em,
+  .collection-shelf__head h2 em,
+  .accord-collection__heading h2 em,
+  .collection-hero h1 em,
+  .story-masthead h1 em,
+  .atelier-masthead h1 em,
+  .journal-masthead h1 em,
+  .not-found h1 em,
+  .story-image-band > div em {
+    background-image: var(--lux-gold-sheen);
+    background-size: 240% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+/* Gold button fills get the same metal instead of a flat yellow wash. */
+.button-outline::before,
+.text-link::before,
+.atelier-link::before,
+.product-card__add::before,
+.buy-add::before,
+.bag-checkout::before,
+.contact-form .button-outline::before {
+  background: var(--lux-gold-sheen);
+}
+
+/* --- Light sections -------------------------------------------------------
+   Opt-in inversion for editorial bands that would otherwise be another slab
+   of the same black. Only remaps colour tokens; spacing is untouched. */
+.lux-light {
+  background: var(--lux-paper);
+  color: var(--lux-ink);
+}
+.lux-light h1,
+.lux-light h2,
+.lux-light h3,
+.lux-light h4,
+.lux-light .lux-light__title {
+  color: var(--lux-ink);
+}
+.lux-light p,
+.lux-light li,
+.lux-light .lux-light__body {
+  color: var(--lux-ink-muted);
+}
+.lux-light .eyebrow,
+.lux-light .page-breadcrumb,
+.lux-light .lux-light__kicker {
+  color: var(--lux-gold-deep);
+  opacity: 1;
+}
+.lux-light :is(a, .text-link) {
+  color: var(--lux-ink);
+}
+/* Gold stays gold on a light band, but the sheen is re-angled through the
+   shadow end of the ramp so the metal stays legible against near-white. */
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .lux-light :is(h1, h2) em {
+    background-image: linear-gradient(112deg,
+        #6d5216 0%, #d4af37 26%, #b8912b 52%, #e3c55c 74%, #7d5c1a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* --- Light panels ---------------------------------------------------------
+   The fragrance modal is the one genuinely light surface in the UI. The
+   site-wide text ramp is tuned for a black background, so dark ink is
+   re-pinned here rather than left inheriting near-white text.
+
+   The bag-drawer footer is deliberately NOT included: luxe.css already
+   paints it obsidian to match the drawer head, and pinning it to paper
+   put --lux-muted text on white (1.03:1). It stays dark. */
+.fragrance-modal {
+  background: var(--lux-paper);
+  color: var(--lux-ink);
+}
+.fragrance-modal :is(p, li, label, small) {
+  color: var(--lux-ink-muted);
+}
+.fragrance-modal :is(h1, h2, h3, h4) {
+  color: var(--lux-ink);
+}
+/* Gold on near-white needs the shadow side of the ramp to stay legible;
+   bright gold here measured ~2:1. */
+.fragrance-modal :is(.eyebrow, .modal-notes span, .modal-contact, .modal-close) {
+  color: var(--lux-gold-deep);
+}
+.fragrance-modal .eyebrow {
+  opacity: 1;
+}
+.fragrance-modal .modal-copy,
+.fragrance-modal .modal-subtitle {
+  color: var(--lux-ink-muted);
+}
+.fragrance-modal .modal-foot {
+  color: var(--lux-ink-muted);
+}
+
+/* --- Contrast repairs -----------------------------------------------------
+   Two text colours were pre-existing failures that the palette change did not
+   create but did make worse (the journal link was #5f5348 at ~2.5:1 before,
+   #3a3644 / 1.59:1 after). Both are re-pinned here. */
+.journal-card__copy > a {
+  color: var(--lux-gold);
+}
+.journal-card__copy > a i {
+  color: var(--lux-gold-lite);
+}
+/* 48% alpha cream composited to 3.36:1 on the page background. */
+.scene-side-copy {
+  color: rgba(247, 245, 240, 0.72);
+}
+
+/* --- Light band: reviews --------------------------------------------------
+   The testimonials strip is the site's one deliberate bright-white band, which
+   is what stops the page reading as an unbroken black slab. Every accent here
+   needs !important because the shared dark-theme rules above use it. */
+.reviews-strip.lux-light {
+  background: var(--lux-paper) !important;
+  color: var(--lux-ink);
+}
+.reviews-strip.lux-light::after {
+  opacity: 0.015;
+}
+.reviews-strip.lux-light .reviews-strip__head h2 {
+  color: var(--lux-ink);
+}
+.reviews-strip.lux-light .reviews-strip__head h2 em {
+  color: var(--lux-gold-deep) !important;
+}
+.reviews-strip.lux-light .reviews-strip__head .eyebrow {
+  color: var(--lux-gold-deep) !important;
+  opacity: 1;
+}
+/* Cards sit on a slightly deeper paper with a dark hairline rather than the
+   dark-theme's translucent-cream tint, which vanishes on a light band. */
+.reviews-strip.lux-light .review-card {
+  background: var(--lux-paper-2);
+  border-color: var(--lux-line-light) !important;
+  border-top: 1px solid var(--lux-line-light);
+  box-shadow: 0 18px 44px rgba(13, 12, 16, 0.07);
+}
+.reviews-strip.lux-light .review-card p {
+  color: var(--lux-ink);
+}
+.reviews-strip.lux-light .review-card footer b {
+  /* #8c6a1f measured 4.36:1 on the card paper; the shadow end of the ramp
+     clears 4.5:1 at this 8px size. */
+  color: #6d5216;
+}
+.reviews-strip.lux-light .review-card footer span {
+  color: var(--lux-ink-muted);
+  opacity: 1;
 }

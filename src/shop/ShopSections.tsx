@@ -148,7 +148,7 @@ export function ReviewsStrip({ product }: { product?: Product } = {}) {
   if (shown.length === 0) return null;
 
   return (
-    <section className="reviews-strip" data-gsap-reveal aria-label={product ? `${product.name} reviews` : 'Dayrah reviews'}>
+    <section className="reviews-strip lux-light" data-gsap-reveal aria-label={product ? `${product.name} reviews` : 'Dayrah reviews'}>
       <div className="reviews-strip__head">
         <p className="eyebrow"><span /> WORN & REMEMBERED{product ? ` / ${product.name.toUpperCase()}` : ''}</p>
         <h2>From those<br /><em>who wear it.</em></h2>

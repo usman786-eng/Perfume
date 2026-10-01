@@ -15,7 +15,7 @@ export function ProductPage() {
 
   return (
     <motion.div className="editorial-page product-page" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6, ease: [0.22, 1, 0.36, 1] }}>
-      <div className="page-breadcrumb"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>{product.name.toUpperCase()}</span></div>
+      <div className="page-breadcrumb lux-light"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>{product.name.toUpperCase()}</span></div>
       <section className="product-hero">
         <figure className="product-hero__media" style={{ '--accent': product.accent } as CSSProperties}>
           <img src={product.image} alt={product.imageAlt} />
@@ -79,7 +79,7 @@ export function CheckoutPage() {
 
   return (
     <motion.div className="editorial-page checkout-page" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6 }}>
-      <div className="page-breadcrumb"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>CHECKOUT</span></div>
+      <div className="page-breadcrumb lux-light"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>CHECKOUT</span></div>
       <section className="checkout-grid">
         <div className="checkout-form-wrap">
           <div className="checkout-head">

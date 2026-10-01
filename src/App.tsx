@@ -297,7 +297,7 @@ function ScentFinder({ onChooseNote }: { onChooseNote: (note: Note) => void }) {
   };
 
   return (
-    <section className="finder-section" id="finder">
+    <section className="finder-section lux-light" id="finder">
       <div className="finder-heading" data-gsap-reveal><p className="eyebrow"><span /> A SMALL SCENT CONSULTATION</p><h2>Begin with<br /><em>a feeling.</em></h2><p>Three quick choices. A note to start with. Let your instinct lead.</p></div>
       <div className="finder-panel" data-gsap-reveal>
         <div className="finder-panel-top"><span>FIND YOUR NOTE</span><span>{recommendation ? 'YOUR RESULT' : `0${step + 1} / 03`}</span></div>
@@ -387,7 +387,7 @@ function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNot
       <SovereignFeature />
       <EssenceFilm scrollTo="#notes" preload="metadata" />
       <NoteExplorer note={note} setNote={setNote} />
-      <section className="home-signature">
+      <section className="home-signature lux-light">
         <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup><br /><em>A memory in motion.</em></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace. Meet the full composition behind Dayrah's signature fragrance.</p><Link to="/sifr-01" className="text-link">ENTER THE FRAGRANCE <span>↗</span></Link></div>
         <Link to="/sifr-01" className="home-signature__image" aria-label="Discover Sifr 01"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image: an amber perfume bottle amid rose petals and golden light" loading="lazy" /><span>01 / SIFR — THE SIGNATURE</span></Link>
       </section>
@@ -404,7 +404,7 @@ function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNot
       <ScentFinder onChooseNote={setNote} />
       <RitualGuide />
       <Atelier />
-      <section className="home-pages"><p className="eyebrow"><span /> CONTINUE EXPLORING</p><div><Link to="/collection">THE COLLECTION <span>↗</span></Link><Link to="/story">THE HOUSE <span>↗</span></Link><Link to="/journal">FIELD NOTES <span>↗</span></Link></div></section>
+      <section className="home-pages lux-light"><p className="eyebrow"><span /> CONTINUE EXPLORING</p><div><Link to="/collection">THE COLLECTION <span>↗</span></Link><Link to="/story">THE HOUSE <span>↗</span></Link><Link to="/journal">FIELD NOTES <span>↗</span></Link></div></section>
       <ScentMarquee />
       <section className="closing-section"><p className="eyebrow"><span /> DAYRAH&nbsp; / &nbsp;FRAGRANCE HOUSE</p><h2>Let the scent<br /><em>say the rest.</em></h2><Magnetic strength={0.4}><Link to="/contact">CONTACT THE HOUSE <span>↗</span></Link></Magnetic></section>
     </main>
