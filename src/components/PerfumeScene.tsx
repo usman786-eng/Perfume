@@ -84,7 +84,7 @@ function makeLabelTexture() {
   ctx.fillText('EAU DE PARFUM', 512, 516);
   ctx.font = '19px Georgia';
   ctx.letterSpacing = '9px';
-  ctx.fillText('OUD · ROSE · AMBER', 512, 624);
+  ctx.fillText('OUD ┬╖ ROSE ┬╖ AMBER', 512, 624);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 16;

@@ -39,17 +39,17 @@ type VortexParticle = {
 };
 
 /**
- * Ten-stage locked-off cinema sequence mapping every second of the 0–10s timeline:
- * 0–1s: Frame 1A (Poised in the Obsidian Void under 3200K spotlight)
- * 1–2s: Frame 1B (Suspended Sovereign levitating & rotating with prismatic flares)
- * 2–3s: Frame 2A (Cap Release — 24k gold cap begins unscrewing in a tight spiral)
- * 3–4s: Frame 2B (Cap Release — 24k gold cap levitates high, revealing chrome atomizer)
- * 4–5s: Frame 3A (The Diffusion — Chrome atomizer depresses, explosive diamond micro-droplet burst)
- * 5–6s: Frame 3B (The Diffusion — Backlit perfume mist forms lingering volumetric swirls)
- * 6–7s: Frame 4A (The Reveal — Hyper-translucent crystal glass reveals internal botanicals in clear liquid)
- * 7–8s: Frame 4B (The Reveal — Rose, cardamom, bergamot & sandalwood swirl in a luminous vortex)
- * 8–9s: Frame 5A (Alchemical Transition — Liquid shifts to soft blushing rose gold as cap descends)
- * 9–10s: Frame 5B (Alchemical Transition — Deep rich glowing amber light-box & 24k gold cap 'click')
+ * Ten-stage  cinema sequence mapping every second of the 0ΓÇô10s timeline:
+ * 0ΓÇô1s: Frame 1A (Poised in the Obsidian Void under 3200K spotlight)
+ * 1ΓÇô2s: Frame 1B (Suspended Sovereign levitating & rotating with prismatic flares)
+ * 2ΓÇô3s: Frame 2A (Cap Release ΓÇö 24k gold cap begins unscrewing in a tight spiral)
+ * 3ΓÇô4s: Frame 2B (Cap Release ΓÇö 24k gold cap levitates high, revealing chrome atomizer)
+ * 4ΓÇô5s: Frame 3A (The Diffusion ΓÇö Chrome atomizer depresses, explosive diamond micro-droplet burst)
+ * 5ΓÇô6s: Frame 3B (The Diffusion ΓÇö Backlit perfume mist forms lingering volumetric swirls)
+ * 6ΓÇô7s: Frame 4A (The Reveal ΓÇö Hyper-translucent crystal glass reveals internal botanicals in clear liquid)
+ * 7ΓÇô8s: Frame 4B (The Reveal ΓÇö Rose, cardamom, bergamot & sandalwood swirl in a luminous vortex)
+ * 8ΓÇô9s: Frame 5A (Alchemical Transition ΓÇö Liquid shifts to soft blushing rose gold as cap descends)
+ * 9ΓÇô10s: Frame 5B (Alchemical Transition ΓÇö Deep rich glowing amber light-box & 24k gold cap 'click')
  */
 const SEQUENCE_STAGES = [
   { src: '/images/sovereign-ref-bottle.jpg', centerSec: 0.45 },
@@ -103,7 +103,7 @@ export default function SovereignFilm({
   const smoothProgressRef = useRef(0);
   const velocityRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
-  // 35mm depth-rig refs — all driven via transform/opacity only.
+  // 35mm depth-rig refs ΓÇö all driven via transform/opacity only.
   const bgRef = useRef<HTMLDivElement>(null);
   const fgRef = useRef<HTMLDivElement>(null);
   const abyssRef = useRef<HTMLDivElement>(null);
@@ -355,7 +355,7 @@ export default function SovereignFilm({
           (tSec >= 2 && tSec <= 4 ? (tSec - 2) * 3.5 : 0);
         // Camera zoom tightens on nozzle/interior in Frames 2-4, pulls back to full view in Frame 5.
         // Ken Burns dolly: the bottle grows 1.0 -> 1.15 across the pinned scroll,
-        // with a slow ±1.2% breathing loop so frames feel projected, not fixed.
+        // with a slow ┬▒1.2% breathing loop so frames feel projected, not fixed.
         const zoomBell =
           (1 +
             0.035 * Math.sin(Math.min(1, Math.max(0, (tSec - 1.5) / 6.8)) * Math.PI) +
@@ -377,7 +377,7 @@ export default function SovereignFilm({
       }
 
       // 35mm depth rig: background strata drift at 0.3x, foreground at 1.2x.
-      // All writes are transform/opacity — no layout, no paint properties.
+      // All writes are transform/opacity ΓÇö no layout, no paint properties.
       {
         const vMag = Math.min(1, velocityRef.current);
         const vDir = diff >= 0 ? 1 : -1;
@@ -421,11 +421,11 @@ export default function SovereignFilm({
       }
       if (alchemicalLabelRef.current) {
         if (tSec < 8.0) {
-          alchemicalLabelRef.current.textContent = 'CRYSTAL CLEAR BOTANICAL';
+          alchemicalLabelRef.current.textContent = 'CARDAMOM · LIME';
         } else if (tSec < 9.05) {
-          alchemicalLabelRef.current.textContent = 'BLUSHING ROSE GOLD';
+          alchemicalLabelRef.current.textContent = 'ROSE HEART';
         } else {
-          alchemicalLabelRef.current.textContent = 'DEEP LUXURIOUS AMBER';
+          alchemicalLabelRef.current.textContent = 'SANDALWOOD BASE';
         }
       }
 
@@ -550,7 +550,7 @@ export default function SovereignFilm({
       ctx.restore();
 
       // =========================================================================
-      // 4. FRAME 1 (0–2s): PRISMATIC CRYSTAL FACET LIGHT FLARES & 360° ROTATION GLINTS
+      // 4. FRAME 1 (0ΓÇô2s): PRISMATIC CRYSTAL FACET LIGHT FLARES & 360┬░ ROTATION GLINTS
       // =========================================================================
       if (tSec < 2.6) {
         const f1Alpha = Math.min(1, Math.max(0, 1 - (tSec - 1.75) / 0.85));
@@ -577,7 +577,7 @@ export default function SovereignFilm({
       }
 
       // =========================================================================
-      // 5. FRAME 2 (2–4s): SPIRAL CAP ASCENSION HELIX & 24K GOLD / CHROME SPECULAR GLINT
+      // 5. FRAME 2 (2ΓÇô4s): SPIRAL CAP ASCENSION HELIX & 24K GOLD / CHROME SPECULAR GLINT
       // =========================================================================
       if (tSec > 1.5 && tSec < 4.5) {
         const f2Env =
@@ -631,7 +631,7 @@ export default function SovereignFilm({
       }
 
       // =========================================================================
-      // 6. FRAME 3 (4–6s): EXPLOSIVE ULTRA-SLOW-MOTION DIAMOND MICRO-DROPLET MIST
+      // 6. FRAME 3 (4ΓÇô6s): EXPLOSIVE ULTRA-SLOW-MOTION DIAMOND MICRO-DROPLET MIST
       // =========================================================================
       if (tSec > 3.5 && tSec < 6.6) {
         const f3Env =
@@ -701,7 +701,7 @@ export default function SovereignFilm({
       }
 
       // =========================================================================
-      // 7. FRAME 4 (6–8s): INTERNAL BOTANICAL VORTEX & HYPER-TRANSLUCENT GLOW
+      // 7. FRAME 4 (6ΓÇô8s): INTERNAL BOTANICAL VORTEX & HYPER-TRANSLUCENT GLOW
       // =========================================================================
       if (tSec > 5.5 && tSec < 8.45) {
         const f4Env =
@@ -748,13 +748,13 @@ export default function SovereignFilm({
       }
 
       // =========================================================================
-      // 8. FRAME 5 (8–10s): ALCHEMICAL TRANSITION (CLEAR → ROSE GOLD → AMBER) & MAGNETIC 'CLICK'
+      // 8. FRAME 5 (8ΓÇô10s): ALCHEMICAL TRANSITION (CLEAR ΓåÆ ROSE GOLD ΓåÆ AMBER) & MAGNETIC 'CLICK'
       // =========================================================================
       if (tSec > 7.7) {
         const f5Env = Math.min(1, Math.max(0, (tSec - 7.7) / 0.5));
         const bottleCoreY = height * 0.54;
 
-        // Rose-gold phase peaks around 8.45s, Amber light-box peaks 9.2–10.0s
+        // Rose-gold phase peaks around 8.45s, Amber light-box peaks 9.2ΓÇô10.0s
         const roseGoldWeight = Math.max(0, 1 - Math.abs(tSec - 8.45) / 0.75);
         const amberWeight = Math.min(1, Math.max(0, (tSec - 8.75) / 0.75));
 
@@ -799,7 +799,7 @@ export default function SovereignFilm({
           ctx.fill();
         }
 
-        // Satisfying visual 'CLICK' when the 24k gold cap snaps back onto the bottle (around 9.1s–9.85s)
+        // Satisfying visual 'CLICK' when the 24k gold cap snaps back onto the bottle (around 9.1sΓÇô9.85s)
         if (tSec >= 9.05) {
           const clickT = Math.min(1, (tSec - 9.05) / 0.75);
           const clickRingAlpha = Math.sin(clickT * Math.PI) * 0.9;
@@ -842,7 +842,7 @@ export default function SovereignFilm({
     const section = sectionRef.current;
     if (!section) return;
     const distance = Math.max(0, section.offsetHeight - window.innerHeight);
-    // Jump to the center of the selected frame's time window
+    // Jump to the center of the selected frame's 
     const targetProgress =
       index === sovereignFilmFrames.length - 1
         ? 0.96
@@ -862,7 +862,7 @@ export default function SovereignFilm({
     <section
       className="sovereign-film"
       ref={sectionRef}
-      aria-label="DAYRAH SCENTS — The Sovereign 10-second scroll-scrubbed fragrance film"
+      aria-label="DAYRAH NOOR 03 — executive eau de parfum presentation"
     >
       <div className="sovereign-film__stage" ref={stageRef}>
         {/* 35mm depth rig: abyss + background strata drift at 0.3x behind the bottle */}
@@ -874,7 +874,7 @@ export default function SovereignFilm({
           <i className="sf-bg__petal p2" />
           <i className="sf-bg__petal p3" />
         </div>
-        {/* Multi-keyframe locked-off cinema stage with 3D perspective & alchemical sub-frames */}
+        {/* Multi-keyframe  cinema stage with 3D perspective & alchemical sub-frames */}
         <div className="sovereign-film__frames" ref={bottleStageRef} aria-hidden="true">
           {SEQUENCE_STAGES.map((stage, index) => (
             <img
@@ -922,11 +922,11 @@ export default function SovereignFilm({
         <div className="sf-bar sf-bar--bot" ref={barBotRef} aria-hidden="true" />
         <div className="sf-flicker" aria-hidden="true" />
 
-        {/* Top Director's Header Bar */}
+        {/* Top Brand Header Bar */}
         <div className="sovereign-film__topline">
           <div className="sovereign-film__topline-left">
-            <span className="sovereign-film__brand-pill">DAYRAH SCENTS</span>
-            <span>THE SOVEREIGN FILM&nbsp; / &nbsp;OBSIDIAN VOID STUDIO&nbsp; · &nbsp;3200K VOLUMETRIC</span>
+            <span className="sovereign-film__brand-pill">DAYRAH NOOR 03</span>
+            <span>EAU DE PARFUM&nbsp; / &nbsp;100 ML&nbsp; · &nbsp;CARDAMOM · LIME · ROSE · SANDALWOOD</span>
           </div>
           <div className="sovereign-film__topline-controls">
             <button
@@ -934,20 +934,20 @@ export default function SovereignFilm({
               className={`sovereign-film__ctrl-btn ${showRefsDrawer ? 'is-on' : ''}`}
               onClick={() => setShowRefsDrawer((v) => !v)}
             >
-              VISUAL ELEMENTS ({sovereignVisualElements.length})
+              THE COMPOSITION ({sovereignVisualElements.length})
             </button>
             <button
               type="button"
               className={`sovereign-film__ctrl-btn ${isPlaying ? 'is-on' : ''}`}
               onClick={() => setIsPlaying((v) => !v)}
             >
-              {isPlaying ? '❚❚ PAUSE FILM' : '▶ AUTO-PLAY 10S FILM'}
+              {isPlaying ? '❚❚ PAUSE' : '▶ CONTINUE'}
             </button>
 
           </div>
         </div>
 
-        {/* Optional floating drawer previewing the 4 Established Reference Visual Elements */}
+        {/* Optional floating drawer previewing the composition */}
         <AnimatePresence>
           {showRefsDrawer && (
             <motion.div
@@ -958,7 +958,7 @@ export default function SovereignFilm({
               transition={{ duration: 0.28 }}
             >
               <div className="sovereign-film__refs-head">
-                <span>ESTABLISHED REFERENCE VISUAL ELEMENTS (LOCATIONS · PROPS · 3200K SET LIGHTING)</span>
+                <span>DAYRAH NOOR 03 · EXECUTIVE EAU DE PARFUM · 100 ML</span>
                 <button type="button" onClick={() => setShowRefsDrawer(false)}>
                   CLOSE ×
                 </button>
@@ -1008,14 +1008,14 @@ export default function SovereignFilm({
             </AnimatePresence>
             <div className="sovereign-film__actions">
               <a className="sovereign-film__link" href={`#${elementsId}`}>
-                EXPLORE VISUAL ELEMENTS & STORYBOARD <span>↓</span>
+                DISCOVER THE COMPOSITION <span>→</span>
               </a>
-              <span className="sovereign-film__hint">SCROLL DOWN TO SCRUB THE 10-SECOND FILM</span>
+              <span className="sovereign-film__hint">EAU DE PARFUM · 100 ML</span>
             </div>
           </div>
 
-          {/* Right Column: Camera Angle, Lighting & Frame-Specific Live Monitors */}
-          <aside className="sovereign-film__specs" aria-label="Scene camera and lighting telemetry">
+          {/* Right Column: Fragrance composition details */}
+          <aside className="sovereign-film__specs" aria-label="Fragrance composition">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={chapter}
@@ -1026,51 +1026,49 @@ export default function SovereignFilm({
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="sovereign-film__spec-row">
-                  <span>TIME WINDOW</span>
-                  <b>{active.timeRange.toUpperCase()} · LOCKED-OFF TRIPOD</b>
+                  <span>CONCENTRATION</span>
+                  <b>EAU DE PARFUM · 100 ML</b>
                 </div>
                 <div className="sovereign-film__spec-row">
-                  <span>CAMERA ANGLE</span>
-                  <p>{active.cameraAngle}</p>
+                  <span>OLFACTIVE FAMILY</span>
+                  <p>Warm floral-woody, built on restraint.</p>
                 </div>
                 <div className="sovereign-film__spec-row">
-                  <span>LIGHTING RIG</span>
-                  <p>{active.lighting}</p>
+                  <span>LONGEVITY</span>
+                  <p>Eight to ten hours on skin, close and steady.</p>
                 </div>
                 <div className="sovereign-film__spec-row">
-                  <span>BOTTLE INSCRIPTION</span>
-                  <b>DAYRAH SCENTS — THE SOVEREIGN</b>
+                  <span>COMPOSITION</span>
+                  <b>DAYRAH NOOR 03</b>
                 </div>
 
-                {/* Frame 4 (6-8s): Live Macro Loupe showing internal botanicals close-up */}
                 {active.macroSrc && (
                   <div className="sovereign-film__macro-pip">
-                    <img src={active.macroSrc} alt="Macro interior study of rose petals, cardamom pods, bergamot slices, and sandalwood chips inside the bottle" />
+                    <img src={active.macroSrc} alt="Close study of rose petals, cardamom pods, lime wheels, and sandalwood inside the bottle" />
                     <div>
-                      <span>MACRO INTERIOR LOUPE</span>
-                      <b>Rose · Cardamom · Bergamot · Sandalwood</b>
+                      <span>KEY NOTES</span>
+                      <b>Cardamom · Lime · Rose · Sandalwood</b>
                     </div>
                   </div>
                 )}
 
-                {/* Frame 5 (8-10s): Live Alchemical Color Transition & Magnetic Click Telemetry */}
                 {active.frameNumber === 5 && (
                   <div className="sovereign-film__alchemy-meter">
-                    <span>ALCHEMICAL LIQUID STATE</span>
+                    <span>DRY-DOWN</span>
                     <b ref={alchemicalLabelRef}>{alchemicalStage}</b>
                     <div className="sovereign-film__alchemy-swatches">
-                      <i className={alchemicalStage === 'CLEAR' ? 'is-current' : ''} title="Crystal Clear">
-                        CLEAR
+                      <i className={alchemicalStage === 'CLEAR' ? 'is-current' : ''} title="Bright opening">
+                        CARDAMOM
                       </i>
-                      <i className={alchemicalStage === 'ROSE GOLD' ? 'is-current' : ''} title="Blushing Rose Gold">
-                        ROSE GOLD
+                      <i className={alchemicalStage === 'ROSE GOLD' ? 'is-current' : ''} title="Lifted heart">
+                        ROSE
                       </i>
-                      <i className={alchemicalStage === 'AMBER' ? 'is-current' : ''} title="Deep Luxurious Amber">
-                        AMBER
+                      <i className={alchemicalStage === 'AMBER' ? 'is-current' : ''} title="Lasting base">
+                        SANDALWOOD
                       </i>
                     </div>
                     <div className={`sovereign-film__click-badge ${capClicked ? 'is-clicked' : ''}`}>
-                      {capClicked ? "● 24K GOLD CAP: MAGNETIC 'CLICK' SEALED" : '○ 24K GOLD CAP: DESCENDING'}
+                      {capClicked ? '● SIGNATURE SEALED' : '○ SIGNATURE SETTLING'}
                     </div>
                   </div>
                 )}
@@ -1080,14 +1078,14 @@ export default function SovereignFilm({
         </div>
 
         {/* Right-edge Chapter Rail */}
-        <div className="sovereign-film__chapters" aria-label="Film frames">
+        <div className="sovereign-film__chapters" aria-label="Fragrance chapters">
           {sovereignFilmFrames.map((frame, index) => (
             <button
-              key={frame.label}
+              key={frame.frameNumber}
               type="button"
               className={chapter === index ? 'is-active' : ''}
               onClick={() => jumpTo(index)}
-              aria-label={`Jump to Frame ${frame.frameNumber}: ${frame.context}`}
+              aria-label={`View chapter ${index + 1}`}
               aria-current={chapter === index ? 'step' : undefined}
             >
               <span>0{index + 1}</span>
@@ -1097,10 +1095,10 @@ export default function SovereignFilm({
         </div>
 
         <div className="sovereign-film__bottom">
-          <a href={`#${galleryId}`} className="sovereign-film__scroll-mark" aria-label="Scroll to storyboard">
+          <a href={`#${galleryId}`} className="sovereign-film__scroll-mark" aria-label="View fragrance details">
             ↓
           </a>
-          <div className="sovereign-film__timeline-stops" role="group" aria-label="Scrub to scene frame">
+          <div className="sovereign-film__timeline-stops" role="group" aria-label="Fragrance notes">
             {sovereignFilmFrames.map((frame, index) => (
               <button
                 key={frame.frameNumber}
@@ -1108,8 +1106,8 @@ export default function SovereignFilm({
                 className={chapter === index ? 'is-active' : ''}
                 onClick={() => jumpTo(index)}
               >
-                <b>F0{frame.frameNumber}</b>
-                <span>{frame.timeRange}</span>
+                <b>0{frame.frameNumber}</b>
+                <span>{['OPENING', 'HEART', 'BODY', 'DRY-DOWN', 'SIGNATURE'][index]}</span>
               </button>
             ))}
           </div>
@@ -1117,7 +1115,7 @@ export default function SovereignFilm({
             <span className="sovereign-film__timecode" ref={timecodeRef}>00:00:00</span>
             <span>·</span>
             <b ref={frameCounterRef}>01</b>
-            <i>/ 05 FRAMES (10.0S)</i>
+            <i>/ 05 NOTES</i>
           </span>
         </div>
         <div className="sovereign-film__progress">

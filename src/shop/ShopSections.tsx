@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from './CartContext';
@@ -35,10 +35,67 @@ export function ProductCard({ product, reveal = true }: { product: Product; reve
   );
 }
 
-export function ShopGrid({ items }: { items: Product[] }) {
+export function ShopGrid({ items, carousel = false }: { items: Product[]; carousel?: boolean }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pauseRef = useRef(false);
+  const inViewRef = useRef(true);
+  const scrollByCards = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const card = track.querySelector<HTMLElement>('.product-card');
+    const gap = parseFloat(getComputedStyle(track).columnGap || '16') || 16;
+    const step = card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+    track.scrollBy({ left: direction * step, behavior: 'smooth' });
+  };
+  /* Auto-scroll: advance one card on a timer, wrapping back to the start.
+     Pauses while the visitor hovers, touches, tabs through, hides the tab,
+     or scrolls the shelf out of view. Disabled for reduced motion. */
+  useEffect(() => {
+    if (!carousel) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const track = trackRef.current;
+    if (!track) return;
+    const observer = new IntersectionObserver(([entry]) => { inViewRef.current = entry.isIntersecting; }, { threshold: 0.15 });
+    observer.observe(track);
+    const id = window.setInterval(() => {
+      if (pauseRef.current || !inViewRef.current || document.hidden) return;
+      const card = track.querySelector<HTMLElement>('.product-card');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '16') || 16;
+      const step = card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 12) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    }, 3200);
+    return () => { window.clearInterval(id); observer.disconnect(); };
+  }, [carousel, items.length]);
+  if (!carousel) {
+    return (
+      <div className="shop-grid">
+        {items.map((product) => <ProductCard key={product.slug} product={product} />)}
+      </div>
+    );
+  }
   return (
-    <div className="shop-grid">
-      {items.map((product) => <ProductCard key={product.slug} product={product} />)}
+    <div className="shop-carousel">
+      <div
+        className="shop-grid shop-grid--carousel"
+        ref={trackRef}
+        onPointerEnter={() => { pauseRef.current = true; }}
+        onPointerLeave={() => { pauseRef.current = false; }}
+        onPointerDown={() => { pauseRef.current = true; }}
+        onPointerUp={() => { pauseRef.current = false; }}
+        onFocus={() => { pauseRef.current = true; }}
+        onBlur={() => { pauseRef.current = false; }}
+      >
+        {items.map((product) => <ProductCard key={product.slug} product={product} />)}
+      </div>
+      <div className="shop-carousel__nav">
+        <button type="button" className="shop-carousel__arrow" onClick={() => scrollByCards(-1)} aria-label="Scroll products backward">←</button>
+        <span>{items.length} COMPOSITIONS — AUTO-SCROLL</span>
+        <button type="button" className="shop-carousel__arrow" onClick={() => scrollByCards(1)} aria-label="Scroll products forward">→</button>
+      </div>
     </div>
   );
 }

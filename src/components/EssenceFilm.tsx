@@ -13,44 +13,49 @@ type EssenceChapter = {
   timeRange: string;
   camera: string;
   lighting: string;
+  pillSeparator?: string;
   pills: string[];
+  video?: string;
 };
 
-/** Twin of the Sovereign film: identical pinned 100vh stage, parallax speeds,
+/** Companion to the Sovereign film: identical pinned 100vh stage, parallax speeds,
  *  letterbox, grain and HUD hierarchy — but a looping NOOR 03 video core. */
 const ESSENCE_CHAPTERS: EssenceChapter[] = [
   {
-    label: 'FRAME 01 / THE AWAKENING',
-    context: 'INTRODUCTION: LIGHT, UNCORKED',
-    title: 'Saffron',
-    emphasis: 'ignites.',
-    copy: 'Hand-picked crimson threads spark against cold morning air. The first breath is mineral, golden, impossible to ignore — light striking cut glass.',
-    timeRange: '0–2S',
-    camera: 'Macro close-up, centered, locked-off tripod. Eye-level with the flacon.',
-    lighting: 'Cold sparkle key with a warm 3200K volumetric halo; glinting saffron dust.',
-    pills: ['SAFFRON SPARK', 'COLD TOP RADIANCE', 'GOLDEN VOLUMETRIC'],
+    label: 'NOTE 01 / THE OPENING',
+    context: 'TOP: CARDAMOM & LIME',
+    title: 'Cardamom',
+    emphasis: 'commands.',
+    copy: 'Clean cardamom and cold lime open with deliberate clarity. A crisp, executive first impression — precise, never loud.',
+    timeRange: 'TOP',
+    camera: 'Olfactive family: warm floral-woody.',
+    lighting: 'Built for boardroom presence and quiet power.',
+    pills: ['CARDAMOM', 'LIME', 'CRISP OPENER'],
+    video: '/videos/botanicals-swirl.mp4',
   },
   {
-    label: 'FRAME 02 / THE HEART',
-    context: 'THE HEART: DRIED ROSE',
-    title: 'Petals,',
-    emphasis: 'remembered.',
-    copy: 'Not a fresh rose — a remembered one. Dried damask petals turn honeyed and dark, pulling the brilliance down toward the skin.',
-    timeRange: '2–4S',
-    camera: 'Slow push-in, locked-off. Focus rests on the rose-gold heart.',
-    lighting: 'Rosy amber wash; a soft internal glow moves through the liquid.',
-    pills: ['DAMASK HEART', 'HONEYED DEPTH', 'SKIN PROXIMITY'],
+    label: 'NOTE 02 / THE HEART',
+    context: 'HEART: STRENGTH WITH RESTRAINT',
+    title: 'Rose,',
+    emphasis: 'structured.',
+    copy: 'A lifted rose heart, held in balance rather than sweetness. Contrast without excess.',
+    timeRange: 'HEART',
+    camera: 'Character: measured, confident, timeless.',
+    lighting: 'A signature that speaks before words are spoken.',
+    pills: ['ROSE HEART', 'MEASURED', 'UNDERSTATED'],
+    video: '/videos/decanter-glow-02.mp4',
   },
   {
-    label: 'FRAME 03 / THE TRACE',
-    context: 'THE TRACE: SPICE INTO GOLD',
-    title: 'Spice turns',
-    emphasis: 'to gold.',
-    copy: 'Green cardamom lifts, then dissolves into sandalwood and amber. The trace it leaves is warm, dry, and quietly expensive.',
-    timeRange: '4–6S',
-    camera: 'Settling wide, locked-off. Full flacon held in the amber field.',
-    lighting: 'Golden-hour warmth; the liquid glows like a light-box from within.',
-    pills: ['GREEN CARDAMOM', 'AMBER DRY-DOWN', '100 ML EAU DE PARFUM'],
+    label: 'NOTE 03 / THE BASE',
+    context: 'BASE: DRY, POLISHED, LASTING',
+    title: 'Sandalwood',
+    emphasis: 'endures.',
+    copy: 'Dry, polished sandalwood settles into a close and lasting trace. Quiet dominance that stays with you.',
+    timeRange: 'BASE',
+    camera: 'Longevity: eight to ten hours on skin.',
+    lighting: 'DAYRAH NOOR 03 · Eau de parfum · 100 ml.',
+    pills: ['SANDALWOOD', 'LASTING TRACE', '100 ML EAU DE PARFUM'],
+    video: '/videos/decanter-void.mp4',
   },
 ];
 
@@ -96,6 +101,27 @@ export default function EssenceFilm({
   const reduceMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Swap the looping motion study for each note without restarting the loop.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const wanted = ESSENCE_CHAPTERS[chapter]?.video;
+    if (!wanted) return;
+    const current = video.currentSrc || video.src || '';
+    if (current.includes(wanted)) {
+      // Same study already assigned — but never force a first play here.
+      // With preload="none" the mount render must not start the download;
+      // the viewport observer below starts playback on approach instead.
+      if (video.preload !== 'none') {
+        video.play().catch(() => { /* autoplay blocked — poster holds */ });
+      }
+      return;
+    }
+    video.src = wanted;
+    video.load();
+    video.play().catch(() => { /* autoplay blocked — poster holds */ });
+  }, [chapter, reduceMotion]);
+
   // Scroll choreography: same pinned-scroll progress contract as Sovereign.
   useGSAP(
     () => {
@@ -133,11 +159,17 @@ export default function EssenceFilm({
             const video = videoRef.current;
             if (!video) return;
             if (entry.isIntersecting && !reduceMotion) {
-              video.play().catch(() => { /* autoplay blocked — poster holds */ });
+              // Upgrade from preload="none" on first approach — the motion
+              // study stays off the initial load until the section nears view.
+              if (video.preload === 'none') {
+                video.preload = preload;
+                video.load();
+              }
+              video.play().catch(() => { /* autoplay blocked ΓÇö poster holds */ });
             } else {
               video.pause();
             }
-          }, { threshold: 0 });
+          }, { threshold: 0, rootMargin: '400px' });
     if (observer) observer.observe(section);
 
     const onPointerMove = (e: PointerEvent) => {
@@ -229,7 +261,7 @@ export default function EssenceFilm({
       className="sovereign-film essence-film"
       id="essence"
       ref={sectionRef}
-      aria-label="DAYRAH SCENTS — Essence, a looping NOOR 03 amber-gold film"
+      aria-label="DAYRAH NOOR 03 — executive eau de parfum presentation"
     >
       <div className="sovereign-film__stage" ref={stageRef}>
         <div className="sf-abyss" ref={abyssRef} aria-hidden="true" />
@@ -240,18 +272,17 @@ export default function EssenceFilm({
           <i className="sf-bg__petal p2" />
           <i className="sf-bg__petal p3" />
         </div>
-        {/* Looping NOOR 03 video core — same frame, same hierarchy as Sovereign */}
+        {/* Per-note looping motion study — same frame, same hierarchy as Sovereign */}
         <div className="sovereign-film__frames" ref={framesRef} aria-hidden="true">
           <video
             ref={videoRef}
             className="essence-film__video"
-            src="/videos/noor-essence.mp4"
+            src="/videos/botanicals-swirl.mp4"
             poster="/images/noor-03.jpg"
-            autoPlay={!reduceMotion}
             loop
             muted
             playsInline
-            preload={preload}
+            preload="none"
             disablePictureInPicture
           />
         </div>
@@ -283,10 +314,10 @@ export default function EssenceFilm({
         <div className="sovereign-film__topline">
           <div className="sovereign-film__topline-left">
             <span className="sovereign-film__brand-pill">NOOR 03</span>
-            <span>THE ESSENCE FILM&nbsp; / &nbsp;AMBER GOLD STUDY&nbsp; · &nbsp;SAFFRON · ROSE · CARDAMOM</span>
+            <span>THE SIGNATURE&nbsp; / &nbsp;CARDAMOM · LIME · ROSE · SANDALWOOD</span>
           </div>
           <div className="sovereign-film__topline-controls">
-            <span className="sovereign-film__brand-pill">EAU DE PARFUM · 100 ML</span>
+            <span className="sovereign-film__brand-pill">EAU DE PARFUM ┬╖ 100 ML</span>
           </div>
         </div>
 
@@ -317,13 +348,13 @@ export default function EssenceFilm({
             </AnimatePresence>
             <div className="sovereign-film__actions">
               <Link className="sovereign-film__link" to="/product/noor-03">
-                DISCOVER NOOR 03 <span>↗</span>
+                DISCOVER DAYRAH NOOR 03 <span>→</span>
               </Link>
-              <span className="sovereign-film__hint">SCROLL TO MOVE THROUGH THE ESSENCE</span>
+              <span className="sovereign-film__hint">ADD TO COLLECTION</span>
             </div>
           </div>
 
-          <aside className="sovereign-film__specs" aria-label="Essence camera and lighting telemetry">
+          <aside className="sovereign-film__specs" aria-label="Fragrance composition">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={chapter}
@@ -334,20 +365,20 @@ export default function EssenceFilm({
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="sovereign-film__spec-row">
-                  <span>TIME WINDOW</span>
-                  <b>{active.timeRange} · LOOPING STUDY</b>
+                  <span>STAGE</span>
+                  <b>{active.timeRange}</b>
                 </div>
                 <div className="sovereign-film__spec-row">
-                  <span>CAMERA ANGLE</span>
+                  <span>PROFILE</span>
                   <p>{active.camera}</p>
                 </div>
                 <div className="sovereign-film__spec-row">
-                  <span>LIGHTING RIG</span>
+                  <span>STATEMENT</span>
                   <p>{active.lighting}</p>
                 </div>
                 <div className="sovereign-film__spec-row">
-                  <span>BOTTLE INSCRIPTION</span>
-                  <b>DAYRAH SCENTS — NOOR 03 · 100 ML</b>
+                  <span>COMPOSITION</span>
+                  <b>DAYRAH NOOR 03 · 100 ML</b>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -374,7 +405,7 @@ export default function EssenceFilm({
           <a href={scrollTo} className="sovereign-film__scroll-mark" aria-label="Scroll to continue">
             ↓
           </a>
-          <div className="sovereign-film__timeline-stops" role="group" aria-label="Move to essence chapter">
+          <div className="sovereign-film__timeline-stops" role="group" aria-label="Fragrance notes">
             {ESSENCE_CHAPTERS.map((item, index) => (
               <button
                 key={item.label}
@@ -382,7 +413,7 @@ export default function EssenceFilm({
                 className={chapter === index ? 'is-active' : ''}
                 onClick={() => jumpTo(index)}
               >
-                <b>E0{index + 1}</b>
+                <b>0{index + 1}</b>
                 <span>{item.timeRange}</span>
               </button>
             ))}
@@ -390,8 +421,8 @@ export default function EssenceFilm({
           <span className="sovereign-film__readout">
             <span className="sovereign-film__timecode" ref={timecodeRef}>00:00:00</span>
             <span>·</span>
-            <b>ESSENCE</b>
-            <i>/ LOOP</i>
+            <b>NOOR 03</b>
+            <i>/ SIGNATURE</i>
           </span>
         </div>
         <div className="sovereign-film__progress">

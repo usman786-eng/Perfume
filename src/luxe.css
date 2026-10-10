@@ -37,6 +37,9 @@
 
   /* Metallic gold ramp */
   --lux-gold-deep: #8c6a1f;
+  /* Bright gold measures ~2:1 on paper, so anything small on a light band uses
+     this shadow-end tone instead. Clears 4.5:1 on --lux-paper. */
+  --lux-gold-on-paper: #6d5216;
   --lux-gold: #d4af37;
   --lux-gold-lite: #f3dc8e;
   --lux-bronze: #b08d3a;
@@ -70,14 +73,21 @@
   --lux-ink-muted: rgba(13, 12, 16, 0.62);
   --lux-line-light: rgba(13, 12, 16, 0.14);
 
-  /* Type */
-  /* Gilda Display — high-contrast display serif with flared Art Deco
-     terminals. Chosen as a more distinctive luxury logotype face than the
-     previous Italiana; single 400 weight, so headings must request 400.
-     Commercial-safe via Google Fonts (OFL). */
-  --display: 'Gilda Display', 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
-  --body-serif: 'Cormorant Garamond', Georgia, serif;
-  --sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  /* Type
+     Cormorant Garamond — a true Garamond revival with sharp, high-contrast
+     strokes that stay legible at display sizes where Gilda Display's flared
+     terminals turned thin and muddy. Weights 300-700 plus italics are all
+     loaded, so headings get real weight instead of faux-bold synthesis.
+     Inter for everything functional: labels, nav, buttons, UI. It has a large
+     x-height and open apertures, which is what makes 11-13px text readable
+     where DM Sans at 5-7px was not. Both OFL via Google Fonts.
+
+     The previous stack named 'Cormorant Garamond' and 'DM Sans' but index.html
+     only ever loaded Gilda Display + Playfair Display, so both silently fell
+     back to Georgia and system-ui. The fonts are now actually requested. */
+  --display: 'Fraunces', 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
+  --body-serif: 'Cormorant Garamond', Garamond, Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* Editorial rhythm */
   --lux-section-y: 120px;
@@ -94,7 +104,7 @@
   --dark: #141217;
   --plum: #1e1b22;
   /* Site-wide display serif (film re-locks this to Cormorant below). */
-  --serif: 'Gilda Display', 'Playfair Display', Georgia, serif;
+  --serif: 'Cormorant Garamond', Garamond, Georgia, serif;
 }
 
 /* --------------------------------------------------------------------------
@@ -105,6 +115,52 @@
 .sovereign-film,
 .essence-film {
   --serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+.sovereign-elements__head > p:last-child,
+.sovereign-feature__copy > p:not(.eyebrow),
+.sovereign-composition__copy > p:not(.eyebrow),
+.sovereign-gallery__head > p:last-child,
+.sovereign-element-card__body p {
+  font-size: 16px !important;
+}
+.sovereign-elements__head .eyebrow,
+.sovereign-feature__copy .eyebrow,
+.sovereign-composition__copy .eyebrow,
+.sovereign-gallery__head .eyebrow {
+  font-size: 12px !important;
+  letter-spacing: 0.2em !important;
+}
+/* sovereign.css also sets these as a bare .eyebrow descendant, which beats the
+   class-qualified rule above on specificity and pinned them back to 7px. */
+.sovereign-elements__head p.eyebrow,
+.sovereign-feature__copy p.eyebrow,
+.sovereign-composition__copy p.eyebrow,
+.sovereign-gallery__head p.eyebrow {
+  font-size: 12px !important;
+  letter-spacing: 0.2em !important;
+}
+.sovereign-element-card__badge,
+.sovereign-element-card__subtitle,
+.sovereign-feature__visual > span,
+.sovereign-buy__image figcaption,
+.sovereign-gallery__figure figcaption,
+.sovereign-composition__note > span,
+.sovereign-gallery__specs,
+.sovereign-gallery__meta p,
+.sifr-note > i {
+  font-size: 12px !important;
+}
+.sovereign-element-card__specs span,
+.sovereign-gallery__specs b,
+.sovereign-composition__note i {
+  font-size: 12px !important;
+  letter-spacing: 0.1em !important;
+}
+.sovereign-composition__link {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.18em !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -180,9 +236,17 @@ body {
   color: var(--lux-muted);
 }
 
-/* Display headings — Gilda Display, 7.4vw, -0.032em, 0.85
-   Gilda Display ships as a single weight, so font-weight must be 400; a 300
-   request would synthesise faux-light and look muddy at these sizes. */
+/* Display headings — Cormorant Garamond 500, 7.4vw, -0.02em, 0.92
+
+   Weight is the real change here, not the family. Gilda Display shipped as a
+   single 400 weight, so a 300 request synthesised faux-light and rendered
+   thin and muddy at 46-116px. Cormorant Garamond loads 300-700, so 500 is a
+   genuine weight with proper thick/thin modulation.
+
+   Line-height also moves 0.85 -> 0.92 and tracking -0.032em -> -0.02em. At 0.85
+   Cormorant's ascenders and the gold-gradient em were clipping into the line
+   above; the tighter leading suited the flatter Gilda terminals. Less negative
+   tracking is safe because the new face is narrower per character. */
 .notes-intro h2,
 .atelier-copy h2,
 .closing-section h2,
@@ -214,10 +278,10 @@ body {
 .not-found h1,
 .story-image-band > div p {
   font-family: var(--display) !important;
-  font-weight: 400 !important;
-  letter-spacing: -0.032em !important;
-  line-height: 0.85 !important;
-  font-size: clamp(46px, 7.4vw, 116px) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 0.92 !important;
+  font-size: clamp(44px, 6.9vw, 108px) !important;
   color: var(--lux-ivory);
 }
 
@@ -277,10 +341,14 @@ body {
 .payment-option small,
 .payment-option i {
   font-family: var(--sans) !important;
+  font-weight: 500 !important;
   text-transform: uppercase;
-  font-size: 11px !important;
-  letter-spacing: 0.5em !important;
-  opacity: 0.5;
+  /* 12px with 0.22em, not 11px with 0.5em. Wide tracking is only legible at a
+     larger size; 0.5em at 11px pushed these apart into visual noise, and the
+     letterspacing was doing the work that weight should do. */
+  font-size: 12px !important;
+  letter-spacing: 0.22em !important;
+  opacity: 0.72;
   color: var(--lux-gold);
 }
 
@@ -318,7 +386,10 @@ body {
 }
 .buy-panel__name sup {
   color: var(--lux-bronze) !important;
-  font-size: 0.22em !important;
+  /* clamp(12px, .34em, 30px): 0.22em of the 44px mobile floor gave 11.55px.
+     Floor it at 12px so the ordinal never drops below the legibility minimum
+     while still tracking the display size on wide screens. */
+  font-size: clamp(12px, 0.34em, 30px) !important;
   letter-spacing: 0.2em !important;
   -webkit-text-fill-color: var(--lux-bronze);
 }
@@ -463,8 +534,12 @@ body {
   background: transparent !important;
   color: var(--lux-gold) !important;
   font-family: var(--sans) !important;
-  font-size: 11px !important;
-  letter-spacing: 0.34em !important;
+  font-weight: 500 !important;
+  /* 12px / 0.2em / weight 500. These are the primary calls to action, and at
+     11px with 0.34em the label was both small and loosely tracked, which reads
+     as delicate rather than deliberate. */
+  font-size: 12px !important;
+  letter-spacing: 0.2em !important;
   text-transform: uppercase;
   cursor: pointer;
   overflow: hidden;
@@ -614,14 +689,16 @@ img {
 .brand > span,
 .footer-brand {
   font-family: var(--display) !important;
-  font-weight: 400 !important;
-  font-size: 25px !important;
-  letter-spacing: 0.24em !important;
+  font-weight: 500 !important;
+  font-size: 26px !important;
+  letter-spacing: 0.2em !important;
   color: var(--lux-ivory) !important;
 }
 .brand small {
-  font-size: 10px !important;
-  letter-spacing: 0.42em !important;
+  font-family: var(--sans) !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.22em !important;
   color: var(--lux-bronze) !important;
   text-transform: uppercase;
 }
@@ -651,26 +728,50 @@ img {
   display: flex !important;
   flex-direction: column;
   justify-content: center;
-  gap: 7px;
-  width: 44px;
-  height: 44px;
+  align-items: center;
+  gap: 6px;
+  width: 46px;
+  height: 46px;
   margin-right: -7px;
-  border: 0;
-  background: none;
+  border: 1px solid var(--lux-hairline);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
   padding: 0;
   cursor: pointer;
+  transition: border-color 0.3s, background 0.3s, transform 0.25s;
 }
 .menu-toggle i {
-  width: 26px;
-  height: 1px;
+  display: block;
+  flex: none;
+  width: 22px;
+  height: 1.5px;
+  border-radius: 2px;
   background: var(--lux-gold) !important;
-  transition: transform 0.3s;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease, background 0.3s;
+}
+.menu-toggle:hover {
+  border-color: var(--lux-gold);
+  background: rgba(255, 255, 255, 0.08);
+}
+.menu-toggle:active {
+  transform: scale(0.96);
+}
+/* Open = burger; translated into an X over the dark nav overlay */
+.menu-toggle[aria-expanded='true'] {
+  position: relative;
+  z-index: 70;
+  border-color: var(--lux-gold);
+  background: rgba(255, 255, 255, 0.06);
 }
 .menu-toggle[aria-expanded='true'] i:first-child {
-  transform: translateY(4px) rotate(45deg);
+  transform: translateY(7.5px) rotate(45deg);
+}
+.menu-toggle[aria-expanded='true'] i:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
 }
 .menu-toggle[aria-expanded='true'] i:last-child {
-  transform: translateY(-4px) rotate(-45deg);
+  transform: translateY(-7.5px) rotate(-45deg);
 }
 
 /* Full-screen luxury nav overlay */
@@ -1071,12 +1172,13 @@ img {
   line-height: 0.9 !important;
 }
 .accord-card__text > span {
-  font-size: 11px !important;
-  letter-spacing: 0.4em !important;
-  text-transform: uppercase;
-  font-family: var(--sans) !important;
-  color: var(--lux-gold);
-}
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.22em !important;
+    text-transform: uppercase;
+    font-family: var(--sans) !important;
+    color: var(--lux-gold);
+  }
 .accord-card__text p {
   color: var(--lux-muted);
   font-size: 15px;
@@ -1428,13 +1530,14 @@ img {
 /* Label styled as an eyebrow, but WITHOUT opacity: it wraps the input, so a
    group opacity would dim what the user is typing. */
 .checkout-field {
-  font-family: var(--sans) !important;
-  text-transform: uppercase;
-  font-size: 11px !important;
-  letter-spacing: 0.5em !important;
-  color: var(--lux-gold);
-  opacity: 1;
-}
+    font-family: var(--sans) !important;
+    font-weight: 500 !important;
+    text-transform: uppercase;
+    font-size: 12px !important;
+    letter-spacing: 0.2em !important;
+    color: var(--lux-gold);
+    opacity: 1;
+  }
 .checkout-field input {
   color: var(--lux-ivory) !important;
   border-bottom-color: var(--lux-hairline) !important;
@@ -1654,9 +1757,9 @@ img {
   .product-card__notes,
   .buy-size span,
   .selected-note > span {
-    letter-spacing: 0.34em !important;
+letter-spacing: 0.22em !important;
+    }
   }
-}
 @media (max-width: 700px) {
   :root {
     --lux-section-y: 72px;
@@ -1671,28 +1774,32 @@ img {
   .brand small {
     display: none;
   }
-  .site-footer,
-  .site-footer > a:not(.footer-brand) {
-    font-size: 11px !important;
-  }
+.site-footer,
+    .site-footer > a:not(.footer-brand) {
+      font-size: 12px !important;
+    }
   .site-footer .footer-brand {
     font-size: 20px !important;
   }
-  .eyebrow,
-  .chapter-kicker,
-  .product-card__index,
-  .product-card__cta,
-  .product-card__badge,
-  .product-card__name span,
-  .product-card__notes,
-  .buy-size span,
-  .selected-note > span,
-  .page-breadcrumb,
-  .checkout-field,
-  .payment-option small {
-    font-size: 9px !important;
-    letter-spacing: 0.28em !important;
-  }
+.eyebrow,
+    .chapter-kicker,
+    .product-card__index,
+    .product-card__cta,
+    .product-card__badge,
+    .product-card__name span,
+    .product-card__notes,
+    .buy-size span,
+    .selected-note > span,
+    .page-breadcrumb,
+    .checkout-field,
+    .payment-option small {
+      /* 12px on mobile too, not 9px. Shrinking an already-small label to 9px
+         on the smallest screen is what made the phone build the worst offender
+         for legibility; Inter at 12px still fits these labels on a 375px
+         viewport. Tracking eases slightly to buy horizontal room. */
+      font-size: 12px !important;
+      letter-spacing: 0.18em !important;
+    }
   .buy-panel__name {
     font-size: clamp(48px, 14vw, 68px) !important;
   }
@@ -1770,11 +1877,36 @@ img {
 }
 
 /* --- Light sections -------------------------------------------------------
-   Opt-in inversion for editorial bands that would otherwise be another slab
-   of the same black. Only remaps colour tokens; spacing is untouched. */
+   Opt-in inversion for editorial bands that would otherwise be another slab of
+   the same black. The legacy cream bands (mastheads, pillars, accord, the Sifr
+   note story) were flattened to obsidian by this file; tagging a section
+   .lux-light in the TSX puts the cream back, which is what gives the site its
+   black/white rhythm instead of one continuous dark page.
+
+   These carry !important on purpose: the dark-theme rules above already use it
+   on backgrounds (.story-end, .accord-card) and on gold accents (eyebrows), and
+   without matching force the band half-inverts and strands near-black text on
+   black. Only colour is remapped; spacing and layout are untouched. */
 .lux-light {
-  background: var(--lux-paper);
+  background: var(--lux-paper) !important;
   color: var(--lux-ink);
+  /* This file colours the whole site through tokens, so re-pointing them here
+     inverts every descendant at once. Hand-patching components one by one is
+     what produced half-inverted bands with near-black text stranded on black.
+     --lux-obsidian is deliberately NOT remapped: image placeholders and the
+     finder panel are meant to stay dark, so the band reads as light stock with
+     dark objects sitting on it. */
+  --lux-ivory: #0d0c10;
+  --lux-muted: rgba(13, 12, 16, 0.66);
+  --lux-white: #0d0c10;
+  --lux-gold: var(--lux-gold-on-paper);
+  --lux-gold-deep: var(--lux-gold-on-paper);
+  --lux-gold-lite: #8a6b22;
+  --lux-surface: #fdfcfb;
+  --lux-surface-2: #f4f1ea;
+  --lux-surface-3: #ece7dd;
+  --lux-hairline: rgba(13, 12, 16, 0.18);
+  --lux-hairline-soft: rgba(13, 12, 16, 0.11);
 }
 .lux-light h1,
 .lux-light h2,
@@ -1788,15 +1920,56 @@ img {
 .lux-light .lux-light__body {
   color: var(--lux-ink-muted);
 }
-.lux-light .eyebrow,
-.lux-light .page-breadcrumb,
-.lux-light .lux-light__kicker {
-  color: var(--lux-gold-deep);
-  opacity: 1;
-}
 .lux-light :is(a, .text-link) {
   color: var(--lux-ink);
 }
+/* Every gold accent inside a light band moves to the shadow end of the ramp:
+   #d4af37 measures ~2:1 on paper and fails at any size. */
+.lux-light :is(.eyebrow, .page-breadcrumb, .lux-light__kicker) {
+  color: var(--lux-gold-on-paper) !important;
+  opacity: 1;
+}
+.lux-light :is(.text-link, .text-link span, .button-outline span, .story-masthead__stamp,
+    .sifr-note span, .sifr-note i, .sifr-note-story__detail > span, .sifr-note.is-active b,
+    .home-pages__eyebrow, .home-pages .eyebrow, .home-pages a span) {
+  color: var(--lux-gold-on-paper);
+}
+.lux-light :is(h3, b, strong) {
+  color: var(--lux-ink);
+}
+/* Photo overlay text sits on imagery, not on paper, so it keeps the bright
+   ramp regardless of which band the section sits in. */
+.story-image-band :is(p, span, i) {
+  color: #fdfdfc !important;
+}
+.story-image-band :is(em, i) {
+  color: #e9ce72 !important;
+}
+
+/* Nested surfaces: cards sit a step off the paper instead of glowing white. */
+.lux-light .accord-card {
+  background: var(--lux-paper-2) !important;
+  border-color: var(--lux-line-light) !important;
+  box-shadow: 0 18px 44px rgba(13, 12, 16, 0.07);
+}
+.lux-light .accord-card :is(h3, p, i, b) {
+  color: var(--lux-ink);
+}
+/* Scoped to the text block on purpose: the index and vertical label sit on the
+   dark card art, so they keep the bright ramp. */
+.lux-light .accord-card__text :is(i, span) {
+  color: var(--lux-gold-on-paper);
+}
+/* The scent-finder panel stays dark on purpose: it is the one control surface
+   on a light band, and inverting it would flatten the affordance. */
+.finder-section.lux-light .finder-panel {
+  background: var(--lux-obsidian) !important;
+  border-color: var(--lux-hairline-soft);
+}
+.finder-section.lux-light .finder-panel :is(p, span, label) {
+  color: var(--lux-ivory);
+}
+
 /* Gold stays gold on a light band, but the sheen is re-angled through the
    shadow end of the ramp so the metal stays legible against near-white. */
 @supports ((background-clip: text) or (-webkit-background-clip: text)) {
@@ -1899,4 +2072,694 @@ img {
 .reviews-strip.lux-light .review-card footer span {
   color: var(--lux-ink-muted);
   opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   13 · LIQUID STUDIES — editorial plate of the unused study renders
+   -------------------------------------------------------------------------- */
+.studies-section {
+  padding: clamp(72px, 9vw, 130px) 6.3vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.studies-heading {
+  max-width: 620px;
+  margin-bottom: 52px;
+}
+.studies-heading .eyebrow {
+  margin-bottom: 22px;
+}
+.studies-heading h2 {
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: clamp(60px, 7.6vw, 104px);
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  color: var(--lux-ivory);
+  margin: 0;
+}
+.studies-heading h2 em {
+  font-style: italic;
+  color: var(--lux-gold);
+}
+.studies-heading > p:last-child {
+  color: var(--lux-muted);
+  font-size: 16px;
+  line-height: 1.85;
+  max-width: 42ch;
+  margin: 28px 0 0;
+}
+.studies-feature {
+  margin: 0 0 42px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: end;
+  gap: 28px;
+}
+.studies-feature__frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #100e13;
+  border: 1px solid var(--lux-hairline-soft);
+}
+.studies-feature__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studies-section:hover .studies-feature__frame img {
+  transform: scale(1.03);
+}
+.studies-feature figcaption {
+  padding-bottom: 12px;
+  border-top: 1px solid var(--lux-hairline);
+  padding-top: 18px;
+}
+.studies-feature figcaption span {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--lux-bronze);
+}
+.studies-feature figcaption b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin: 12px 0 10px;
+}
+.studies-feature figcaption p {
+  color: var(--lux-muted);
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 0;
+}
+.studies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.studies-card {
+  margin: 0;
+  position: relative;
+}
+.studies-card__frame {
+  aspect-ratio: 4 / 4.6;
+  overflow: hidden;
+  background: #100e13;
+  position: relative;
+}
+.studies-card__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92) contrast(1.02);
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s;
+}
+.studies-card:hover .studies-card__frame img {
+  transform: scale(1.06);
+  filter: saturate(1) contrast(1);
+}
+.studies-card__frame span {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(8, 7, 10, 0.55);
+  padding: 6px 9px;
+  backdrop-filter: blur(4px);
+}
+.studies-card figcaption {
+  border-bottom: 1px solid var(--lux-hairline-soft);
+  padding: 16px 2px 20px;
+}
+.studies-card figcaption b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 23px;
+  letter-spacing: -0.01em;
+}
+.studies-card figcaption p {
+  color: var(--lux-muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 7px 0 0;
+}
+.studies-card figcaption i {
+  font-style: normal;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--lux-bronze);
+  display: inline-block;
+  margin-top: 12px;
+}
+@media (max-width: 1020px) {
+  .studies-section {
+    padding: 84px 5vw;
+  }
+  .studies-feature {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .studies-feature figcaption {
+    padding-top: 16px;
+  }
+  .studies-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+@media (max-width: 700px) {
+  .studies-section {
+    padding: 64px 20px;
+  }
+  .studies-heading h2 {
+    font-size: clamp(52px, 13vw, 68px);
+  }
+  .studies-feature__frame {
+    aspect-ratio: 4 / 5;
+  }
+  .studies-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .studies-card__frame {
+    aspect-ratio: 4 / 4.9;
+  }
+}
+.studies-feature__frame img.studies-feature__fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  border: 0;
+}
+.studies-feature__frame video {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #100e13;
+}
+.studies-motion {
+  margin: 0 0 42px;
+}
+.studies-motion__label {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  color: var(--lux-bronze);
+  margin: 0 0 16px;
+}
+.studies-motion__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.studies-motion__plate {
+  margin: 0;
+  position: relative;
+  border: 1px solid var(--lux-hairline-soft);
+  background: #100e13;
+}
+.studies-motion__plate video {
+  width: 100%;
+  aspect-ratio: 4 / 4.8;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92) contrast(1.02);
+  transition: filter 0.6s;
+}
+.studies-motion__plate:hover video {
+  filter: saturate(1) contrast(1);
+}
+.studies-motion__plate figcaption {
+  padding: 12px 2px 16px;
+  border-bottom: 1px solid var(--lux-hairline-soft);
+}
+.studies-motion__plate figcaption b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+.studies-motion__plate figcaption i {
+  font-style: normal;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--lux-bronze);
+  display: inline-block;
+  margin-top: 7px;
+}
+@media (max-width: 1020px) {
+  .studies-motion__row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+@media (max-width: 700px) {
+  .studies-motion__row {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .studies-motion__plate video {
+    aspect-ratio: 4 / 4.4;
+  }
+}
+
+/* ==========================================================================
+   ·TYPE ATMOSPHERE — FONT-FIRST LUXURY PASS
+   The display face is now Fraunces: a high-contrast editorial serif with an
+   optical-size axis, so its fine hairlines stay crisp at 96-116px and gain
+   quiet strength at small sizes. SOFT/WONK are forced to 0 for a sharper,
+   engraved-Didot mood. Cormorant still carries the body prose and the gold
+   italic accent words; Inter still handles every label and control.
+   ========================================================================== */
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+.lux-hero::before {
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 0, 'WONK' 0;
+}
+
+/* Fraunces runs wider per character than Cormorant, so the display headlines
+   loosen a beat (-0.02em -> -0.01em) and the hairlines gain a touch more
+   leading (0.92 -> 0.95) so the gold italic accents never kiss the line
+   above. Scoped to the site's display list — the Sovereign film stays on its
+   own locked Cormorant rules. */
+.notes-intro h2,
+.atelier-copy h2,
+.closing-section h2,
+.finder-heading h2,
+.ritual-heading h2,
+.home-signature__copy h2,
+.shelf-section__head h2,
+.collection-shelf__head h2,
+.accord-collection__heading h2,
+.collection-hero h1,
+.story-masthead h1,
+.atelier-masthead h1,
+.journal-masthead h1,
+.contact-intro h1,
+.sifr-note-story__intro h2,
+.sifr-bottle-card__copy h2,
+.story-end h2,
+.atelier-process__head h2,
+.atelier-materials h2,
+.collection-foot h2,
+.sifr-final h2,
+.journal-bottom > p,
+.buy-panel__name,
+.also-like__head h2,
+.reviews-strip__head h2,
+.checkout-head h1,
+.checkout-done h1,
+.not-found h1,
+.story-image-band > div p {
+  letter-spacing: -0.01em !important;
+  line-height: 0.95 !important;
+}
+
+/* The oversized hero wordmark is wider now; step it down so it never spills
+   past the viewport on the product/collection heroes. */
+.lux-hero::before {
+  font-size: 16.5vw;
+}
+
+/* Editorial prose: keep the Cormorant voice, add a whisper of blackletter
+   ligature alignment for the shop copy. */
+.chapter-copy-text,
+.notes-intro > p:not(.eyebrow),
+.atelier-copy > p:not(.eyebrow),
+.finder-heading > p:last-child,
+.ritual-heading > p:last-child,
+.home-signature__copy > p:not(.eyebrow),
+.collection-hero__copy > p:not(.eyebrow),
+.story-masthead > p:not(.eyebrow) {
+  font-weight: 400;
+  color: var(--lux-muted);
+}
+
+/* CTA controls — wider, costlier tracking; one weight up from the labels. */
+.finder-primary,
+.finder-next,
+.header-cta,
+.modal-contact,
+.product-card__cta,
+.bag-button,
+.menu-toggle {
+  letter-spacing: 0.26em !important;
+}
+
+/* Eyebrow/metadata labels — a touch more air at the same 12px size. */
+.eyebrow,
+.chapter-kicker,
+.collection-hero__side,
+.page-breadcrumb {
+  letter-spacing: 0.28em !important;
+  opacity: 0.85 !important;
+}
+
+/* ==========================================================================
+   ·NOOR ESSENCE — FULL-BLEED CINEMATIC INTERLUDE (HOME)
+   The noor-essence film runs edge-to-edge behind a veiled editorial overlay:
+   eyebrow + Fraunces headline, three glass "movements" (top/heart/base), and
+   a gold progress hairline that fills on scroll. Choreography (clip reveal,
+   video parallax scrub, progress fill) is registered in App's useGSAP block.
+   ========================================================================== */
+.essence-cine {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: #08070a;
+  padding: clamp(96px, 15vh, 160px) clamp(20px, 6vw, 84px) clamp(72px, 10vh, 110px);
+}
+.essence-cine__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.essence-cine__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.essence-cine__video {
+  width: 100%;
+  height: 118%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.04) contrast(1.04) brightness(0.92);
+}
+.essence-cine__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 7, 10, 0.9) 0%, rgba(8, 7, 10, 0.32) 28%, rgba(8, 7, 10, 0.3) 60%, rgba(8, 7, 10, 0.95) 100%),
+    radial-gradient(120% 90% at 50% 42%, transparent 40%, rgba(8, 7, 10, 0.55) 100%);
+}
+.essence-cine__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
+}
+.essence-cine__copy {
+  position: relative;
+  z-index: 1;
+  max-width: 1020px;
+}
+.essence-cine__copy h2 {
+  font-family: var(--display) !important;
+  font-weight: 500 !important;
+  font-size: clamp(60px, 9vw, 148px) !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--lux-ivory);
+  margin: 22px 0 26px;
+  text-wrap: balance;
+}
+.essence-cine__copy h2 em {
+  color: var(--lux-gold) !important;
+  font-weight: 400 !important;
+}
+.essence-cine__copy > p:last-child {
+  font-family: var(--body-serif);
+  font-size: 20px !important;
+  line-height: 1.7 !important;
+  letter-spacing: 0.02em;
+  max-width: 58ch;
+  color: var(--lux-muted);
+  margin: 0;
+}
+.essence-cine__movements {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: clamp(38px, 6vh, 64px);
+}
+.essence-cine__movement {
+  margin: 0;
+  border: 1px solid var(--lux-hairline-soft);
+  background: rgba(12, 10, 14, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  padding: 28px 26px 24px;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.5s;
+}
+.essence-cine__movement:hover {
+  transform: translateY(-5px);
+  border-color: var(--lux-hairline);
+}
+.essence-cine__movement span {
+  display: block;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--lux-gold);
+  margin-bottom: 16px;
+}
+.essence-cine__movement b {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  color: var(--lux-ivory);
+  margin-bottom: 14px;
+}
+.essence-cine__movement p {
+  font-family: var(--body-serif);
+  font-size: 19px;
+  line-height: 1.65;
+  letter-spacing: 0.015em;
+  color: var(--lux-muted);
+  margin: 0 0 18px;
+}
+.essence-cine__movement i {
+  font-style: normal;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--lux-bronze);
+}
+.essence-cine__foot {
+  position: relative;
+  z-index: 1;
+  margin-top: 46px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+.essence-cine__spec {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  color: var(--lux-bronze);
+  white-space: nowrap;
+}
+.essence-cine__progress {
+  flex: 1 1 180px;
+  height: 1px;
+  background: var(--lux-hairline-soft);
+  overflow: hidden;
+}
+.essence-cine__progress i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--lux-gold-deep), var(--lux-gold), #f4e19e);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+@media (max-width: 900px) {
+  .essence-cine__movements {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .essence-cine__copy h2 {
+    font-size: clamp(52px, 14vw, 76px) !important;
+  }
+  .essence-cine__spec {
+    white-space: normal;
+  }
+}
+
+/* ==========================================================================
+   ·HOME SHELF CAROUSEL — UNIFORM CARDS, HORIZONTAL SCROLL
+   The home shelf is a snap carousel: every card shares one width and one
+   frame ratio, text is line-clamped with reserved measure, and QUICK ADD
+   pins to the card foot — so all cards render at identical height. Scoped
+   to .shelf-section (home) only; collection + also-like keep their grids.
+   ========================================================================== */
+.shelf-section {
+  padding-left: 0;
+  padding-right: 0;
+}
+.shelf-section__head {
+  padding: 0 9vw;
+}
+.shop-carousel {
+  position: relative;
+}
+.shelf-section .shop-grid--carousel {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 9vw;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 8px 9vw 26px;
+}
+.shelf-section .shop-grid--carousel::-webkit-scrollbar {
+  display: none;
+}
+.shelf-section .shop-grid--carousel .product-card {
+  flex: 0 0 clamp(232px, 21vw, 300px);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  /* Each card reads as one composed object: hairline frame, deep surface,
+     and inner padding so the image, type and pill never touch an edge. */
+  background: rgba(18, 16, 18, 0.72);
+  border: 1px solid var(--lux-hairline-soft);
+  padding: 14px 14px 18px;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.55s, box-shadow 0.55s;
+}
+.shelf-section .shop-grid--carousel .product-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--lux-hairline);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 60px var(--lux-glow-amber);
+}
+.shelf-section .product-card__frame {
+  aspect-ratio: 3 / 4;
+}
+.shelf-section .product-card__badge {
+  top: 12px;
+  left: 12px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  padding: 7px 10px;
+}
+.shelf-section .product-card__index {
+  bottom: 12px;
+  left: 12px;
+}
+.shelf-section .product-card__cta {
+  bottom: 12px;
+  right: 12px;
+}
+.shelf-section .product-card__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 6px 0;
+}
+.shelf-section .product-card__name h3 {
+  min-height: 2.2em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.shelf-section .product-card__notes {
+  min-height: 2.7em;
+  margin: 10px 0 18px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.shelf-section .product-card__add {
+  margin-top: auto;
+}
+.shop-carousel__nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 6px 9vw 0;
+}
+.shop-carousel__nav span {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  color: var(--lux-bronze);
+}
+.shop-carousel__arrow {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--lux-hairline);
+  background: transparent;
+  color: var(--lux-ivory);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.35s, border-color 0.35s, color 0.35s, transform 0.35s;
+}
+.shop-carousel__arrow:hover {
+  background: var(--lux-gold);
+  border-color: var(--lux-gold);
+  color: var(--lux-obsidian);
+  transform: translateY(-2px);
+}
+@media (max-width: 700px) {
+  .shelf-section__head {
+    padding: 0 20px;
+  }
+  .shelf-section .shop-grid--carousel {
+    gap: 18px;
+    padding: 6px 20px 20px;
+    scroll-padding-inline: 20px;
+  }
+  .shelf-section .shop-grid--carousel .product-card {
+    padding: 10px 10px 14px;
+  }
+  .shop-carousel__nav {
+    padding: 4px 20px 0;
+  }
+  /* Four note tabs never fit one 360px row without clipping their labels —
+     settle into an elegant 2×2 grid instead of squeezing. */
+  .note-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .note-tab {
+    min-width: 0;
+    width: 100%;
+  }
 }

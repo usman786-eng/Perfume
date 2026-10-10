@@ -1,4 +1,4 @@
-/* Sovereign campaign / scroll-controlled 10-second fragrance film in The Obsidian Void */
+﻿/* Sovereign campaign / scroll-controlled 10-second fragrance film in The Obsidian Void */
 .sovereign-film {
   height: 620vh;
   position: relative;
@@ -52,7 +52,7 @@
   display: block;
 }
 
-/* Edge vignette that keeps the center (32%–68%) completely clear for the DAYRAH SCENTS bottle */
+/* Edge vignette that keeps the center (32%â€“68%) completely clear for the DAYRAH SCENTS bottle */
 .sovereign-film__wash {
   z-index: 3;
   background:
@@ -93,7 +93,7 @@
   justify-content: space-between;
   gap: 16px;
   color: #d6c8ba;
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.16em;
 }
 
@@ -125,7 +125,7 @@
   background: rgba(12, 9, 10, 0.72);
   backdrop-filter: blur(8px);
   color: #dfd0c0;
-  font-size: 6px;
+  font-size: 12px;
   letter-spacing: 0.15em;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
@@ -159,7 +159,7 @@
   padding-bottom: 12px;
   margin-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   color: #e6be83;
 }
@@ -168,7 +168,7 @@
   border: 0;
   background: none;
   color: #e6dacb;
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.15em;
   cursor: pointer;
 }
@@ -202,7 +202,7 @@
 
 .sovereign-film__ref-card small {
   display: block;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.15em;
   color: #dda963;
 }
@@ -216,12 +216,12 @@
 
 .sovereign-film__ref-card p {
   margin: 0;
-  font-size: 7px;
+  font-size: 14px;
   line-height: 1.55;
   color: #bfb2a6;
 }
 
-/* Main 3-zone layout: Left Storyboard Copy | Center Unobstructed Bottle | Right Camera/Lighting Specs */
+/* Main 3-zone layout: Left Copy | Center Unobstructed Bottle | Right Camera/Lighting Specs */
 .sovereign-film__layout {
   position: relative;
   z-index: 6;
@@ -248,7 +248,7 @@
   gap: 10px;
   margin: 0 0 8px;
   color: #e6b873;
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.18em;
 }
 
@@ -263,7 +263,7 @@
 .sovereign-film__context {
   margin: 0 0 12px;
   color: #f3e4cf;
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -272,8 +272,8 @@
 .sovereign-film__copy h1 {
   margin: 0;
   color: #faf3ea;
-  font: 300 clamp(46px, 5.2vw, 76px) / 0.84 var(--serif);
-  letter-spacing: -0.035em;
+  font: 500 clamp(44px, 5.2vw, 76px) / 0.92 var(--serif);
+  letter-spacing: -0.02em;
 }
 
 .sovereign-film__copy h1 em {
@@ -293,7 +293,7 @@
 
 .sovereign-film__dialog-box span {
   display: block;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.17em;
   color: #dfaf67;
   margin-bottom: 4px;
@@ -308,7 +308,7 @@
 .sovereign-film__description {
   margin: 0 0 13px;
   color: #d2c5b8;
-  font-size: 8.5px;
+  font-size: 14px;
   line-height: 1.75;
 }
 
@@ -321,7 +321,7 @@
 
 .sovereign-film__fx-pills span {
   padding: 3px 7px;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.13em;
   color: #efd09f;
   background: rgba(226, 179, 106, 0.11);
@@ -342,7 +342,7 @@
   padding-bottom: 6px;
   border-bottom: 1px solid #d5a968;
   color: #f6ede2;
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.15em;
 }
 
@@ -358,7 +358,7 @@
 
 .sovereign-film__hint {
   color: #a99b8e;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.14em;
 }
 
@@ -381,7 +381,7 @@
 
 .sovereign-film__spec-row span {
   display: block;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   color: #dfae67;
   margin-bottom: 3px;
@@ -389,7 +389,7 @@
 
 .sovereign-film__spec-row b {
   display: block;
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   color: #f8efe4;
   font-weight: 500;
@@ -397,7 +397,7 @@
 
 .sovereign-film__spec-row p {
   margin: 0;
-  font-size: 7.5px;
+  font-size: 14px;
   line-height: 1.6;
   color: #cfc1b4;
 }
@@ -421,14 +421,14 @@
 
 .sovereign-film__macro-pip span {
   display: block;
-  font-size: 5px;
+  font-size: 12px;
   letter-spacing: 0.15em;
   color: #e2b36e;
 }
 
 .sovereign-film__macro-pip b {
   display: block;
-  font-size: 7px;
+  font-size: 12px;
   line-height: 1.4;
   color: #f5ece0;
   margin-top: 2px;
@@ -442,14 +442,14 @@
 
 .sovereign-film__alchemy-meter > span {
   display: block;
-  font-size: 5px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   color: #e2b36e;
 }
 
 .sovereign-film__alchemy-meter > b {
   display: block;
-  font-size: 8px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   color: #ffdfb0;
   margin: 3px 0 7px;
@@ -466,7 +466,7 @@
   font-style: normal;
   text-align: center;
   padding: 4px 3px;
-  font-size: 5px;
+  font-size: 12px;
   letter-spacing: 0.11em;
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #b7a99b;
@@ -493,7 +493,7 @@
 
 .sovereign-film__click-badge {
   padding: 5px 8px;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.13em;
   border: 1px solid rgba(255, 255, 255, 0.14);
   color: #b6a89a;
@@ -527,7 +527,7 @@
   background: none;
   padding: 3px 0;
   color: #9e9186;
-  font-size: 6px;
+  font-size: 12px;
   cursor: pointer;
   transition: color 0.2s;
 }
@@ -566,7 +566,7 @@
 }
 
 .sovereign-film__subtitle-tag {
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.18em;
   color: #e4b46c;
   padding-right: 10px;
@@ -591,7 +591,7 @@
   align-items: center;
   gap: 14px;
   color: #c7b8aa;
-  font-size: 6px;
+  font-size: 12px;
   letter-spacing: 0.14em;
 }
 
@@ -622,7 +622,7 @@
   align-items: center;
   gap: 6px;
   color: #b8a99c;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.13em;
   cursor: pointer;
   transition: all 0.2s;
@@ -646,7 +646,7 @@
   align-items: center;
   gap: 7px;
   color: #f5e6d4;
-  font-size: 7px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -663,7 +663,7 @@
 .sovereign-film__readout i {
   font-style: normal;
   color: #b4a498;
-  font-size: 5.5px;
+  font-size: 12px;
 }
 
 .sovereign-film__progress {
@@ -706,7 +706,7 @@
 .sovereign-elements__head .eyebrow {
   justify-content: center;
   color: #e0b16b;
-  font-size: 7px;
+  font-size: 12px;
   margin-bottom: 20px;
 }
 
@@ -726,7 +726,7 @@
   max-width: 490px;
   margin: 18px auto 0;
   color: #bfb1a3;
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1.85;
 }
 
@@ -773,7 +773,7 @@
   background: rgba(8, 6, 7, 0.82);
   border: 1px solid rgba(226, 179, 106, 0.45);
   color: #ecc17e;
-  font-size: 6px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -787,7 +787,7 @@
 }
 
 .sovereign-element-card__subtitle {
-  font-size: 6px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   color: #d9a760;
 }
@@ -801,7 +801,7 @@
 .sovereign-element-card__body p {
   margin: 0;
   color: #cabcb0;
-  font-size: 9.5px;
+  font-size: 14px;
   line-height: 1.85;
 }
 
@@ -815,7 +815,7 @@
 
 .sovereign-element-card__specs span {
   padding: 4px 8px;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   color: #ebd0a3;
   background: rgba(226, 179, 106, 0.1);
@@ -823,7 +823,7 @@
 }
 
 /* =========================================================================
-   SOVEREIGN FEATURE BANNER & FIVE-FRAME STORYBOARD GALLERY
+   
    ========================================================================= */
 .sovereign-feature {
   position: relative;
@@ -872,7 +872,7 @@
   left: 22px;
   bottom: 19px;
   color: #f5e8d6;
-  font-size: 6px;
+  font-size: 12px;
   letter-spacing: 0.16em;
 }
 
@@ -882,7 +882,7 @@
 
 .sovereign-feature__copy .eyebrow {
   color: #dfb06a;
-  font-size: 7px;
+  font-size: 12px;
   margin-bottom: 21px;
 }
 
@@ -902,7 +902,7 @@
   max-width: 395px;
   margin: 22px 0 27px;
   color: #d1c4ba;
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1.9;
 }
 
@@ -915,7 +915,7 @@
   color: #dfb06a;
 }
 
-/* Five-Frame Storyboard Gallery */
+/*  */
 .sovereign-gallery {
   padding: 116px 8.5vw 125px;
   background: #e7e2d8;
@@ -931,7 +931,7 @@
 .sovereign-gallery__head .eyebrow {
   justify-content: center;
   color: #94765f;
-  font-size: 7px;
+  font-size: 12px;
   margin-bottom: 22px;
 }
 
@@ -950,8 +950,8 @@
 .sovereign-gallery__head > p:last-child {
   max-width: 440px;
   margin: 19px auto 0;
-  color: #746d64;
-  font-size: 10px;
+  color: #847d74;
+  font-size: 14px;
   line-height: 1.85;
 }
 
@@ -1015,7 +1015,7 @@
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(41, 37, 31, 0.12);
   color: #8b7e71;
-  font-size: 6.5px;
+  font-size: 12px;
   letter-spacing: 0.14em;
 }
 
@@ -1045,9 +1045,9 @@
 
 .sovereign-gallery__meta p {
   margin: 0;
-  font-size: 8.5px;
+  font-size: 12px;
   line-height: 1.75;
-  color: #5f584f;
+  color: #837c73;
 }
 
 .sovereign-gallery__specs {
@@ -1057,16 +1057,16 @@
   padding-top: 8px;
   margin-top: 4px;
   border-top: 1px solid rgba(41, 37, 31, 0.1);
-  font-size: 7.5px;
+  font-size: 12px;
   line-height: 1.55;
-  color: #6d655b;
+  color: #7f776d;
 }
 
 .sovereign-gallery__specs b {
   display: block;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.15em;
-  color: #9b6b43;
+  color: #a17149;
   margin-bottom: 2px;
 }
 
@@ -1087,7 +1087,7 @@
 
 .sovereign-composition__copy .eyebrow {
   color: #dfb06a;
-  font-size: 7px;
+  font-size: 12px;
   margin-bottom: 23px;
 }
 
@@ -1107,7 +1107,7 @@
   max-width: 420px;
   margin: 22px 0 26px;
   color: #d2c6bc;
-  font-size: 10px;
+  font-size: 14px;
   line-height: 1.9;
 }
 
@@ -1118,7 +1118,7 @@
   padding-bottom: 8px;
   border-bottom: 1px solid #c59b5f;
   color: #f1e9df;
-  font-size: 7px;
+  font-size: 12px;
   letter-spacing: 0.14em;
 }
 
@@ -1143,7 +1143,7 @@
 .sovereign-composition__note > span {
   grid-row: span 2;
   color: #dfb06a;
-  font-size: 6px;
+  font-size: 12px;
   letter-spacing: 0.12em;
 }
 
@@ -1156,7 +1156,7 @@
 .sovereign-composition__note i {
   font-style: normal;
   color: #b4a69c;
-  font-size: 5.5px;
+  font-size: 12px;
   letter-spacing: 0.14em;
 }
 
@@ -1191,7 +1191,7 @@
   left: 19px;
   bottom: 18px;
   color: #f5e8d5;
-  font-size: 6px;
+  font-size: 12px;
   letter-spacing: 0.15em;
 }
 
@@ -1267,7 +1267,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    font-size: 5px;
+    font-size: 12px;
   }
   .sovereign-film__layout {
     padding: 74px 18px 72px;
@@ -1284,7 +1284,7 @@
     font-size: clamp(38px, 10.5vw, 56px);
   }
   .sovereign-film__description {
-    font-size: 7.5px;
+    font-size: 14px;
     line-height: 1.55;
   }
   .sovereign-film__timeline-stops {
@@ -1360,7 +1360,7 @@
 }
 
 /* ==========================================================================
-   ESSENCE TWIN — looping NOOR 03 video core in the identical film frame.
+   ESSENCE TWIN â€” looping NOOR 03 video core in the identical film frame.
    The video breathes on the independent `scale` property; the wrapper div
    carries the scroll-driven transform, so the two never fight.
    ========================================================================== */
@@ -1377,9 +1377,9 @@
 }
 
 /* ==========================================================================
-   LIVING FRAMES — every Sovereign image breathes like projected film.
+   LIVING FRAMES â€” every Sovereign image breathes like projected film.
    Rule: motion lives on the independent `scale` / `translate` properties or
-   pseudo-elements — never `transform`/`opacity` on GSAP- or loop-driven nodes.
+   pseudo-elements â€” never `transform`/`opacity` on GSAP- or loop-driven nodes.
    ========================================================================== */
 
 /* Gallery + reference frames: slow breathing zoom (room to drift inside). */
@@ -1403,7 +1403,7 @@
   from { scale: 1.04; }
   to { scale: 1.075; }
 }
-/* Mouse drift rides the independent `translate` property — GSAP, the film
+/* Mouse drift rides the independent `translate` property â€” GSAP, the film
    loop and the hover zoom (all on `transform`) are untouched. */
 .sovereign-gallery__frame img {
   translate: var(--gmx, 0px) var(--gmy, 0px);
@@ -1420,7 +1420,7 @@
     inset 0 0 34px rgba(212, 163, 92, 0.2);
 }
 
-/* Per-frame 35mm grain (static fur; the stage grain already shimmers). */
+/* Per-frame  grain (static fur; the stage grain already shimmers). */
 .sovereign-gallery__frame::before,
 .sovereign-element-card__media::before {
   content: '';
@@ -1521,7 +1521,7 @@
 }
 
 /* ==========================================================================
-   35MM ANAMORPHIC RIG — parallax depth strata, letterbox, grain, flicker.
+    ANAMORPHIC RIG â€” parallax depth strata, letterbox, grain, flicker.
    JS owns transform/opacity on these layers; CSS owns everything static.
    ========================================================================== */
 .sf-abyss,
@@ -1677,7 +1677,7 @@
   will-change: opacity;
 }
 
-/* Animated film grain at 0.08 — the pattern drifts via transform (cheap). */
+/* Animated  at 0.08 â€” the pattern drifts via transform (cheap). */
 .sovereign-film__grain.sf-grain {
   opacity: 0.08;
   animation: sf-grain-drift 1.2s steps(4) infinite;
@@ -1710,7 +1710,7 @@
   transform-origin: 50% 100%;
 }
 
-/* Projector flicker: 0.98–1.0 opacity shimmer, compositor only. */
+/* Projector flicker: 0.98â€“1.0 opacity shimmer, compositor only. */
 .sf-flicker {
   inset: 0;
   z-index: 6;

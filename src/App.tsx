@@ -1,11 +1,9 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import Lenis from 'lenis';
-import BlurText from './components/BlurText';
-import { CanvasBoundary } from './components/CanvasBoundary';
 import { BrowserRouter, Link, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { AtelierPage, CollectionPage, ContactPage, JournalPage, SifrPage, SovereignPage, SovereignVisualElementsSection, StoryPage } from './pages';
 import SovereignFilm from './components/SovereignFilm';
@@ -15,21 +13,17 @@ import { CartProvider, useCart } from './shop/CartContext';
 import { products } from './shop/products';
 import { ReviewsStrip, ShopGrid } from './shop/ShopSections';
 import CartDrawer from './components/CartDrawer';
-const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
+import MotionPlate from './components/MotionPlate';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-type Note = 'oud' | 'rose' | 'amber';
+type Note = 'cardamom' | 'lime' | 'rose' | 'sandalwood';
 type QuizQuestion = { prompt: string; choices: { title: string; detail: string; note?: Note }[] };
-const stories = [
-  { eyebrow: '01 / THE FIRST BREATH', lineOne: 'An oud at', lineTwo: 'the heart.', copy: 'A familiar depth, made personal. Resinous wood opens the story with warmth and quiet confidence.' },
-  { eyebrow: '02 / THE BLOOM', lineOne: 'Petals take', lineTwo: 'flight.', copy: 'Rose unfurls through the composition. A vivid, delicate moment—caught in a cloud of drifting petals.' },
-  { eyebrow: '03 / THE LASTING NOTE', lineOne: 'A memory,', lineTwo: 'in amber.', copy: 'The final warmth settles close to the skin, lingering long after the first impression.' },
-];
 const notes: Record<Note, { title: string; subtitle: string; copy: string; number: string }> = {
-  oud: { title: 'Oud', subtitle: 'THE FOUNDATION', copy: 'Dark, resinous and full of texture. Oud gives the fragrance its grounding, unmistakable depth.', number: '01' },
-  rose: { title: 'Rose', subtitle: 'THE HEART', copy: 'A petal-soft floral note with a bright, modern lift—never too sweet, always in motion.', number: '02' },
-  amber: { title: 'Amber', subtitle: 'THE TRACE', copy: 'Golden warmth that rests close to the skin and draws the composition into a long, soft finish.', number: '03' },
+  cardamom: { title: 'Cardamom', subtitle: 'TOP', copy: 'A crisp, commanding opener. Green cardamom cuts through a room before a single word is spoken.', number: '01' },
+  lime: { title: 'Lime', subtitle: 'TOP', copy: 'Cold lime keeps the opening bright and decisive: it wakes the air without raising its voice.', number: '02' },
+  rose: { title: 'Rose', subtitle: 'HEART', copy: 'A structured rose heart carries the composition — grown for command, never for sweetness.', number: '03' },
+  sandalwood: { title: 'Sandalwood', subtitle: 'BASE', copy: 'Dry, polished sandalwood settles last and stays longest. The part your decisions linger on.', number: '04' },
 };
 
 /* Cinematic boot veil: counts in, then lifts to reveal the scene. */
@@ -62,13 +56,13 @@ function Preloader({ onDone }: { onDone: () => void }) {
           initial={false}
           exit={{ clipPath: 'inset(0 0 100% 0)', transition: { duration: .95, ease: [0.76, 0, 0.24, 1] } }}>
           <div className="preloader__grain" />
-          <div className="preloader__top"><span>DAYRAH SCENTS&nbsp; / &nbsp;FRAGRANCE HOUSE</span><span>THE SOVEREIGN — EAU DE PARFUM</span></div>
+          <div className="preloader__top"><span>DAYRAH&nbsp; / &nbsp;FRAGRANCE HOUSE</span><span>DAYRAH NOOR 03 — EAU DE PARFUM</span></div>
           <div className="preloader__brand">
-            <motion.b initial={{ opacity: 0, y: 22, filter: 'blur(9px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .8, ease: [0.22, 1, 0.36, 1], delay: .12 }}>DAYRAH SCENTS</motion.b>
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .7, delay: .42 }}>THE SOVEREIGN · OBSIDIAN VOID</motion.span>
+            <motion.b initial={{ opacity: 0, y: 22, filter: 'blur(9px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .8, ease: [0.22, 1, 0.36, 1], delay: .12 }}>DAYRAH NOOR 03</motion.b>
+            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .7, delay: .42 }}>QUIET POWER · BUILT FOR BOARDROOM PRESENCE</motion.span>
           </div>
           <div className="preloader__bottom">
-            <span>OUD&nbsp; · &nbsp;ROSE&nbsp; · &nbsp;AMBER</span>
+            <span>CARDAMOM&nbsp; · &nbsp;LIME&nbsp; · &nbsp;ROSE&nbsp; · &nbsp;SANDALWOOD</span>
             <span className="preloader__count">{String(count).padStart(3, '0')}</span>
           </div>
           <div className="preloader__line" style={{ transform: `scaleX(${count / 100})` }} />
@@ -136,7 +130,7 @@ function Magnetic({ children, strength = 0.38, className = '' }: { children: Rea
 
 /* Endless olfactory ribbon that separates the story from the finale. */
 function ScentMarquee() {
-  const phrase = 'OUD \u00b7 ROSE \u00b7 AMBER \u00b7 SIFR / 01 \u00b7 DAYRAH \u00b7 A MODERN RITUAL \u00b7 ';
+  const phrase = 'CARDAMOM \u00b7 LIME \u00b7 ROSE \u00b7 SANDALWOOD \u00b7 DAYRAH NOOR 03 \u00b7 QUIET POWER \u00b7 ';
   return (
     <div className="scent-marquee" aria-hidden="true">
       <div className="scent-marquee__track">{Array.from({ length: 4 }, (_, index) => <span key={index}>{phrase}</span>)}</div>
@@ -149,8 +143,8 @@ function Header() {
   const { count, openBag } = useCart();
   const close = () => setMenuOpen(false);
   return (
-    <header className="site-header">
-      <Link className="brand" to="/" aria-label="Dayrah Scents home" onClick={close}><span>DAYRAH SCENTS</span><small>FRAGRANCE HOUSE</small></Link>
+    <header className={`site-header ${menuOpen ? 'is-nav-open' : ''}`}>
+      <Link className="brand" to="/" aria-label="Dayrah home" onClick={close}><span>DAYRAH</span><small>FRAGRANCE HOUSE</small></Link>
       <nav className="desktop-nav" aria-label="Main navigation">
         <NavLink to="/sovereign">SOVEREIGN</NavLink>
         <NavLink to="/collection">COLLECTION</NavLink>
@@ -159,13 +153,13 @@ function Header() {
         <NavLink to="/journal">JOURNAL</NavLink>
       </nav>
       <div className="header-actions">
-        <Magnetic strength={0.32}><Link className="header-cta" to="/contact">CONTACT THE HOUSE <span>↗</span></Link></Magnetic>
+        <Magnetic strength={0.32}><Link className="header-cta" to="/contact">ENQUIRE <span>↗</span></Link></Magnetic>
         <button className="bag-button" onClick={openBag} aria-label={count > 0 ? `Open bag, ${count} item${count === 1 ? '' : 's'}` : 'Open bag'}>
           BAG
           <motion.span key={count} className="bag-count" initial={{ scale: .5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 22 }}>{count}</motion.span>
         </button>
       </div>
-      <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button>
+      <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /><i /></button>
       <AnimatePresence>{menuOpen && <motion.nav className="mobile-nav" aria-label="Mobile navigation" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .22 }}>
         <Link to="/sovereign" onClick={close}>SOVEREIGN / NEW</Link><Link to="/collection" onClick={close}>THE COLLECTION</Link><Link to="/story" onClick={close}>THE HOUSE</Link><Link to="/atelier" onClick={close}>THE ATELIER</Link><Link to="/journal" onClick={close}>JOURNAL</Link><Link to="/contact" onClick={close}>CONTACT ↗</Link>
       </motion.nav>}</AnimatePresence>
@@ -173,91 +167,28 @@ function Header() {
   );
 }
 
-function ScentExperience({ note, onOpenDetails, booted }: { note: Note; onOpenDetails: () => void; booted: boolean }) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const progressRef = useRef(0);
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const frameCounterRef = useRef<HTMLElement>(null);
-  const [step, setStep] = useState(0);
-
-  useGSAP(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const trigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (self) => {
-        progressRef.current = self.progress;
-        if (progressBarRef.current) progressBarRef.current.style.transform = `scaleX(${self.progress})`;
-        if (frameCounterRef.current) frameCounterRef.current.textContent = String(Math.round(self.progress * 179)).padStart(3, '0');
-        const next = Math.min(stories.length - 1, Math.floor(self.progress * stories.length));
-        setStep((current) => current === next ? current : next);
-      },
-    });
-    return () => trigger.kill();
-  }, { scope: sectionRef });
-
-  const jumpTo = (index: number) => {
-    const section = sectionRef.current;
-    if (!section) return;
-    const range = section.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: section.offsetTop + Math.max(0, range) * (index / stories.length), behavior: 'smooth' });
-  };
-
-  const active = stories[step];
-  return (
-    <section className="scent-experience" id="story" ref={sectionRef}>
-      <div className="experience-sticky">
-        <div className="experience-glow" />
-        <div className="cinema-vignette" aria-hidden="true" />
-        <div className="experience-grain" />
-        <CanvasBoundary fallback={<div className="scene-loading" aria-hidden="true" />}>
-          <Suspense fallback={<div className="scene-loading" aria-hidden="true" />}><PerfumeScene progress={progressRef} note={note} /></Suspense>
-        </CanvasBoundary>
-        <div className="experience-topline"><span>DAYRAH&nbsp; / &nbsp;THE ART OF PERFUMERY</span><span>OUD&nbsp; · &nbsp;ROSE&nbsp; · &nbsp;AMBER</span></div>
-        <div className="experience-layout">
-          <div className="experience-copy" aria-live="polite">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div className="chapter-copy" key={step} initial={{ opacity: 0, y: 18, filter: 'blur(7px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -12, filter: 'blur(5px)' }} transition={{ duration: .55, ease: [0.22, 1, 0.36, 1], delay: booted ? 0 : 1.5 }}>
-                <p className="chapter-kicker">{active.eyebrow}</p>
-                <h1><span><BlurText text={active.lineOne} startDelay={booted ? 0 : 1.55} /></span><em><BlurText text={active.lineTwo} delay={.12} startDelay={booted ? 0 : 1.55} /></em></h1>
-                <p className="chapter-copy-text">{active.copy}</p>
-              </motion.div>
-            </AnimatePresence>
-            <div className="story-actions"><Magnetic strength={0.42}><motion.button className="discover-button" onClick={onOpenDetails} whileHover={{ x: 4 }} whileTap={{ scale: .98 }}>EXPLORE THE FRAGRANCE <span>↗</span></motion.button></Magnetic><span className="drag-note">DRAG THE BOTTLE TO TURN</span></div>
-          </div>
-          <div className="scene-side-copy"><span className="scene-rule" /><p>SCENT AS<br />A SENSORY<br />MEMORY</p></div>
-        </div>
-        <div className="chapter-nav" aria-label="Fragrance story chapters">{stories.map((item, index) => <button key={item.eyebrow} className={step === index ? 'chapter-dot active' : 'chapter-dot'} onClick={() => jumpTo(index)} aria-label={`Go to ${item.eyebrow.toLowerCase()}`}><span>0{index + 1}</span><i /></button>)}</div>
-        <div className="experience-bottom"><a href="#notes" aria-label="Scroll to the notes"><span className="scroll-ring">↓</span></a><span className="scroll-prompt">SCROLL TO REVEAL</span><span className="frame-readout" aria-label="Scroll-scrubbed fragrance film frame"><b ref={frameCounterRef}>000</b><i>/ 180 FRAMES</i></span><span className="experience-count">0{step + 1}<i />03</span></div>
-        <div className="experience-progress"><div ref={progressBarRef} /></div>
-      </div>
-    </section>
-  );
-}
 
 function NoteExplorer({ note, setNote }: { note: Note; setNote: (value: Note) => void }) {
   const active = notes[note];
   return (
     <section className="notes-section" id="notes">
       <div className="notes-intro" data-gsap-reveal>
-        <p className="eyebrow"><span /> THE OLFACTIVE PALETTE</p>
-        <h2>Three notes.<br /><em>One lasting feeling.</em></h2>
-        <p>Tap a note to feel its place in the composition. The bottle’s colour shifts with the accord.</p>
+        <p className="eyebrow"><span /> SCENT PROFILE</p>
+        <h2>Four notes.<br /><em>One executive signature.</em></h2>
+        <p>Tap a note to see where it sits in the composition. Four accords, one executive signature.</p>
         <div className="note-tabs" role="tablist" aria-label="Choose a fragrance note">{(Object.keys(notes) as Note[]).map((key) => <motion.button key={key} role="tab" aria-selected={note === key} className={note === key ? 'note-tab active' : 'note-tab'} onClick={() => setNote(key)} whileTap={{ scale: .97 }}><span>{notes[key].number}</span>{notes[key].title}</motion.button>)}</div>
         <AnimatePresence mode="wait" initial={false}><motion.div className="selected-note" key={note} initial={{ opacity: 0, y: 11 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -7 }} transition={{ duration: .28 }}><span>{active.subtitle}</span><h3>{active.title}</h3><p>{active.copy}</p></motion.div></AnimatePresence>
       </div>
-      <figure className="notes-image" data-gsap-reveal><div className="notes-image-frame"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image of a glass bottle, amber liquid, and rose petals" loading="lazy" /></div><figcaption><span>THE MATERIAL</span><span>AMBER GLASS / STUDY 01</span></figcaption><span className="image-index">01</span></figure>
+      <figure className="notes-image" data-gsap-reveal><div className="notes-image-frame"><img src="/images/decanter-levitating.jpg" alt="Dayrah Noor 03 crystal decanter levitating, held in golden light" loading="lazy" /></div><figcaption><span>THE MATERIAL</span><span>CRYSTAL / STUDY 01</span></figcaption><span className="image-index">01</span></figure>
     </section>
   );
 }
 
 const quizQuestions: QuizQuestion[] = [
-  { prompt: 'What do you want to feel first?', choices: [
-    { title: 'Deep & grounded', detail: 'Resinous woods with a little mystery.', note: 'oud' as Note },
-    { title: 'Soft & in bloom', detail: 'A petal-bright floral heart.', note: 'rose' as Note },
-    { title: 'Warm & golden', detail: 'A close, amber glow.', note: 'amber' as Note },
+  { prompt: 'How should it open?', choices: [
+    { title: 'Crisp & decisive', detail: 'Green cardamom with a cold lime edge.', note: 'cardamom' as Note },
+    { title: 'Structured & in command', detail: 'A lifted rose heart, held in balance.', note: 'rose' as Note },
+    { title: 'Dry & enduring', detail: 'Polished sandalwood that lingers.', note: 'sandalwood' as Note },
   ] },
   { prompt: 'How should it wear?', choices: [
     { title: 'Close to the skin', detail: 'A private, personal trail.' },
@@ -284,7 +215,7 @@ function ScentFinder({ onChooseNote }: { onChooseNote: (note: Note) => void }) {
     if (selected === undefined) return;
     if (step === quizQuestions.length - 1) {
       const firstAnswer = answers[0] ?? selected;
-      setRecommendation(quizQuestions[0].choices[firstAnswer].note ?? 'amber');
+      setRecommendation(quizQuestions[0].choices[firstAnswer].note ?? 'cardamom');
     } else {
       setStep((current) => current + 1);
     }
@@ -332,9 +263,9 @@ function RitualGuide() {
   const step = ritualSteps[active];
   return (
     <section className="ritual-section" id="ritual">
-      <div className="ritual-heading" data-gsap-reveal><p className="eyebrow"><span /> THE RITUAL</p><h2>Let the notes<br /><em>take their time.</em></h2><p>Fragrance is not a race to the last note. Give it a moment, and make the moment your own.</p></div>
+      <div className="ritual-heading" data-gsap-reveal><p className="eyebrow"><span /> RITUAL</p><h2>Disciplined<br /><em>application.</em></h2><p>Applied with intent. For moments that require control.</p></div>
       <div className="ritual-card" data-gsap-reveal>
-        <div className="ritual-card-top"><span>HOW TO WEAR</span><span>0{active + 1} / 03</span></div>
+        <div className="ritual-card-top"><span>HOW TO WEAR IT</span><span>0{active + 1} / 03</span></div>
         <AnimatePresence mode="wait" initial={false}><motion.div className="ritual-content" key={active} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }} transition={{ duration: .3 }}><span>{step.note}</span><h3>{step.title}</h3><p>{step.copy}</p></motion.div></AnimatePresence>
         <div className="ritual-bottom"><div className="ritual-step-buttons" aria-label="Ritual steps">{ritualSteps.map((item, index) => <button key={item.note} className={active === index ? 'ritual-step active' : 'ritual-step'} onClick={() => setActive(index)} aria-label={`Show step ${index + 1}: ${item.title}`}><span>0{index + 1}</span><i /></button>)}</div><div className="ritual-arrows"><button onClick={() => setActive((current) => Math.max(0, current - 1))} disabled={active === 0} aria-label="Previous ritual step">←</button><button onClick={() => setActive((current) => Math.min(ritualSteps.length - 1, current + 1))} disabled={active === ritualSteps.length - 1} aria-label="Next ritual step">→</button></div></div>
       </div>
@@ -359,27 +290,118 @@ function DetailsModal({ open, onClose }: { open: boolean; onClose: () => void })
     document.body.style.overflow = 'hidden';
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
   }, [open, onClose]);
-  return <AnimatePresence>{open && <motion.div className="modal-scrim" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="fragrance-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()} initial={{ y: 28, opacity: 0, scale: .98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 18, opacity: 0, scale: .985 }} transition={{ duration: .3, ease: [0.22, 1, 0.36, 1] }}><button className="modal-close" onClick={onClose} aria-label="Close fragrance details">×</button><p className="eyebrow"><span /> DAYRAH / SIGNATURE SCENT</p><h2 id="modal-title">Sifr<sup>01</sup></h2><p className="modal-subtitle">A memory, held in glass.</p><div className="modal-notes"><span>OUD <i /> ROSE <i /> AMBER</span></div><p className="modal-copy">A warm, floral-woody composition, inspired by the scents that turn a moment into a place you remember.</p><a className="modal-contact" href="mailto:hello@dayrah.com">ASK THE ATELIER <span>↗</span></a><p className="modal-foot">CONTACT DETAILS AND PRODUCT INFORMATION ARE PLACEHOLDERS.</p></motion.div></motion.div>}</AnimatePresence>;
+  return <AnimatePresence>{open && <motion.div className="modal-scrim" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="fragrance-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()} initial={{ y: 28, opacity: 0, scale: .98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 18, opacity: 0, scale: .985 }} transition={{ duration: .3, ease: [0.22, 1, 0.36, 1] }}><button className="modal-close" onClick={onClose} aria-label="Close fragrance details">×</button><p className="eyebrow"><span /> DAYRAH / SIGNATURE SCENT</p><h2 id="modal-title">Sifr<sup>01</sup></h2><p className="modal-subtitle">A memory, held in glass.</p><div className="modal-notes"><span>OUD <i /> ROSE <i /> AMBER</span></div><p className="modal-copy">A warm, floral-woody composition, inspired by the scents that turn a moment into a place you remember.</p><a className="modal-contact" href="mailto:hello@dayrah.com">ASK THE ATELIER <span>↗</span></a></motion.div></motion.div>}</AnimatePresence>;
 }
 
-function SovereignFeature() {
+function LiquidStudies() {
   return (
-    <section className="sovereign-feature" id="sovereign-feature-section" aria-labelledby="sovereign-feature-title">
-      <Link to="/sovereign" className="sovereign-feature__visual" aria-label="Enter the Sovereign film">
-        <img src="/images/sovereign-05.jpg" alt="DAYRAH SCENTS The Sovereign geometric crystal perfume flacon glowing with amber liquid in the Obsidian Void" loading="lazy" />
-        <span>DAYRAH SCENTS&nbsp; / &nbsp;THE SOVEREIGN (0–10S FILM)</span>
-      </Link>
-      <div className="sovereign-feature__copy" data-gsap-reveal>
-        <p className="eyebrow"><span /> THE SOVEREIGN / ETERNAL. REFINED.</p>
-        <h2 id="sovereign-feature-title">Experience the<br /><em>weight of light.</em></h2>
-        <p>Suspended in the Obsidian Void under a 3200K volumetric beam, velvet-red rose petals, green cardamom, bergamot slices, and sandalwood shift from crystal clear to blushing rose gold and deep luxurious amber.</p>
-        <Link to="/sovereign" className="text-link">OPEN FULL SOVEREIGN STORYBOARD &amp; SHOP <span>↗</span></Link>
+    <section className="studies-section" id="studies" data-gsap-reveal>
+      <div className="studies-heading">
+        <p className="eyebrow"><span /> THE LIQUID STUDIES</p>
+        <h2>Liquid in<br /><em>crystal.</em></h2>
+        <p>A study set of the house decanter — ingredients suspended in golden liquid, light caught in the facets, and the signature still at rest.</p>
+      </div>
+      <figure className="studies-feature" data-gsap-reveal>
+        <div className="studies-feature__frame">
+          <MotionPlate src="/videos/bottle-void.mp4" poster="/images/decanter-levitating.jpg" ariaLabel="The Dayrah Noor 03 decanter rotating in darkness" />
+          <img className="studies-feature__fallback" src="/images/decanter-levitating.jpg" alt="" aria-hidden="true" loading="lazy" />
+        </div>
+        <figcaption><span>00 / THE MUSE</span><b>The decanter, unsupported and weightless</b><p>The object around which everything else settles — turning, unhurried, in the dark.</p></figcaption>
+      </figure>
+      <div className="studies-motion">
+        <p className="studies-motion__label">MOTION PLATES</p>
+        <div className="studies-motion__row">
+          {[
+            { src: '/videos/stopper-unscrew.mp4', title: 'The Opening', frame: 'STOPPER · RELEASED' },
+            { src: '/videos/metallic-cap.mp4', title: 'The Fitting', frame: 'COLLAR · SETTLING' },
+            { src: '/videos/decanter-glow-01.mp4', title: 'The Glow', frame: 'LIQUID · AGLOW' },
+            { src: '/videos/perfume-bursts.mp4', title: 'The Release', frame: 'FIVE MOVEMENTS · UNCORKED' },
+          ].map((plate) => (
+            <figure className="studies-motion__plate" key={plate.src}>
+              <MotionPlate src={plate.src} poster="/images/decanter-glowing.jpg" ariaLabel={`Motion study of the decanter: ${plate.title}`} />
+              <figcaption><b>{plate.title}</b><i>{plate.frame}</i></figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+      <div className="studies-grid" data-gsap-reveal>
+        {[
+          { n: '01', src: '/images/botanicals-in-liquid.jpg', title: 'The Infusion', copy: 'Rose petals, lime wheels, cardamom pods, and sandalwood shards — suspended, never lost.', frame: 'BOTANICALS IN GOLDEN LIQUID' },
+          { n: '02', src: '/images/botanicals-swirl.jpg', title: 'The Swirl', copy: 'The ingredients in patient motion through the heart of the composition.', frame: 'CARDAMOM · ROSE · SANDALWOOD' },
+          { n: '03', src: '/images/bottle-suspended.jpg', title: 'The Suspension', copy: 'Held between air and surface, exactly where attention is meant to rest.', frame: 'CRYSTAL · AIR · GOLD' },
+          { n: '04', src: '/images/perfume-burst.jpg', title: 'The Release', copy: 'The notes escaping the decanter — weight, then air.', frame: 'THE SIGNATURE UNCORKED' },
+          { n: '05', src: '/images/bottle-floor.jpg', title: 'The Quiet', copy: 'At rest on the studio floor, still the centre of the room.', frame: 'THE DECANTER AT REST' },
+          { n: '06', src: '/images/sovereign-04-macro.jpg', title: 'The Macro', copy: 'Real glass in real light — refraction without render.', frame: 'REAL LIGHT STUDY' },
+        ].map((study) => (
+          <figure className="studies-card" key={study.n}>
+            <div className="studies-card__frame"><img src={study.src} alt={`Dayrah Noor 03 study ${study.n}: ${study.title}`} loading="lazy" /><span>{study.frame}</span></div>
+            <figcaption><b>{study.title}</b><p>{study.copy}</p><i>STUDY {study.n}</i></figcaption>
+          </figure>
+        ))}
       </div>
     </section>
   );
 }
 
-function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNote: (note: Note) => void; onOpenDetails: () => void; booted: boolean }) {
+/* Noor Essence — full-bleed cinematic interlude on the noor-essence film.
+   Scroll choreography lives in the global useGSAP block below (clip reveal,
+   video parallax scrub, gold progress hairline), so this stays declarative. */
+function NoorEssence() {
+  return (
+    <section className="essence-cine" id="essence-cine" aria-label="Noor, the essence">
+      <div className="essence-cine__media" aria-hidden="true">
+        <div className="essence-cine__frame">
+          <MotionPlate className="essence-cine__video" src="/videos/noor-essence.mp4" poster="/images/noor-03.jpg" ariaLabel="Noor essence — golden perfume in slow motion" />
+        </div>
+        <span className="essence-cine__veil" />
+        <span className="essence-cine__grain" />
+      </div>
+      <div className="essence-cine__copy" data-gsap-reveal>
+        <p className="eyebrow"><span /> NOOR — THE ESSENCE</p>
+        <h2>Wear the light<br /><em>you carry.</em></h2>
+        <p>Noor is the house study of radiance — cold lime and green cardamom folded into a structured rose, set down softly on dry sandalwood. It does not project across the room. It changes the air around the wrist.</p>
+      </div>
+      <div className="essence-cine__movements">
+        {[
+          { n: 'I', title: 'THE ARRIVAL', copy: 'Cardamom and lime strike first — bright, deliberate, gone before they are named.', tag: 'TOP · 0–20 MIN' },
+          { n: 'II', title: 'THE BLOOM', copy: 'Rose opens at the heart, petal by petal, warmed from beneath by the spice it follows.', tag: 'HEART · 20 MIN – 4 HRS' },
+          { n: 'III', title: 'THE STAY', copy: 'Dry sandalwood holds the trace for hours — a quiet signature on skin, cloth, and collar.', tag: 'BASE · 4–10 HRS' },
+        ].map((movement) => (
+          <article className="essence-cine__movement" key={movement.n} data-reveal-up>
+            <span>{movement.n}</span>
+            <b>{movement.title}</b>
+            <p>{movement.copy}</p>
+            <i>{movement.tag}</i>
+          </article>
+        ))}
+      </div>
+      <div className="essence-cine__foot" data-gsap-reveal>
+        <Link className="text-link" to="/sovereign">ENTER THE FILM <span>→</span></Link>
+        <p className="essence-cine__spec">EAU DE PARFUM · 100 ML · 21% PARFUM</p>
+        <div className="essence-cine__progress" aria-hidden="true"><i /></div>
+      </div>
+    </section>
+  );
+}
+
+function SovereignFeature() {
+  return (
+    <section className="sovereign-feature" id="sovereign-feature-section" aria-labelledby="sovereign-feature-title">
+<Link to="/sovereign" className="sovereign-feature__visual" aria-label="Discover DAYRAH NOOR 03">
+        <img src="/images/sovereign-05.jpg" alt="DAYRAH NOOR 03 crystal decanter with gold collar and golden liquid" loading="lazy" />
+        <span>DAYRAH NOOR 03&nbsp; / &nbsp;EAU DE PARFUM · 100 ML</span>
+      </Link>
+      <div className="sovereign-feature__copy" data-gsap-reveal>
+        <p className="eyebrow"><span /> DAYRAH NOOR 03</p>
+        <h2 id="sovereign-feature-title">Quiet Power<br /><em>Built for boardroom presence.</em></h2>
+        <p>Engineered for quiet command. Measured restraint. Unrivalled precision.</p>
+        <Link to="/sovereign" className="text-link">DISCOVER THE COMPOSITION <span>→</span></Link>
+      </div>
+    </section>
+  );
+}
+
+function HomePage({ note, setNote }: { note: Note; setNote: (note: Note) => void; onOpenDetails: () => void; booted: boolean }) {
   return (
     <main className="home-page">
       <SovereignFilm galleryId="sovereign-feature-section" elementsId="sovereign-elements-home" />
@@ -387,19 +409,21 @@ function HomePage({ note, setNote, onOpenDetails, booted }: { note: Note; setNot
       <SovereignFeature />
       <EssenceFilm scrollTo="#notes" preload="metadata" />
       <NoteExplorer note={note} setNote={setNote} />
+      <LiquidStudies />
+      <NoorEssence />
       <section className="home-signature lux-light">
-        <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup><br /><em>A memory in motion.</em></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace. Meet the full composition behind Dayrah's signature fragrance.</p><Link to="/sifr-01" className="text-link">ENTER THE FRAGRANCE <span>↗</span></Link></div>
-        <Link to="/sifr-01" className="home-signature__image" aria-label="Discover Sifr 01"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image: an amber perfume bottle amid rose petals and golden light" loading="lazy" /><span>01 / SIFR — THE SIGNATURE</span></Link>
+        <div className="home-signature__copy"><p className="eyebrow"><span /> THE HOUSE SIGNATURE</p><h2>Noor<sup>03</sup><br /><em>Presence, measured.</em></h2><p>Cardamom at the top. Rose at the heart. Sandalwood in the trace. The executive composition behind Dayrah's house signature.</p><Link to="/sovereign" className="text-link">DISCOVER NOOR 03 <span>→</span></Link></div>
+        <Link to="/sovereign" className="home-signature__image" aria-label="Discover Noor 03"><img src="/images/decanter-studio.jpg" alt="Dayrah Noor 03 crystal decanter rotating in the studio, golden liquid" loading="lazy" /><span>03 / NOOR — THE SIGNATURE</span></Link>
       </section>
       <section className="shelf-section">
         <div className="shelf-section__head" data-gsap-reveal>
           <p className="eyebrow"><span /> THE ATELIER SHELF</p>
-          <h2>Wear the house.<br /><em>Choose your note.</em></h2>
-          <Link className="text-link" to="/collection">VIEW THE FULL COLLECTION <span>↗</span></Link>
+          <h2>DAYRAH NOOR 03<br /><em>EAU DE PARFUM 100ML.</em></h2>
+          <Link className="text-link" to="/collection">ADD TO COLLECTION <span>↗</span></Link>
         </div>
-        <ShopGrid items={products} />
+        <ShopGrid items={products} carousel />
       </section>
-      <ScentExperience note={note} onOpenDetails={onOpenDetails} booted={booted} />
+      
       <ReviewsStrip />
       <ScentFinder onChooseNote={setNote} />
       <RitualGuide />
@@ -421,7 +445,7 @@ function NotFoundPage() {
 
 function SiteLayout() {
   const location = useLocation();
-  const [note, setNote] = useState<Note>('amber');
+  const [note, setNote] = useState<Note>('cardamom');
   const [modalOpen, setModalOpen] = useState(false);
   const [booted, setBooted] = useState(false);
   const appRef = useRef<HTMLDivElement>(null);
@@ -440,10 +464,10 @@ function SiteLayout() {
 
   useEffect(() => {
     const pageMeta: Record<string, { title: string; description: string }> = {
-      '/': { title: 'Dayrah — The Art of Perfumery', description: 'Discover Dayrah through the Sifr 01 3D fragrance film, the new Sovereign campaign, and the rituals of scent.' },
+      '/': { title: 'Dayrah — The Art of Perfumery', description: 'DAYRAH NOOR 03 Eau de Parfum 100ml — cardamom, lime, rose and sandalwood. An executive composition for boardroom presence and quiet power.' },
       '/collection': { title: 'The Collection — Dayrah', description: 'Explore Dayrah fragrances, including the new Sovereign composition and the Sifr 01 signature.' },
-      '/sovereign': { title: 'Sovereign — Dayrah', description: 'Enter Sovereign, a new Dayrah eau de parfum, through a five-scene cinematic fragrance film with diffused amber mist.' },
-      '/sifr-01': { title: 'Sifr 01 — Dayrah', description: 'Experience Sifr 01 through a scroll-controlled 3D fragrance film and an interactive accord palette.' },
+      '/sovereign': { title: 'Dayrah Noor 03 — Dayrah', description: 'Explore Dayrah Noor 03, a new Dayrah eau de parfum for boardroom presence and quiet power.' },
+      '/sifr-01': { title: 'Sifr 01 — Dayrah', description: 'Sifr 01 — a memory, held in glass. Oud, rose and amber in the house signature composition.' },
       '/story': { title: 'The House — Dayrah', description: 'Discover the Dayrah point of view: memory, Arabic perfumery, and scent worn personally.' },
       '/atelier': { title: 'The Atelier — Dayrah', description: 'Explore the materials, ideas, and deliberate gestures behind the Dayrah fragrance house.' },
       '/journal': { title: 'Field Notes — Dayrah', description: 'Short reflections on material, memory, and the rituals that give fragrance its place.' },
@@ -473,11 +497,15 @@ function SiteLayout() {
     gsap.utils.toArray<HTMLElement>('.note-tab').forEach((tab, index) => {
       gsap.fromTo(tab, { y: 13, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, delay: index * .07, ease: 'power2.out', scrollTrigger: { trigger: tab, start: 'top 90%', once: true } });
     });
-    gsap.utils.toArray<HTMLElement>('.notes-image-frame,.atelier-frame,.story-image-band,.journal-card__image').forEach((frame) => {
+    gsap.utils.toArray<HTMLElement>('.notes-image-frame,.atelier-frame,.story-image-band,.journal-card__image,.essence-cine__frame').forEach((frame) => {
       gsap.fromTo(frame, { clipPath: 'inset(9% 7% 9% 7%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.25, ease: 'power3.out', scrollTrigger: { trigger: frame, start: 'top 82%', once: true } });
     });
-    gsap.utils.toArray<HTMLElement>('.notes-image-frame img,.atelier-frame img,.story-image-band img,.journal-card__image img').forEach((image) => {
+    gsap.utils.toArray<HTMLElement>('.notes-image-frame img,.atelier-frame img,.story-image-band img,.journal-card__image img,.essence-cine__video').forEach((image) => {
       gsap.fromTo(image, { scale: 1.12, yPercent: -4 }, { scale: 1, yPercent: 4, ease: 'none', scrollTrigger: { trigger: image, start: 'top bottom', end: 'bottom top', scrub: .7 } });
+    });
+    /* Noor Essence progress hairline — fills as the interlude scrolls through. */
+    gsap.utils.toArray<HTMLElement>('.essence-cine__progress i').forEach((bar) => {
+      gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: '.essence-cine', start: 'top 65%', end: 'bottom 75%', scrub: .5 } });
     });
     gsap.utils.toArray<HTMLElement>('[data-reveal-up]').forEach((element) => {
       gsap.fromTo(element, { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .85, ease: 'power2.out', stagger: .1, scrollTrigger: { trigger: element, start: 'top 86%', once: true } });
@@ -495,7 +523,7 @@ function SiteLayout() {
             <Route path="/sovereign" element={<SovereignPage />} />
             <Route path="/product/:slug" element={<ProductPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/sifr-01" element={<SifrPage note={note} setNote={setNote} />} />
+            <Route path="/sifr-01" element={<SifrPage />} />
             <Route path="/story" element={<StoryPage />} />
             <Route path="/atelier" element={<AtelierPage />} />
             <Route path="/journal" element={<JournalPage />} />

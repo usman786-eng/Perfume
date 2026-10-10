@@ -12,7 +12,7 @@ import { sovereignFilmFrames, sovereignVisualElements } from './sovereign';
 
 const PerfumeScene = lazy(() => import('./components/PerfumeScene'));
 type Note = 'oud' | 'rose' | 'amber';
-/* Real photography only — no AI renders, no stock. Each note is paired with an
+/* Real photography only ΓÇö no AI renders, no stock. Each note is paired with an
    existing photographic asset in /public/images (see the asset gap list). */
 const noteCopy: Record<Note, { title: string; role: string; body: string; color: string; image: string; alt: string }> = {
   oud: { title: 'Oud', role: 'THE FOUNDATION', body: 'Dark, resinous and textured. The grounded opening gives the composition its quiet depth.', color: '#79513c', image: '/images/sovereign-ref-botanicals.jpg', alt: 'Real botanical study of dark resins, wood and dried oud material' },
@@ -61,14 +61,14 @@ export function ProductFilm({ note }: { note: Note }) {
 
   const active = filmBeats[beat];
   return (
-    <section className="product-film" ref={sectionRef} aria-label="Scroll-controlled fragrance film">
+    <section className="product-film" ref={sectionRef} aria-label="Scroll-controlled fragrance study">
       <div className="product-film__stage">
         <div className="product-film__wash" />
         <div className="product-film__grain" />
         <CanvasBoundary fallback={<div className="product-film__loading" />}>
           <Suspense fallback={<div className="product-film__loading" />}><PerfumeScene progress={progress} note={note} /></Suspense>
         </CanvasBoundary>
-        <div className="product-film__top"><span>DAYRAH / SIFR 01</span><span>SCROLL-SCRUBBED 3D FILM</span></div>
+        <div className="product-film__top"><span>DAYRAH / SIFR 01</span><span>EAU DE PARFUM · SCROLL TO INSPECT</span></div>
         <div className="product-film__layout">
           <div className="product-film__copy" aria-live="polite">
             <AnimatePresence mode="wait" initial={false}>
@@ -78,11 +78,11 @@ export function ProductFilm({ note }: { note: Note }) {
                 <p className="product-film__description">{active.copy}</p>
               </motion.div>
             </AnimatePresence>
-            <Link className="product-film__link" to="/contact">ASK THE HOUSE <span>↗</span></Link>
+            <Link className="product-film__link" to="/contact">ASK THE HOUSE <span>→</span></Link>
           </div>
-          <div className="product-film__index"><span>FRAME <b ref={frameRef}>000</b> / 240</span><span className="product-film__line" /><span>DRAG TO TURN THE BOTTLE</span></div>
+          <div className="product-film__index"><span>NOTE <b ref={frameRef}>000</b> / 240</span><span className="product-film__line" /><span>SCROLL TO TURN THE BOTTLE</span></div>
         </div>
-        <div className="product-film__chapters" aria-label="Film chapters">{filmBeats.map((item, index) => <button key={item.label} className={beat === index ? 'is-active' : ''} onClick={() => jumpTo(index)} aria-label={`Go to ${item.label.toLowerCase()}`}><span>0{index + 1}</span><i /></button>)}</div>
+        <div className="product-film__chapters" aria-label="Fragrance notes">{filmBeats.map((item, index) => <button key={item.label} className={beat === index ? 'is-active' : ''} onClick={() => jumpTo(index)} aria-label={`Go to ${item.label.toLowerCase()}`}><span>0{index + 1}</span><i /></button>)}</div>
         <div className="product-film__progress"><div ref={fillRef} /></div>
       </div>
     </section>
@@ -93,23 +93,23 @@ export function CollectionPage() {
   return (
     <motion.div className="editorial-page collection-page" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, ease: [0.22, 1, .36, 1] }}>
       <section className="collection-hero">
-        <div className="collection-hero__copy"><p className="eyebrow"><span /> THE DAYRAH COLLECTION</p><h1>One scent.<br /><em>Many ways to feel.</em></h1><p>A single signature composition, explored through its three defining notes: oud, rose, and amber.</p><Link className="text-link" to="/sifr-01">DISCOVER SIFR 01 <span>↗</span></Link></div>
-        <figure className="collection-hero__image"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image with an amber glass bottle and drifting rose petals" /><figcaption>STUDY 01&nbsp; / &nbsp;THE SIGNATURE</figcaption><span className="collection-hero__seal">D<br /><i>01</i></span></figure>
+        <div className="collection-hero__copy"><p className="eyebrow"><span /> THE DAYRAH COLLECTION</p><h1>One scent.<br /><em>Many ways to feel.</em></h1><p>A single signature composition, explored through its three defining notes: oud, rose, and amber.</p><Link className="text-link" to="/sifr-01">DISCOVER SIFR 01 <span>Γåù</span></Link></div>
+        <figure className="collection-hero__image"><img src="/images/dayrah-cinematic-campaign.webp" alt="Dayrah amber glass bottle with drifting rose petals and golden light" /><figcaption>STUDY 01&nbsp; / &nbsp;THE SIGNATURE</figcaption><span className="collection-hero__seal">D<br /><i>01</i></span></figure>
         <div className="collection-hero__side">A MODERN RITUAL<br />ROOTED IN PERFUMERY</div>
       </section>
       <section className="collection-shelf" id="shop">
         <div className="collection-shelf__head" data-gsap-reveal>
           <p className="eyebrow"><span /> THE SHELF / THE DAYRAH WARDROBE</p>
           <h2>Choose your<br /><em>signature.</em></h2>
-          <p>Five compositions, one point of view. Every bottle ships with two samples of the house — complimentary over $250.</p>
+          <p>Five compositions, one point of view. Every bottle ships with two samples of the house ΓÇö complimentary over $250.</p>
         </div>
         <ShopGrid items={products} />
       </section>
       <section className="accord-collection lux-light" id="accords">
         <div className="accord-collection__heading"><p className="eyebrow"><span /> THE OLFACTIVE PALETTE</p><h2>Three notes.<br /><em>One composition.</em></h2><p>Each accord has its own character. Together, they create the arc of Sifr 01.</p></div>
-        <div className="accord-grid">{(Object.keys(noteCopy) as Note[]).map((key, index) => <Link to={`/sifr-01#${key}`} className={`accord-card accord-card--${key}`} key={key}><div className="accord-card__art" style={{ '--accord-color': noteCopy[key].color } as CSSProperties}><img className="accord-card__photo" src={noteCopy[key].image} alt={noteCopy[key].alt} loading="lazy" /><span className="accord-card__number">0{index + 1}</span><span className="accord-card__vertical">DAYRAH / OLFACTIVE STUDY</span></div><div className="accord-card__text"><span>{noteCopy[key].role}</span><h3>{noteCopy[key].title}</h3><p>{noteCopy[key].body}</p><i>EXPLORE NOTE&nbsp; ↗</i></div></Link>)}</div>
+        <div className="accord-grid">{(Object.keys(noteCopy) as Note[]).map((key, index) => <Link to={`/sifr-01#${key}`} className={`accord-card accord-card--${key}`} key={key}><div className="accord-card__art" style={{ '--accord-color': noteCopy[key].color } as CSSProperties}><img className="accord-card__photo" src={noteCopy[key].image} alt={noteCopy[key].alt} loading="lazy" /><span className="accord-card__number">0{index + 1}</span><span className="accord-card__vertical">DAYRAH / OLFACTIVE STUDY</span></div><div className="accord-card__text"><span>{noteCopy[key].role}</span><h3>{noteCopy[key].title}</h3><p>{noteCopy[key].body}</p><i>EXPLORE NOTE&nbsp; Γåù</i></div></Link>)}</div>
       </section>
-      <section className="collection-foot"><p>THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace.</p><Link to="/sifr-01" className="button-outline">ENTER THE FRAGRANCE <span>↗</span></Link></section>
+      <section className="collection-foot"><p>THE HOUSE SIGNATURE</p><h2>Sifr<sup>01</sup></h2><p>Oud at the foundation. Rose at the heart. Amber in the trace.</p><Link to="/sifr-01" className="button-outline">ENTER THE FRAGRANCE <span>Γåù</span></Link></section>
     </motion.div>
   );
 }
@@ -118,9 +118,9 @@ export function SovereignVisualElementsSection({ id = 'sovereign-elements' }: { 
   return (
     <section className="sovereign-elements" id={id} aria-labelledby="sovereign-elements-title">
       <div className="sovereign-elements__head" data-gsap-reveal>
-        <p className="eyebrow"><span /> VISUAL ELEMENTS ESTABLISHED FIRST</p>
-        <h2 id="sovereign-elements-title">The Obsidian Void &amp;<br /><em>Sovereign Architecture.</em></h2>
-        <p>Before generating the five scene frames, reference studies establish the location, the faceted DAYRAH SCENTS crystal flacon, the hyper-realistic botanical infusions, and the 3200K overhead volumetric lighting rig.</p>
+        <p className="eyebrow"><span /> THE COMPOSITION</p>
+        <h2 id="sovereign-elements-title">Heart of the House &amp;<br /><em>Signature Refined.</em></h2>
+        <p>A faceted crystal decanter with a diamond-cut stopper and gold collar, holding rose petals, lime wheels, cardamom pods, and sandalwood shards suspended in golden liquid.</p>
       </div>
       <div className="sovereign-elements__grid">
         {sovereignVisualElements.map((element) => (
@@ -153,28 +153,34 @@ export function SovereignPage() {
 
   return (
     <motion.div className="editorial-page sovereign-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .65 }}>
-      <div className="page-breadcrumb lux-light"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>DAYRAH SCENTS — THE SOVEREIGN FILM</span></div>
+      <div className="page-breadcrumb lux-light"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>DAYRAH NOOR 03</span></div>
       <SovereignFilm galleryId="sovereign-gallery" elementsId="sovereign-elements" />
 
       <SovereignVisualElementsSection id="sovereign-elements" />
 
       <section className="sovereign-gallery" id="sovereign-gallery" aria-labelledby="sovereign-gallery-title">
         <div className="sovereign-gallery__head" data-gsap-reveal>
-          <p className="eyebrow"><span /> SCENE FRAMES (0–10 SECONDS) / THE SOVEREIGN FILM</p>
-          <h2 id="sovereign-gallery-title">Five frames,<br /><em>one alchemical arc.</em></h2>
-          <p>From the suspended crystal flacon in the Obsidian Void to the final glowing amber light-box and magnetic 24k gold cap click, every scene frame is inscribed with DAYRAH SCENTS.</p>
+          <p className="eyebrow"><span /> THE OLFACTIVE ARC</p>
+          <h2 id="sovereign-gallery-title">Five movements,<br /><em>one signature.</em></h2>
+          <p>Cardamom and lime open with cold clarity. Rose and sandalwood carry the body. The dry-down settles into a quiet, lasting presence.</p>
         </div>
         <div className="sovereign-gallery__grid">
-          {sovereignFilmFrames.map((frame, index) => (
-            <figure className={`sovereign-gallery__figure sovereign-gallery__figure--${index + 1}`} key={frame.src} data-gsap-reveal>
-              <div className="sovereign-gallery__frame"><img src={frame.src} alt={frame.alt} loading="lazy" /><i className="sf-cell" aria-hidden="true" /></div>
-              <figcaption><span>FRAME 0{frame.frameNumber} / DAYRAH SCENTS</span><span>{frame.caption}</span></figcaption>
+          {[
+            { n: '01', ctx: 'THE OPENING', body: 'Cardamom and lime deliver a crisp, deliberate first impression.', notes: ['CARDAMOM', 'LIME'] },
+            { n: '02', ctx: 'THE HEART', body: 'A structured rose emerges, precise and lifted.', notes: ['ROSE'] },
+            { n: '03', ctx: 'THE BODY', body: 'Sandalwood grounds the composition with dry, polished warmth.', notes: ['SANDALWOOD'] },
+            { n: '04', ctx: 'THE DRY-DOWN', body: 'Notes settle into a close, unspoken confidence.', notes: ['ROSE', 'SANDALWOOD'] },
+            { n: '05', ctx: 'THE SIGNATURE', body: 'A lasting executive presence that speaks for itself.', notes: ['CARDAMOM', 'LIME', 'ROSE', 'SANDALWOOD'] },
+          ].map((frame, index) => (
+            <figure className={`sovereign-gallery__figure sovereign-gallery__figure--${index + 1}`} key={frame.n} data-gsap-reveal>
+              <div className="sovereign-gallery__frame"><img src={sovereignFilmFrames[index].src} alt={`DAYRAH NOOR 03 crystal decanter, study ${frame.n}`} loading="lazy" /><i className="sf-cell" aria-hidden="true" /></div>
+              <figcaption><span>NO. {frame.n} / DAYRAH NOOR 03</span><span>{frame.ctx}</span></figcaption>
               <div className="sovereign-gallery__meta">
-                <h3>{frame.context}</h3>
-                <p>{frame.action}</p>
+                <h3>{frame.ctx}</h3>
+                <p>{frame.body}</p>
                 <div className="sovereign-gallery__specs">
-                  <div><b>CAMERA ANGLE</b>{frame.cameraAngle}</div>
-                  <div><b>LIGHTING</b>{frame.lighting}</div>
+                  <div><b>NOTES</b>{frame.notes.join(' · ')}</div>
+                  <div><b>CHARACTER</b>Executive · Understated · Lasting</div>
                 </div>
               </div>
             </figure>
@@ -186,17 +192,17 @@ export function SovereignPage() {
 
       <section className="sovereign-composition">
         <div className="sovereign-composition__copy">
-          <p className="eyebrow"><span /> BOTANICAL INFUSIONS &amp; ALCHEMY / NO. 04</p>
-          <h2>Nature, captured<br /><em>in crystal.</em></h2>
-          <p>Deep velvet-red rose petals, textured green cardamom pods, translucent green bergamot slices, and raw aromatic sandalwood swirl in crystal-clear liquid before shifting through blushing rose gold into a deep, glowing amber.</p>
-          <Link to="#sovereign-buy" className="sovereign-composition__link">ACQUIRE THE SOVEREIGN <span>↓</span></Link>
+          <p className="eyebrow"><span /> THE OLFACTIVE COMPOSITION / NO. 04</p>
+          <h2>Four notes,<br /><em>held in crystal.</em></h2>
+          <p>Rose petals, lime wheels, cardamom pods, and sandalwood shards float in golden liquid inside a faceted crystal decanter — a composition built for restraint, presence, and quiet command.</p>
+          <Link to="#sovereign-buy" className="sovereign-composition__link">ADD TO COLLECTION <span>→</span></Link>
         </div>
-        <div className="sovereign-composition__notes" aria-label="Sovereign botanical infusions">
+        <div className="sovereign-composition__notes" aria-label="Sovereign fragrance notes">
           {[
-            ['01', 'VELVET-RED ROSE PETALS', 'DEEP FLORAL HEART · INTERNAL VORTEX'],
-            ['02', 'GREEN CARDAMOM PODS', 'VISIBLE FIBERS · WARM AROMATIC SPICE'],
-            ['03', 'GREEN BERGAMOT SLICES', 'TRANSLUCENT ZEST PORES · TOP RADIANCE'],
-            ['04', 'RAW SANDALWOOD & AMBER', 'BLUSHING ROSE GOLD TO DEEP AMBER GLOW'],
+            ['01', 'CARDAMOM', 'TOP · CRISP EXECUTIVE OPENER'],
+            ['02', 'LIME', 'HEART · COLD DECISIVE CLARITY'],
+            ['03', 'ROSE', 'HEART · STRUCTURED AND LIFTED'],
+            ['04', 'SANDALWOOD', 'BASE · DRY, POLISHED, LASTING'],
           ].map(([number, note, role]) => (
             <div className="sovereign-composition__note" key={number}><span>{number}</span><b>{note}</b><i>{role}</i></div>
           ))}
@@ -205,8 +211,8 @@ export function SovereignPage() {
 
       <section className="sovereign-buy" id="sovereign-buy">
         <figure className="sovereign-buy__image" data-gsap-reveal>
-          <img src="/images/sovereign-05.jpg" alt="DAYRAH SCENTS The Sovereign glowing amber crystal bottle reflected in the polished dark obsidian floor" loading="lazy" />
-          <figcaption>DAYRAH SCENTS&nbsp; / &nbsp;THE SOVEREIGN — ETERNAL. REFINED.</figcaption>
+          <img src="/images/sovereign-05.jpg" alt="DAYRAH NOOR 03 crystal decanter with gold collar and golden liquid" loading="lazy" />
+          <figcaption>DAYRAH NOOR 03&nbsp; / &nbsp;EAU DE PARFUM · 100 ML</figcaption>
         </figure>
         <BuyPanel product={product} />
       </section>
@@ -221,7 +227,8 @@ export function SovereignPage() {
   );
 }
 
-export function SifrPage({ note, setNote }: { note: Note; setNote: (note: Note) => void }) {
+export function SifrPage() {
+  const [note, setNote] = useState<Note>('amber');
   return (
     <motion.div className="editorial-page sifr-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .65 }}>
       <div className="page-breadcrumb lux-light"><Link to="/collection">THE COLLECTION</Link><span>/</span><span>SIFR 01</span></div>
@@ -238,8 +245,8 @@ export function SifrPage({ note, setNote }: { note: Note; setNote: (note: Note) 
         </figure>
         <BuyPanel product={products[0]} />
       </section>
-      <section className="sifr-bottle-card lux-light"><div className="sifr-bottle-card__image"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image with an amber glass bottle, petals, and volumetric light" loading="lazy" /><span>OBJECT STUDY / SIFR 01</span></div><div className="sifr-bottle-card__copy"><p className="eyebrow"><span /> THE SIGNATURE</p><h2>A memory,<br /><em>held in glass.</em></h2><p>Sifr 01 is the house's point of departure: a study in contrast, with deep woods, a lifted floral heart, and a close amber finish.</p><Link to="/contact" className="text-link">ENQUIRE ABOUT SIFR 01 <span>↗</span></Link></div></section>
-      <section className="sifr-final"><span>DAYRAH / SIFR 01</span><h2>Wear the<br /><em>moment.</em></h2><Link to="/contact" className="button-outline">A NOTE TO THE HOUSE <span>↗</span></Link></section>
+      <section className="sifr-bottle-card lux-light"><div className="sifr-bottle-card__image"><img src="/images/dayrah-cinematic-campaign.webp" alt="Conceptual Dayrah campaign image with an amber glass bottle, petals, and volumetric light" loading="lazy" /><span>OBJECT STUDY / SIFR 01</span></div><div className="sifr-bottle-card__copy"><p className="eyebrow"><span /> THE SIGNATURE</p><h2>A memory,<br /><em>held in glass.</em></h2><p>Sifr 01 is the house's point of departure: a study in contrast, with deep woods, a lifted floral heart, and a close amber finish.</p><Link to="/contact" className="text-link">ENQUIRE ABOUT SIFR 01 <span>Γåù</span></Link></div></section>
+      <section className="sifr-final"><span>DAYRAH / SIFR 01</span><h2>Wear the<br /><em>moment.</em></h2><Link to="/contact" className="button-outline">A NOTE TO THE HOUSE <span>Γåù</span></Link></section>
     </motion.div>
   );
 }
@@ -249,9 +256,9 @@ export function StoryPage() {
     <motion.div className="editorial-page story-page" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }}>
       <section className="story-masthead lux-light"><p className="eyebrow"><span /> THE HOUSE OF DAYRAH</p><h1>Memory has<br /><em>a language.</em></h1><p>We speak it through scent: with the depth of oud, the tenderness of rose, and the warmth that lingers.</p><div className="story-masthead__stamp">A HOUSE<br />IN SCENT<br /><i>01 / 03</i></div></section>
       <section className="story-image-band"><img src="/images/perfumer-at-work.jpg" alt="A perfumer arranging materials at a work table" loading="lazy" /><div><span>THE ART OF COMPOSITION</span><p>Material, memory,<br /><em>and time.</em></p></div></section>
-      <section className="story-manifesto"><p className="eyebrow"><span /> OUR POINT OF VIEW</p><blockquote>“A fragrance should not announce everything at once. It should invite you closer.”</blockquote><p className="story-manifesto__note">DAYRAH / A STUDY IN SLOW REVEAL</p></section>
+      <section className="story-manifesto"><p className="eyebrow"><span /> OUR POINT OF VIEW</p><blockquote>ΓÇ£A fragrance should not announce everything at once. It should invite you closer.ΓÇ¥</blockquote><p className="story-manifesto__note">DAYRAH / A STUDY IN SLOW REVEAL</p></section>
       <section className="story-pillars lux-light">{[{ n: '01', title: 'Rooted in ritual', text: 'Oud, resins, smoke, and the gestures that make scent part of a day.' }, { n: '02', title: 'Made of contrast', text: 'A fragrance becomes memorable when depth and light are allowed to meet.' }, { n: '03', title: 'Worn personally', text: 'The same notes settle differently on every wearer. That is part of the story.' }].map((pillar) => <article key={pillar.n}><span>{pillar.n} / DAYRAH</span><h3>{pillar.title}</h3><p>{pillar.text}</p></article>)}</section>
-      <section className="story-end lux-light"><p className="eyebrow"><span /> BEGIN WITH SIFR 01</p><h2>Let the scent<br /><em>say the rest.</em></h2><Link to="/sifr-01" className="button-outline">DISCOVER THE SIGNATURE <span>↗</span></Link></section>
+      <section className="story-end lux-light"><p className="eyebrow"><span /> BEGIN WITH SIFR 01</p><h2>Let the scent<br /><em>say the rest.</em></h2><Link to="/sifr-01" className="button-outline">DISCOVER THE SIGNATURE <span>Γåù</span></Link></section>
     </motion.div>
   );
 }
@@ -261,7 +268,7 @@ export function AtelierPage() {
     <motion.div className="editorial-page atelier-page" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }}>
       <section className="atelier-masthead lux-light"><div><p className="eyebrow"><span /> THE ATELIER</p><h1>Patience is<br /><em>an ingredient.</em></h1><p>A look at the ideas, materials, and deliberate gestures behind the Dayrah point of view.</p></div><figure><img src="/images/perfumer-at-work.jpg" alt="Hands at work among glass vessels and perfumery materials" /><figcaption>THE PERFUMER'S TABLE / STUDY 01</figcaption></figure></section>
       <section className="atelier-process"><div className="atelier-process__head"><p className="eyebrow"><span /> A QUIET PROCESS</p><h2>From first thought<br /><em>to final trace.</em></h2></div><div className="atelier-process__steps">{[{n:'01',title:'Listen',text:'Begin with a memory, a place, a material, or a feeling worth returning to.'},{n:'02',title:'Compose',text:'Balance contrasts. Give each accord space to speak without overwhelming the others.'},{n:'03',title:'Wear',text:'Let skin, time, and the wearer complete the composition.'}].map((step)=><article key={step.n}><span>{step.n} / THE ATELIER</span><h3>{step.title}</h3><p>{step.text}</p></article>)}</div></section>
-      <section className="atelier-materials lux-light"><div className="atelier-materials__image"><img src="/images/perfume-warm-still-life.jpg" alt="Warm light falls across a perfume still life" loading="lazy" /></div><div><p className="eyebrow"><span /> MATERIAL & MEMORY</p><h2>Considered<br /><em>in every detail.</em></h2><p>Our visual language draws on the tactility of glass, the warmth of resins, and the quiet elegance of Arabic perfumery.</p><Link to="/collection" className="text-link">EXPLORE THE COLLECTION <span>↗</span></Link></div></section>
+      <section className="atelier-materials lux-light"><div className="atelier-materials__image"><img src="/images/perfume-warm-still-life.jpg" alt="Warm light falls across a perfume still life" loading="lazy" /></div><div><p className="eyebrow"><span /> MATERIAL & MEMORY</p><h2>Considered<br /><em>in every detail.</em></h2><p>Our visual language draws on the tactility of glass, the warmth of resins, and the quiet elegance of Arabic perfumery.</p><Link to="/collection" className="text-link">EXPLORE THE COLLECTION <span>Γåù</span></Link></div></section>
     </motion.div>
   );
 }
@@ -276,8 +283,8 @@ export function JournalPage() {
   return (
     <motion.div className="editorial-page journal-page" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }}>
       <section className="journal-masthead"><p className="eyebrow"><span /> FIELD NOTES FROM DAYRAH</p><h1>Notes on<br /><em>the art of scent.</em></h1><p>Short reflections on material, memory, and the rituals that give a fragrance its place.</p></section>
-      <div className="journal-grid">{journalEntries.map((entry) => <article className="journal-card" key={entry.n}><div className="journal-card__image"><img src={entry.image} alt="" loading="lazy" /><span>{entry.n} / DAYRAH JOURNAL</span></div><div className="journal-card__copy"><p>{entry.category}</p><h2>{entry.title}</h2><span>{entry.copy}</span><Link to="/story">READ THE HOUSE STORY <i>↗</i></Link></div></article>)}</div>
-      <section className="journal-bottom"><span>DAYRAH / FIELD NOTES</span><p>Thoughtfully composed.<br /><em>Slowly discovered.</em></p><Link to="/collection" className="text-link">RETURN TO THE SCENT <span>↗</span></Link></section>
+      <div className="journal-grid">{journalEntries.map((entry) => <article className="journal-card" key={entry.n}><div className="journal-card__image"><img src={entry.image} alt="" loading="lazy" /><span>{entry.n} / DAYRAH JOURNAL</span></div><div className="journal-card__copy"><p>{entry.category}</p><h2>{entry.title}</h2><span>{entry.copy}</span><Link to="/story">READ THE HOUSE STORY <i>Γåù</i></Link></div></article>)}</div>
+      <section className="journal-bottom"><span>DAYRAH / FIELD NOTES</span><p>Thoughtfully composed.<br /><em>Slowly discovered.</em></p><Link to="/collection" className="text-link">RETURN TO THE SCENT <span>Γåù</span></Link></section>
     </motion.div>
   );
 }
@@ -294,9 +301,9 @@ export function ContactPage() {
   };
   return (
     <motion.div className="editorial-page contact-page" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }}>
-      <section className="contact-intro"><p className="eyebrow"><span /> CORRESPONDENCE</p><h1>A conversation<br /><em>begins here.</em></h1><p>Questions about Sifr 01, the house, or the ritual of wearing fragrance? Send us a note.</p><div className="contact-detail"><span>THE HOUSE</span><a href="mailto:hello@dayrah.com">hello@dayrah.com ↗</a></div><small>Contact details are placeholders until the brand's official information is supplied.</small></section>
-      <form className="contact-form" onSubmit={submit}><div className="contact-form__top"><span>WRITE TO DAYRAH</span><span>01 / 01</span></div><label>Your name<input name="name" required autoComplete="name" placeholder="Name" /></label><label>Email address<input name="email" type="email" required autoComplete="email" placeholder="you@example.com" /></label><label>Your note<textarea name="message" required rows={5} placeholder="How may we help?" /></label><button type="submit" className="button-outline">{sent ? 'OPENING YOUR EMAIL' : 'PREPARE YOUR NOTE'} <span>↗</span></button><p>Your email app will open with the message prepared. No details are stored on this site.</p></form>
-      <section className="contact-close"><span>DAYRAH / FRAGRANCE HOUSE</span><p>Leave room<br /><em>for the unexpected.</em></p><Link to="/">RETURN TO THE BEGINNING ↑</Link></section>
+      <section className="contact-intro"><p className="eyebrow"><span /> CORRESPONDENCE</p><h1>A conversation<br /><em>begins here.</em></h1><p>Questions about Sifr 01, the house, or the ritual of wearing fragrance? Send us a note.</p><div className="contact-detail"><span>THE HOUSE</span><a href="mailto:hello@dayrah.com">hello@dayrah.com Γåù</a></div><small>Contact details are placeholders until the brand's official information is supplied.</small></section>
+      <form className="contact-form" onSubmit={submit}><div className="contact-form__top"><span>WRITE TO DAYRAH</span><span>01 / 01</span></div><label>Your name<input name="name" required autoComplete="name" placeholder="Name" /></label><label>Email address<input name="email" type="email" required autoComplete="email" placeholder="you@example.com" /></label><label>Your note<textarea name="message" required rows={5} placeholder="How may we help?" /></label><button type="submit" className="button-outline">{sent ? 'OPENING YOUR EMAIL' : 'PREPARE YOUR NOTE'} <span>Γåù</span></button><p>Your email app will open with the message prepared. No details are stored on this site.</p></form>
+      <section className="contact-close"><span>DAYRAH / FRAGRANCE HOUSE</span><p>Leave room<br /><em>for the unexpected.</em></p><Link to="/">RETURN TO THE BEGINNING Γåæ</Link></section>
     </motion.div>
   );
 }
