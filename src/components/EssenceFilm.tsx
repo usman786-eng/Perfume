@@ -193,6 +193,28 @@ export default function EssenceFilm({
     const video = videoRef.current;
     video?.addEventListener('timeupdate', onTimeUpdate);
 
+    // Background tabs keep decoding otherwise — pause on hide, resume only
+    // if the section is still near the viewport on return.
+    const onVisibility = () => {
+      const v = videoRef.current;
+      const sectionEl = sectionRef.current;
+      if (!v || !sectionEl) return;
+      if (document.hidden) {
+        v.pause();
+        return;
+      }
+      if (reduceMotion) return;
+      const rect = sectionEl.getBoundingClientRect();
+      if (rect.bottom > -400 && rect.top < window.innerHeight + 400) {
+        if (v.preload === 'none') {
+          v.preload = preload;
+          v.load();
+        }
+        v.play().catch(() => { /* autoplay blocked — poster holds */ });
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
     let raf = 0;
     const render = () => {
       raf = requestAnimationFrame(render);
@@ -241,6 +263,7 @@ export default function EssenceFilm({
       cancelAnimationFrame(raf);
       if (observer) observer.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
+      document.removeEventListener('visibilitychange', onVisibility);
       video?.removeEventListener('timeupdate', onTimeUpdate);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
