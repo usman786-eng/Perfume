@@ -791,6 +791,7 @@ img {
   -webkit-backdrop-filter: blur(18px);
 }
 .mobile-nav a {
+  position: relative;
   font-family: var(--display) !important;
   font-weight: 400 !important;
   font-size: clamp(34px, 6vw, 62px) !important;
@@ -798,12 +799,54 @@ img {
   letter-spacing: -0.03em;
   color: var(--lux-ivory) !important;
   border-bottom: 1px solid var(--lux-hairline-soft);
-  padding: 14px 0;
+  padding: 14px 0 14px 56px;
   transition: color 0.3s, padding-left 0.3s;
+  animation: mnav-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.mobile-nav a:nth-child(1) { animation-delay: 0.04s; }
+.mobile-nav a:nth-child(2) { animation-delay: 0.09s; }
+.mobile-nav a:nth-child(3) { animation-delay: 0.14s; }
+.mobile-nav a:nth-child(4) { animation-delay: 0.19s; }
+.mobile-nav a:nth-child(5) { animation-delay: 0.24s; }
+.mobile-nav a:nth-child(6) { animation-delay: 0.29s; }
+/* Index numerals, counted — no markup change needed. */
+.mobile-nav {
+  counter-reset: mnav;
+}
+.mobile-nav a::before {
+  counter-increment: mnav;
+  content: '0' counter(mnav);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--lux-bronze);
 }
 .mobile-nav a:hover {
   color: var(--lux-gold) !important;
-  padding-left: 12px;
+  padding-left: 68px;
+}
+.mobile-nav a.active {
+  color: var(--lux-gold) !important;
+  padding-left: 68px;
+}
+.mobile-nav a.active::before {
+  color: var(--lux-gold);
+}
+.mobile-nav::after {
+  content: 'DAYRAH — FRAGRANCE HOUSE';
+  margin-top: 36px;
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--lux-bronze);
+  opacity: 0.8;
+}
+@keyframes mnav-in {
+  from { opacity: 0; transform: translateY(16px); }
 }
 
 /* --------------------------------------------------------------------------
@@ -2915,6 +2958,49 @@ h4,
 }
 
 /* ==========================================================================
+   ·MOBILE HEADER (≤700px) — wordmark docks left so it can never touch the
+   bag + burger cluster; tighter actions; overlay type steps down a touch.
+   ========================================================================== */
+@media (max-width: 700px) {
+  /* Sticky bar. The blur lives on a ::before sibling — never on the header
+     itself — so it cannot become the containing block that would trap the
+     fixed fullscreen nav overlay inside the 66px bar. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+  .site-header.is-scrolled::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(8, 7, 10, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--lux-hairline);
+  }
+  section[id] {
+    scroll-margin-top: 78px;
+  }
+  .brand {
+    left: 20px;
+    transform: translateY(-50%);
+  }
+  .header-actions {
+    gap: 14px;
+  }
+  .bag-button {
+    font-size: 12px !important;
+    letter-spacing: 0.22em !important;
+  }
+  .mobile-nav a {
+    font-size: clamp(30px, 9vw, 40px) !important;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+/* ==========================================================================
    ·MOBILE TYPE + POLISH (≤700px) — phones get their own quieter scale.
    Mirrors the desktop display list (film heads are not in it). Placed last
    so it wins every earlier !important at equal specificity.
@@ -2987,5 +3073,172 @@ h4,
   .shop-carousel__nav span {
     font-size: 10px;
     letter-spacing: 0.2em;
+  }
+}
+
+/* ==========================================================================
+   ·MOBILE FOOTER (≤700px) — centered composition: gold diamond, animated
+   golden-brown sheen wordmark, tracked tagline, then a hairline-divided
+   link list with generous tap rows. Desktop footer untouched.
+   ========================================================================== */
+@media (max-width: 700px) {
+  .site-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 28px;
+    align-items: center;
+    padding: 54px 28px 46px;
+  }
+  .site-footer::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    transform: rotate(45deg);
+    background: var(--lux-gold);
+    margin-bottom: 22px;
+    opacity: 0.9;
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+  .site-footer .footer-brand {
+    grid-column: 1 / -1;
+    justify-self: center;
+    text-align: center;
+    font-size: 38px !important;
+    letter-spacing: 0.28em !important;
+    margin-right: -0.28em;
+    background: linear-gradient(105deg, #8c6a1f 0%, #d4af37 25%, #f6e7b8 50%, #d4af37 75%, #8c6a1f 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent;
+    animation: footer-sheen 6s linear infinite;
+  }
+  @keyframes footer-sheen {
+    to { background-position: 220% center; }
+  }
+  .site-footer > span {
+    grid-column: 1 / -1;
+    text-align: center;
+    margin: 14px 0 24px;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--lux-bronze);
+  }
+  .site-footer > a:not(.footer-brand) {
+    width: auto;
+    padding: 14px 0;
+    border: 0;
+  }
+  .site-footer > a:not(.footer-brand):nth-child(even) {
+    text-align: right;
+  }
+  .site-footer > a:not(.footer-brand):last-child {
+    grid-column: 1 / -1;
+    text-align: center;
+    border-top: 1px solid var(--lux-hairline-soft);
+    padding-top: 22px;
+    margin-top: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-footer .footer-brand {
+    animation: none;
+  }
+}
+/* ==========================================================================
+   ·MOBILE FILM CHROME (≤700px) — EXPLICIT USER EXCEPTION TO THE FILM LOCK.
+   The films' top bar (brand pill + notes line + COMPOSITION / CONTINUE
+   buttons) crowds small screens, so the whole bar is hidden on phones. The
+   film itself keeps playing scroll-driven; the composition content lives in
+   the elements section directly below.
+   ========================================================================== */
+@media (max-width: 700px) {
+  .sovereign-film__topline {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   ·SOVEREIGN ELEMENTS — ALTERNATING EDITORIAL ROWS
+   Row one: image left, text right. Row two: image right, text left. Full-
+   height imagery, generous copy measure, gold index numerals, refined chips.
+   ========================================================================== */
+.sovereign-elements__grid {
+  grid-template-columns: 1fr;
+  gap: clamp(56px, 8vh, 96px);
+  max-width: 1280px;
+}
+.sovereign-element-card {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  background: rgba(18, 16, 18, 0.6);
+  border-color: var(--lux-hairline-soft);
+  transition: border-color 0.5s;
+}
+.sovereign-element-card:hover {
+  border-color: var(--lux-hairline);
+}
+.sovereign-element-card--flip .sovereign-element-card__media {
+  order: 2;
+}
+.sovereign-element-card__media {
+  aspect-ratio: auto;
+  min-height: 340px;
+}
+.sovereign-element-card__media img {
+  position: absolute;
+  inset: 0;
+}
+.sovereign-element-card:hover .sovereign-element-card__media img {
+  transform: scale(1.06);
+}
+.sovereign-element-card__index {
+  position: absolute;
+  bottom: 10px;
+  right: 16px;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--lux-gold);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.75);
+}
+.sovereign-element-card__body {
+  padding: clamp(30px, 4vw, 60px);
+  justify-content: center;
+  gap: 14px;
+}
+.sovereign-element-card__body h3 {
+  font-size: clamp(32px, 3.4vw, 48px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.sovereign-element-card__body p {
+  font-size: 16px;
+  max-width: 44ch;
+}
+.sovereign-element-card__specs {
+  gap: 8px;
+  margin-top: 10px;
+}
+.sovereign-element-card__specs span {
+  padding: 8px 13px;
+  letter-spacing: 0.18em;
+}
+@media (max-width: 700px) {
+  .sovereign-element-card {
+    grid-template-columns: 1fr;
+  }
+  .sovereign-element-card--flip .sovereign-element-card__media {
+    order: 0;
+  }
+  .sovereign-element-card__media {
+    aspect-ratio: 16 / 10;
+    min-height: 0;
+  }
+  .sovereign-element-card__body {
+    padding: 26px 22px 28px;
   }
 }

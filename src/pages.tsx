@@ -123,11 +123,12 @@ export function SovereignVisualElementsSection({ id = 'sovereign-elements' }: { 
         <p>A faceted crystal decanter with a diamond-cut stopper and gold collar, holding rose petals, lime wheels, cardamom pods, and sandalwood shards suspended in golden liquid.</p>
       </div>
       <div className="sovereign-elements__grid">
-        {sovereignVisualElements.map((element) => (
-          <article className="sovereign-element-card" key={element.id} data-gsap-reveal>
+        {sovereignVisualElements.map((element, index) => (
+          <article className={index % 2 ? 'sovereign-element-card sovereign-element-card--flip' : 'sovereign-element-card'} key={element.id} data-gsap-reveal>
             <div className="sovereign-element-card__media">
               <img src={element.src} alt={element.alt} loading="lazy" />
               <span className="sovereign-element-card__badge">{element.category}</span>
+              <span className="sovereign-element-card__index">{String(index + 1).padStart(2, '0')}</span>
             </div>
             <div className="sovereign-element-card__body">
               <span className="sovereign-element-card__subtitle">{element.subtitle}</span>

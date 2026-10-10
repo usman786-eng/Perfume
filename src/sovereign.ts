@@ -42,6 +42,16 @@ export const sovereignVisualElements: SovereignVisualElement[] = [
     alt: 'Dayrah Noor 03 faceted crystal decanter against a dark ground',
     specs: ['Faceted crystal', 'Diamond-cut stopper', 'Brushed gold collar'],
   },
+  {
+    id: 'suspended-botanicals',
+    category: 'Set/Environment Elements',
+    name: 'Suspended Botanicals',
+    subtitle: 'MATTER STUDY',
+    description: 'Rose petals, lime wheels, cardamom pods, and sandalwood shards — held weightless in golden liquid, exactly as they rest inside the decanter.',
+    src: '/images/sovereign-ref-botanicals.jpg',
+    alt: 'Rose petals, lime, cardamom pods and sandalwood suspended in golden perfume liquid',
+    specs: ['Taif rose petals', 'Green cardamom', 'Dry sandalwood'],
+  },
 ];
 
 export const sovereignFilmFrames: SovereignFilmFrame[] = [

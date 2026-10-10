@@ -140,10 +140,22 @@ function ScentMarquee() {
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { count, openBag } = useCart();
+  const location = useLocation();
   const close = () => setMenuOpen(false);
+  /* A route change from anywhere (back/forward buttons included) dismisses
+     a lingering open menu. */
+  useEffect(() => { close(); }, [location.pathname]);
+  /* Stuck-bar state for the mobile sticky header (drives its backdrop). */
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
   return (
-    <header className={`site-header ${menuOpen ? 'is-nav-open' : ''}`}>
+    <header className={`site-header ${menuOpen ? 'is-nav-open' : ''} ${scrolled ? 'is-scrolled' : ''}`}>
       <Link className="brand" to="/" aria-label="Dayrah home" onClick={close}><span>DAYRAH</span><small>FRAGRANCE HOUSE</small></Link>
       <nav className="desktop-nav" aria-label="Main navigation">
         <NavLink to="/sovereign">SOVEREIGN</NavLink>
@@ -161,7 +173,7 @@ function Header() {
       </div>
       <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /><i /></button>
       <AnimatePresence>{menuOpen && <motion.nav className="mobile-nav" aria-label="Mobile navigation" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .22 }}>
-        <Link to="/sovereign" onClick={close}>SOVEREIGN / NEW</Link><Link to="/collection" onClick={close}>THE COLLECTION</Link><Link to="/story" onClick={close}>THE HOUSE</Link><Link to="/atelier" onClick={close}>THE ATELIER</Link><Link to="/journal" onClick={close}>JOURNAL</Link><Link to="/contact" onClick={close}>CONTACT ↗</Link>
+        <NavLink to="/sovereign" onClick={close}>SOVEREIGN / NEW</NavLink><NavLink to="/collection" onClick={close}>THE COLLECTION</NavLink><NavLink to="/story" onClick={close}>THE HOUSE</NavLink><NavLink to="/atelier" onClick={close}>THE ATELIER</NavLink><NavLink to="/journal" onClick={close}>JOURNAL</NavLink><NavLink to="/contact" onClick={close}>CONTACT ↗</NavLink>
       </motion.nav>}</AnimatePresence>
     </header>
   );
