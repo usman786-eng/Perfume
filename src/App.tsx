@@ -393,10 +393,10 @@ function SovereignFeature() {
       </Link>
       <div className="sovereign-feature__copy" data-gsap-reveal>
         <p className="eyebrow"><span /> DAYRAH NOOR 03</p>
-        <h2 id="sovereign-feature-title">Quiet Power<br /><em>Built for boardroom presence.</em></h2>
         <p>Engineered for quiet command. Measured restraint. Unrivalled precision.</p>
         <Link to="/sovereign" className="text-link">DISCOVER THE COMPOSITION <span>→</span></Link>
       </div>
+      <h2 className="sovereign-feature__title" id="sovereign-feature-title" data-gsap-reveal><span>Quiet Power</span><i aria-hidden="true" /><em>Built for boardroom presence.</em></h2>
     </section>
   );
 }

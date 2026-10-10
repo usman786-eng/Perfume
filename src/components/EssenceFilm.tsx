@@ -151,6 +151,12 @@ export default function EssenceFilm({
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
+    // Same mobile-autoplay hardening as MotionPlate: the muted IDL property
+    // must be set imperatively or phones treat the video as unmuted.
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.defaultMuted = true;
+    }
     const observer =
       typeof IntersectionObserver === 'undefined'
         ? null

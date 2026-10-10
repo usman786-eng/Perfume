@@ -1592,7 +1592,7 @@ img {
 }
 .sovereign-elements__head h2,
 .sovereign-element-card__body h3,
-.sovereign-feature__copy h2,
+.sovereign-feature__title,
 .sovereign-composition__copy h2 {
   font-family: var(--display) !important;
   font-weight: 400 !important;
@@ -1640,11 +1640,29 @@ img {
   position: relative;
   isolation: isolate;
 }
-.sovereign-feature__copy h2 {
+/* Home "Quiet Power" lockup: a full-width horizontal row — phrase, gold
+   hairline, phrase — spanning both section columns. Wraps gracefully. */
+.sovereign-feature__title {
+  grid-column: 1 / -1;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.3em 0.55em;
   color: var(--lux-ivory) !important;
+  font-size: clamp(40px, 3.8vw, 60px) !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0.005em !important;
 }
-.sovereign-feature__copy h2 em {
+.sovereign-feature__title > i {
+  align-self: center;
+  width: clamp(32px, 4vw, 64px);
+  height: 1px;
+  background: var(--lux-hairline);
+}
+.sovereign-feature__title em {
   color: var(--lux-gold) !important;
+  font-weight: 400 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -2629,82 +2647,202 @@ h4,
 }
 .shelf-section__head {
   padding: 0 9vw;
+  max-width: 1220px;
 }
-.shop-carousel {
+/* Home shelf headline: a wider measure with a step-down size. The smaller
+   cut gains positive tracking so "DAYRAH NOOR 03 / EAU DE PARFUM 100ML."
+   still spans broad and breathes. Scoped to home — collection keeps hers. */
+.shelf-section__head h2 {
+  font-size: clamp(46px, 5.4vw, 90px) !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.02 !important;
+}
+/* ==========================================================================
+   ·DAYRAH RING CAROUSEL (HOME SHELF) — 3D ROTATING RING
+   Our fifteen compositions on a rotating 3D ring: auto-stepped rotation,
+   hover glow + pop-forward, folded floor reflection and a ground shadow.
+   A live readout beneath the stage carries the front cell's name, notes,
+   price, quick-add and discover link. Scoped to home — collection and
+   also-like keep their grids.
+   ========================================================================== */
+.shelf-section {
+  overflow: clip;
+}
+.dayrah-carousel {
+  --dc-n: 15;
+  --dc-diameter: 980px;
+  --dc-radius: calc(var(--dc-diameter) / 2);
+  --dc-item-w: 200px;
+  --dc-item-h: 250px;
   position: relative;
 }
-.shelf-section .shop-grid--carousel {
-  display: flex;
-  gap: 30px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 9vw;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 8px 9vw 26px;
+.dayrah-carousel__stage {
+  position: relative;
+  height: calc(var(--dc-item-h) + 300px);
+  display: grid;
+  place-items: center;
+  overflow: clip;
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
 }
-.shelf-section .shop-grid--carousel::-webkit-scrollbar {
-  display: none;
+.dayrah-carousel__ring {
+  position: relative;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  /* Driven per-frame by the carousel loop (eased toward its target), so no
+     CSS transition — one would trail a full second behind. */
+  will-change: transform;
 }
-.shelf-section .shop-grid--carousel .product-card {
-  flex: 0 0 clamp(232px, 21vw, 300px);
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  /* Each card reads as one composed object: hairline frame, deep surface,
-     and inner padding so the image, type and pill never touch an edge. */
-  background: rgba(18, 16, 18, 0.72);
+.dayrah-carousel__cell {
+  position: absolute;
+  left: calc(var(--dc-item-w) / -2);
+  top: calc(var(--dc-item-h) / -2);
+  width: var(--dc-item-w);
+  height: var(--dc-item-h);
+  transform: rotateY(calc(360deg / var(--dc-n) * var(--dc-index))) translateZ(var(--dc-radius));
+  transform-style: preserve-3d;
+}
+.dayrah-carousel__card {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
   border: 1px solid var(--lux-hairline-soft);
-  padding: 14px 14px 18px;
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.55s, box-shadow 0.55s;
+  background: #100e13;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 0 rgba(212, 175, 55, 0);
+  transition: box-shadow 0.45s, border-color 0.45s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.shelf-section .shop-grid--carousel .product-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--lux-hairline);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 60px var(--lux-glow-amber);
+.dayrah-carousel__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
-.shelf-section .product-card__frame {
-  aspect-ratio: 3 / 4;
+.dayrah-carousel__card:hover,
+.dayrah-carousel__card:focus-visible {
+  border-color: var(--lux-gold);
+  box-shadow: 0 0 70px rgba(212, 175, 55, 0.35), 0 24px 60px rgba(0, 0, 0, 0.6);
+  transform: translateZ(36px);
 }
-.shelf-section .product-card__badge {
-  top: 12px;
+.dayrah-carousel__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 8px;
+  background: rgba(232, 213, 181, 0.92);
+  color: var(--lux-obsidian);
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+}
+.dayrah-carousel__num {
+  position: absolute;
+  bottom: 8px;
   left: 12px;
+  color: var(--lux-ivory);
+  font-family: var(--sans);
   font-size: 10px;
   letter-spacing: 0.22em;
-  padding: 7px 10px;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
 }
-.shelf-section .product-card__index {
-  bottom: 12px;
-  left: 12px;
+/* Folded floor reflection, drawn from the same image. */
+.dayrah-carousel__cell::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(to top, rgba(8, 7, 10, 0.35) 0%, rgba(8, 7, 10, 1) 78%),
+    var(--_image-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  pointer-events: none;
+  filter: blur(4px);
+  transform-origin: center bottom;
+  transform: rotateX(90deg) rotateZ(180deg) rotateY(180deg);
 }
-.shelf-section .product-card__cta {
-  bottom: 12px;
-  right: 12px;
+/* Soft ground shadow ellipse beneath the ring. */
+.dayrah-carousel__ground {
+  position: absolute;
+  left: calc(var(--dc-diameter) / -2);
+  top: calc(var(--dc-diameter) / -2);
+  width: var(--dc-diameter);
+  height: var(--dc-diameter);
+  border-radius: 50%;
+  background: radial-gradient(rgba(212, 175, 55, 0.4) 12%, rgba(8, 7, 10, 0) 60%);
+  opacity: 0.5;
+  transform: rotateX(90deg) translateZ(calc((var(--dc-item-h) / -2) - 80px));
+  pointer-events: none;
 }
-.shelf-section .product-card__meta {
-  flex: 1;
+/* Front-cell readout. */
+.dayrah-carousel__readout {
+  text-align: center;
+  padding: 10px 20px 0;
+  animation: dc-readout-in 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes dc-readout-in {
+  from { opacity: 0; transform: translateY(10px); }
+}
+.dayrah-carousel__kicker {
+  margin: 0 0 12px;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--lux-bronze);
+}
+.dayrah-carousel__readout h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 54px);
+  letter-spacing: -0.01em;
+  color: var(--lux-ivory);
+}
+.dayrah-carousel__readout h3 a:hover {
+  color: var(--lux-gold);
+}
+.dayrah-carousel__notes {
+  margin: 10px 0 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--lux-gold);
+}
+.dayrah-carousel__price {
+  margin: 12px 0 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--lux-muted);
+}
+.dayrah-carousel__actions {
+  margin-top: 22px;
   display: flex;
-  flex-direction: column;
-  padding: 20px 6px 0;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  flex-wrap: wrap;
 }
-.shelf-section .product-card__name h3 {
-  min-height: 2.2em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+.dayrah-carousel__actions .product-card__add {
+  width: auto;
+  min-width: 230px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
   overflow: hidden;
-}
-.shelf-section .product-card__notes {
-  min-height: 2.7em;
-  margin: 10px 0 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.shelf-section .product-card__add {
-  margin-top: auto;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 .shop-carousel__nav {
   display: flex;
@@ -2736,17 +2874,24 @@ h4,
   color: var(--lux-obsidian);
   transform: translateY(-2px);
 }
+@media (max-width: 1100px) {
+  .dayrah-carousel {
+    --dc-diameter: 800px;
+    --dc-item-w: 175px;
+    --dc-item-h: 220px;
+  }
+}
 @media (max-width: 700px) {
   .shelf-section__head {
     padding: 0 20px;
   }
-  .shelf-section .shop-grid--carousel {
-    gap: 18px;
-    padding: 6px 20px 20px;
-    scroll-padding-inline: 20px;
+  .dayrah-carousel {
+    --dc-diameter: 620px;
+    --dc-item-w: 150px;
+    --dc-item-h: 190px;
   }
-  .shelf-section .shop-grid--carousel .product-card {
-    padding: 10px 10px 14px;
+  .dayrah-carousel__stage {
+    height: calc(var(--dc-item-h) + 240px);
   }
   .shop-carousel__nav {
     padding: 4px 20px 0;
@@ -2761,5 +2906,86 @@ h4,
   .note-tab {
     min-width: 0;
     width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dayrah-carousel__readout {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   ·MOBILE TYPE + POLISH (≤700px) — phones get their own quieter scale.
+   Mirrors the desktop display list (film heads are not in it). Placed last
+   so it wins every earlier !important at equal specificity.
+   ========================================================================== */
+@media (max-width: 700px) {
+  .notes-intro h2,
+  .atelier-copy h2,
+  .closing-section h2,
+  .finder-heading h2,
+  .ritual-heading h2,
+  .home-signature__copy h2,
+  .shelf-section__head h2,
+  .collection-shelf__head h2,
+  .accord-collection__heading h2,
+  .collection-hero h1,
+  .story-masthead h1,
+  .atelier-masthead h1,
+  .journal-masthead h1,
+  .contact-intro h1,
+  .sifr-note-story__intro h2,
+  .sifr-bottle-card__copy h2,
+  .story-end h2,
+  .atelier-process__head h2,
+  .atelier-materials h2,
+  .collection-foot h2,
+  .sifr-final h2,
+  .journal-bottom > p,
+  .buy-panel__name,
+  .also-like__head h2,
+  .reviews-strip__head h2,
+  .checkout-head h1,
+  .checkout-done h1,
+  .not-found h1,
+  .story-image-band > div p {
+    font-size: clamp(38px, 11.5vw, 60px) !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+  }
+  .essence-cine__copy h2 {
+    font-size: clamp(42px, 12vw, 60px) !important;
+  }
+  .product-card__name h3 {
+    font-size: 22px !important;
+  }
+  .dayrah-carousel__readout h3 {
+    font-size: 30px !important;
+  }
+  .fragrance-modal h2 {
+    font-size: clamp(52px, 14vw, 68px) !important;
+  }
+  /* Eyebrows step down a touch so tracked labels never wrap awkwardly. */
+  .eyebrow,
+  .chapter-kicker,
+  .collection-hero__side,
+  .page-breadcrumb {
+    font-size: 11px !important;
+    letter-spacing: 0.22em !important;
+  }
+  /* Carousel nav fits 320px viewports: smaller rings, tighter label. */
+  .shop-carousel__nav {
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .shop-carousel__arrow {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+  .shop-carousel__nav span {
+    font-size: 10px;
+    letter-spacing: 0.2em;
   }
 }

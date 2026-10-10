@@ -16,6 +16,11 @@ export default function MotionPlate({
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
+    // Muted must be set as an IDL property, not just the JSX attribute —
+    // mobile browsers (notably iOS) ignore the attribute and then block
+    // autoplay as "unmuted". Set it imperatively before any play() call.
+    video.muted = true;
+    video.defaultMuted = true;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const start = () => {
       // Upgrade from preload="none" only once, the first time the plate

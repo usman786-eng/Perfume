@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCart } from './CartContext';
@@ -35,41 +35,131 @@ export function ProductCard({ product, reveal = true }: { product: Product; reve
   );
 }
 
-export function ShopGrid({ items, carousel = false }: { items: Product[]; carousel?: boolean }) {
-  const trackRef = useRef<HTMLDivElement>(null);
+/* ---------- Dayrah ring carousel (home shelf) ----------
+   Our products on a 3D rotating ring in the spirit of the classic CSS-only
+   carousel: auto-rotation, hover glow + pop-forward, floor reflection and a
+   ground shadow — with our names, notes, prices, quick-add and arrows. */
+function DayrahCarousel({ items }: { items: Product[] }) {
+  const { addItem } = useCart();
+  const [frontIdx, setFrontIdx] = useState(0);
+  const [added, setAdded] = useState(false);
   const pauseRef = useRef(false);
   const inViewRef = useRef(true);
-  const scrollByCards = (direction: 1 | -1) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const card = track.querySelector<HTMLElement>('.product-card');
-    const gap = parseFloat(getComputedStyle(track).columnGap || '16') || 16;
-    const step = card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
-    track.scrollBy({ left: direction * step, behavior: 'smooth' });
+  const kickRef = useRef(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLUListElement>(null);
+  const offsetRef = useRef(0);
+  const targetRef = useRef(0);
+  const n = items.length;
+  const step = 360 / n;
+  const reduceMotion =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const syncFront = (value: number) => {
+    const idx = ((-Math.round(value / step)) % n + n) % n;
+    setFrontIdx((prev) => (prev === idx ? prev : idx));
   };
-  /* Auto-scroll: advance one card on a timer, wrapping back to the start.
-     Pauses while the visitor hovers, touches, tabs through, hides the tab,
-     or scrolls the shelf out of view. Disabled for reduced motion. */
+  const applyTransform = (value: number) => {
+    const ring = ringRef.current;
+    if (ring) ring.style.transform = `rotateY(${value}deg)`;
+  };
+
+  /* Continuous glide: the target drifts at a slow constant rate and the ring
+     eases toward it every frame — one full revolution per ~45 seconds.
+     Freezes while hovered, touched, tabbed-through, hidden, or offscreen. */
   useEffect(() => {
-    if (!carousel) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const track = trackRef.current;
-    if (!track) return;
-    const observer = new IntersectionObserver(([entry]) => { inViewRef.current = entry.isIntersecting; }, { threshold: 0.15 });
-    observer.observe(track);
-    const id = window.setInterval(() => {
-      if (pauseRef.current || !inViewRef.current || document.hidden) return;
-      const card = track.querySelector<HTMLElement>('.product-card');
-      const gap = parseFloat(getComputedStyle(track).columnGap || '16') || 16;
-      const step = card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
-      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 12) {
-        track.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        track.scrollBy({ left: step, behavior: 'smooth' });
+    if (reduceMotion) return;
+    const el = wrapRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => { inViewRef.current = entry.isIntersecting; }, { threshold: 0.1 });
+    observer.observe(el);
+    const SPEED = 360 / 45000; // degrees per millisecond
+    let raf = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min(100, now - last);
+      last = now;
+      const kicked = now < kickRef.current;
+      if ((!pauseRef.current || kicked) && !document.hidden && inViewRef.current) {
+        targetRef.current -= SPEED * dt;
+        offsetRef.current += (targetRef.current - offsetRef.current) * 0.12;
+        if (Math.abs(targetRef.current - offsetRef.current) < 0.01) offsetRef.current = targetRef.current;
+        applyTransform(offsetRef.current);
+        syncFront(offsetRef.current);
       }
-    }, 3200);
-    return () => { window.clearInterval(id); observer.disconnect(); };
-  }, [carousel, items.length]);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); observer.disconnect(); };
+  }, [reduceMotion, step, n]);
+
+  const go = (direction: 1 | -1) => {
+    targetRef.current = Math.round(targetRef.current / step) * step - direction * step;
+    // A deliberate tap always animates, even mid-hover-pause.
+    kickRef.current = performance.now() + 1500;
+    if (reduceMotion) {
+      offsetRef.current = targetRef.current;
+      applyTransform(offsetRef.current);
+      syncFront(offsetRef.current);
+    }
+  };
+  const front = items[frontIdx];
+  const quickAdd = () => {
+    addItem(front, front.sizes[0]);
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1400);
+  };
+  return (
+    <div
+      className="dayrah-carousel"
+      ref={wrapRef}
+      style={{ '--dc-n': n } as CSSProperties}
+      onPointerEnter={() => { pauseRef.current = true; }}
+      onPointerLeave={() => { pauseRef.current = false; }}
+      onPointerDown={() => { pauseRef.current = true; }}
+      onPointerUp={() => { pauseRef.current = false; }}
+      onFocus={() => { pauseRef.current = true; }}
+      onBlur={() => { pauseRef.current = false; }}
+    >
+      <div className="dayrah-carousel__stage" data-gsap-reveal>
+        <ul className="dayrah-carousel__ring" ref={ringRef}>
+          {items.map((product, index) => (
+            <li
+              key={product.slug}
+              className="dayrah-carousel__cell"
+              style={{ '--dc-index': index, '--_image-url': `url("${product.image}")` } as CSSProperties}
+            >
+              <Link to={`/product/${product.slug}`} className="dayrah-carousel__card" aria-label={`Discover ${product.name}`}>
+                <img src={product.image} alt={product.imageAlt} loading="lazy" decoding="async" />
+                {product.badge && <span className="dayrah-carousel__badge">{product.badge}</span>}
+                <span className="dayrah-carousel__num">{product.index}</span>
+                <span className="sr-only">{product.name} — eau de parfum, from {formatPrice(product.sizes[0].price)}</span>
+              </Link>
+            </li>
+          ))}
+          <li className="dayrah-carousel__ground" aria-hidden="true" />
+        </ul>
+      </div>
+      <div className="dayrah-carousel__readout" key={front.slug} data-gsap-reveal>
+        <p className="dayrah-carousel__kicker">{front.index} / {String(n).padStart(2, '0')} — DAYRAH</p>
+        <h3><Link to={`/product/${front.slug}`}>{front.name}</Link></h3>
+        <p className="dayrah-carousel__notes">{front.notes.join(' · ')}</p>
+        <p className="dayrah-carousel__price">EAU DE PARFUM / FROM {formatPrice(front.sizes[0].price)}</p>
+        <div className="dayrah-carousel__actions">
+          <button type="button" className="product-card__add" onClick={quickAdd} aria-live="polite">{added ? 'ADDED TO BAG ✓' : 'QUICK ADD'}</button>
+          <Link className="text-link" to={`/product/${front.slug}`}>DISCOVER <span>↗</span></Link>
+        </div>
+      </div>
+      <div className="shop-carousel__nav">
+        <button type="button" className="shop-carousel__arrow" onClick={() => go(-1)} aria-label="Rotate products backward">←</button>
+        <span>{n} COMPOSITIONS — AUTO-SCROLL</span>
+        <button type="button" className="shop-carousel__arrow" onClick={() => go(1)} aria-label="Rotate products forward">→</button>
+      </div>
+    </div>
+  );
+}
+
+export function ShopGrid({ items, carousel = false }: { items: Product[]; carousel?: boolean }) {
   if (!carousel) {
     return (
       <div className="shop-grid">
@@ -77,27 +167,7 @@ export function ShopGrid({ items, carousel = false }: { items: Product[]; carous
       </div>
     );
   }
-  return (
-    <div className="shop-carousel">
-      <div
-        className="shop-grid shop-grid--carousel"
-        ref={trackRef}
-        onPointerEnter={() => { pauseRef.current = true; }}
-        onPointerLeave={() => { pauseRef.current = false; }}
-        onPointerDown={() => { pauseRef.current = true; }}
-        onPointerUp={() => { pauseRef.current = false; }}
-        onFocus={() => { pauseRef.current = true; }}
-        onBlur={() => { pauseRef.current = false; }}
-      >
-        {items.map((product) => <ProductCard key={product.slug} product={product} />)}
-      </div>
-      <div className="shop-carousel__nav">
-        <button type="button" className="shop-carousel__arrow" onClick={() => scrollByCards(-1)} aria-label="Scroll products backward">←</button>
-        <span>{items.length} COMPOSITIONS — AUTO-SCROLL</span>
-        <button type="button" className="shop-carousel__arrow" onClick={() => scrollByCards(1)} aria-label="Scroll products forward">→</button>
-      </div>
-    </div>
-  );
+  return <DayrahCarousel items={items} />;
 }
 
 /* ---------- Accordion ---------- */
