@@ -3077,8 +3077,7 @@ h4,
 }
 
 /* Motion-plate tap affordance (phones): the poster holds until tapped. */
-.motion-plate__toggle {
-  position: absolute;
+.motion-plate__toggle {  position: absolute;
   z-index: 3;
   left: 50%;
   top: 50%;
@@ -3297,5 +3296,20 @@ h4,
   }
   .sovereign-element-card__body {
     padding: 26px 22px 28px;
+  }
+}
+
+/* ==========================================================================
+   ·LOW-POWER RING (small touch screens) — fifteen live-blurred reflections
+   plus a 60fps scene is what kills old phone tabs on the shelf section.
+   Reflections go, rotation steps (CSS eases each step, GPU idles between).
+   Desktop keeps the full continuous 3D glide.
+   ========================================================================== */
+@media (pointer: coarse) and (max-width: 760px) {
+  .dayrah-carousel__cell::before {
+    display: none;
+  }
+  .dayrah-carousel__ring {
+    transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
   }
 }

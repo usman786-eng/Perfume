@@ -54,6 +54,13 @@ function DayrahCarousel({ items }: { items: Product[] }) {
   const step = 360 / n;
   const reduceMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Low-power mode (phones): the GPU can't sustain a 60fps 3D scene with
+  // fifteen live-blurred reflections — that combination kills old phone tabs
+  // right on this section. Phones get stepped rotation (static between
+  // steps) with reflections removed by CSS below.
+  const lowPower =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches;
 
   const syncFront = (value: number) => {
     const idx = ((-Math.round(value / step)) % n + n) % n;
@@ -66,13 +73,25 @@ function DayrahCarousel({ items }: { items: Product[] }) {
 
   /* Continuous glide: the target drifts at a slow constant rate and the ring
      eases toward it every frame — one full revolution per ~45 seconds.
-     Freezes while hovered, touched, tabbed-through, hidden, or offscreen. */
+     Freezes while hovered, touched, tabbed-through, hidden, or offscreen.
+     Low-power phones instead step one cell per tick (the GPU idles between
+     steps) with a CSS transition smoothing each step. */
   useEffect(() => {
     if (reduceMotion) return;
     const el = wrapRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(([entry]) => { inViewRef.current = entry.isIntersecting; }, { threshold: 0.1 });
     observer.observe(el);
+    if (lowPower) {
+      const id = window.setInterval(() => {
+        if (pauseRef.current || document.hidden || !inViewRef.current) return;
+        targetRef.current -= step;
+        offsetRef.current = targetRef.current;
+        applyTransform(offsetRef.current);
+        syncFront(offsetRef.current);
+      }, 3200);
+      return () => { window.clearInterval(id); observer.disconnect(); };
+    }
     const SPEED = 360 / 45000; // degrees per millisecond
     let raf = 0;
     let last = performance.now();
@@ -91,13 +110,13 @@ function DayrahCarousel({ items }: { items: Product[] }) {
     };
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); observer.disconnect(); };
-  }, [reduceMotion, step, n]);
+  }, [reduceMotion, step, n, lowPower]);
 
   const go = (direction: 1 | -1) => {
     targetRef.current = Math.round(targetRef.current / step) * step - direction * step;
     // A deliberate tap always animates, even mid-hover-pause.
     kickRef.current = performance.now() + 1500;
-    if (reduceMotion) {
+    if (reduceMotion || lowPower) {
       offsetRef.current = targetRef.current;
       applyTransform(offsetRef.current);
       syncFront(offsetRef.current);
