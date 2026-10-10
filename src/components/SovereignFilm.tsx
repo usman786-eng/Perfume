@@ -203,6 +203,10 @@ export default function SovereignFilm({
   useEffect(() => {
     const canvas = fxCanvasRef.current;
     if (!canvas) return;
+    // Low-power guard: on small touch screens the fullscreen gradient/
+    // blend pass melts old phone GPUs and gets the tab killed. The film's
+    // scroll-driven frame crossfades carry the scene on their own there.
+    if (window.innerWidth < 760 && window.matchMedia('(pointer: coarse)').matches) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
