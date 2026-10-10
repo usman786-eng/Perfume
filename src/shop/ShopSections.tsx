@@ -57,10 +57,12 @@ function DayrahCarousel({ items }: { items: Product[] }) {
   // Low-power mode (phones): the GPU can't sustain a 60fps 3D scene with
   // fifteen live-blurred reflections — that combination kills old phone tabs
   // right on this section. Phones get stepped rotation (static between
-  // steps) with reflections removed by CSS below.
+  // steps) with reflections removed by CSS below, and the ring doesn't even
+  // mount (no image decodes, no layers, no loop) until the shelf nears view.
   const lowPower =
     typeof window !== 'undefined' &&
     window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches;
+  const [near, setNear] = useState(!lowPower);
 
   const syncFront = (value: number) => {
     const idx = ((-Math.round(value / step)) % n + n) % n;
@@ -71,13 +73,37 @@ function DayrahCarousel({ items }: { items: Product[] }) {
     if (ring) ring.style.transform = `rotateY(${value}deg)`;
   };
 
+  /* Mount gate (low-power only): the ring — fifteen image decodes, fifteen
+     3D layers, the loop — stays out of the DOM entirely until the shelf
+     nears the viewport, so arrival at the heading never avalanches. */
+  useEffect(() => {
+    if (!lowPower) return;
+    const el = wrapRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setNear(true);
+      return;
+    }
+    const gate = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNear(true);
+          gate.disconnect();
+        }
+      },
+      { rootMargin: '600px' }
+    );
+    gate.observe(el);
+    return () => gate.disconnect();
+  }, [lowPower]);
+
   /* Continuous glide: the target drifts at a slow constant rate and the ring
      eases toward it every frame — one full revolution per ~45 seconds.
      Freezes while hovered, touched, tabbed-through, hidden, or offscreen.
      Low-power phones instead step one cell per tick (the GPU idles between
      steps) with a CSS transition smoothing each step. */
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || !near) return;
     const el = wrapRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(([entry]) => { inViewRef.current = entry.isIntersecting; }, { threshold: 0.1 });
@@ -110,7 +136,7 @@ function DayrahCarousel({ items }: { items: Product[] }) {
     };
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); observer.disconnect(); };
-  }, [reduceMotion, step, n, lowPower]);
+  }, [reduceMotion, step, n, lowPower, near]);
 
   const go = (direction: 1 | -1) => {
     targetRef.current = Math.round(targetRef.current / step) * step - direction * step;
@@ -140,6 +166,10 @@ function DayrahCarousel({ items }: { items: Product[] }) {
       onFocus={() => { pauseRef.current = true; }}
       onBlur={() => { pauseRef.current = false; }}
     >
+      {!near ? (
+        <div className="dayrah-carousel__placeholder" aria-hidden="true"><span>15 COMPOSITIONS</span></div>
+      ) : (
+        <>
       <div className="dayrah-carousel__stage" data-gsap-reveal>
         <ul className="dayrah-carousel__ring" ref={ringRef}>
           {items.map((product, index) => (
@@ -174,6 +204,8 @@ function DayrahCarousel({ items }: { items: Product[] }) {
         <span>{n} COMPOSITIONS — AUTO-SCROLL</span>
         <button type="button" className="shop-carousel__arrow" onClick={() => go(1)} aria-label="Rotate products forward">→</button>
       </div>
+        </>
+      )}
     </div>
   );
 }

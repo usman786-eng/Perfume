@@ -3299,6 +3299,30 @@ h4,
   }
 }
 
+/* Low-power placeholder: holds the stage's exact height so arrival never
+   shifts layout, then yields to the ring. */
+.dayrah-carousel__placeholder {
+  height: calc(var(--dc-item-h) + 300px);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--lux-hairline-soft);
+  color: var(--lux-bronze);
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  animation: dc-placeholder-pulse 2.2s ease-in-out infinite;
+}
+@keyframes dc-placeholder-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dayrah-carousel__placeholder {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+
 /* ==========================================================================
    ·LOW-POWER RING (small touch screens) — fifteen live-blurred reflections
    plus a 60fps scene is what kills old phone tabs on the shelf section.

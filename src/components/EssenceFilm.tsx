@@ -100,6 +100,12 @@ export default function EssenceFilm({
   const [chapter, setChapter] = useState(0);
   const reduceMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Low-power phones: release the decoder the moment the section leaves the
+  // viewport (no 400px grace), so only one heavy thing runs at a time while
+  // scrolling toward the shelf below.
+  const lowPower =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches;
 
   // Swap the looping motion study for each note without restarting the loop.
   useEffect(() => {
@@ -119,7 +125,14 @@ export default function EssenceFilm({
     }
     video.src = wanted;
     video.load();
-    video.play().catch(() => { /* autoplay blocked — poster holds */ });
+    // A fast fling past the section can land this effect after the
+    // intersection observer's pause — so only play while near the viewport,
+    // otherwise an offscreen video decodes forever and kills phone tabs.
+    const rect = sectionRef.current?.getBoundingClientRect();
+    const nearView = rect != null && rect.bottom > -400 && rect.top < window.innerHeight + 400;
+    if (nearView && !reduceMotion) {
+      video.play().catch(() => { /* autoplay blocked — poster holds */ });
+    }
   }, [chapter, reduceMotion]);
 
   // Scroll choreography: same pinned-scroll progress contract as Sovereign.
@@ -175,7 +188,7 @@ export default function EssenceFilm({
             } else {
               video.pause();
             }
-          }, { threshold: 0, rootMargin: '400px' });
+          }, { threshold: 0, rootMargin: lowPower ? '0px' : '400px' });
     if (observer) observer.observe(section);
 
     const onPointerMove = (e: PointerEvent) => {
