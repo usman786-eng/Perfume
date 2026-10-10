@@ -6,6 +6,15 @@ export default defineConfig({
   server: { host: '0.0.0.0', allowedHosts: true },
   build: {
     chunkSizeWarningLimit: 800,
+    // The 3D engine (three + fiber + drei, ~1MB) is only used by the Sifr 01
+    // route, but Vite preloads every transitively-imported chunk from the
+    // entry — forcing phones to fetch and parse it on every page load, which
+    // kills low-memory mobile tabs. Exclude it from the initial preload list
+    // so it loads on demand when SifrPage's lazy import fires instead.
+    modulePreload: {
+      resolveDependencies: (_filename, deps) =>
+        deps.filter((dep) => !/three-core|react-three|PerfumeScene|postprocessing/i.test(dep)),
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {
