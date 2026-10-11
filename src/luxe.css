@@ -2875,6 +2875,8 @@ h4,
 .dayrah-carousel__actions .product-card__add {
   width: auto;
   min-width: 230px;
+  justify-content: center;
+  text-align: center;
 }
 .sr-only {
   position: absolute;
