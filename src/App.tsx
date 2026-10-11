@@ -465,6 +465,10 @@ function SiteLayout() {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Old phones keep battle-tested native touch scrolling: virtualizing
+    // touch scroll fights pinned ScrollTriggers on weak iOS hardware and
+    // produces freezes that read as crashes. Desktop keeps Lenis butter.
+    if (window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches) return;
     const lenis = new Lenis({ lerp: 0.08, smoothWheel: true, syncTouch: true, touchMultiplier: 1.12 });
     lenisRef.current = lenis;
     const onTick = (time: number) => lenis.raf(time * 1000);

@@ -116,6 +116,11 @@ export default function SovereignFilm({
   // Tracks whether any part of the film section is on screen so the heavy
   // canvas FX loop can sleep while the user is elsewhere on the page.
   const visibleRef = useRef(true);
+  // No live motion-blur on phones (see velocity block below): animating a
+  // fullscreen blur during flings kills old iPhone tabs.
+  const lowPower =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -371,7 +376,7 @@ export default function SovereignFilm({
         const vDir = diff >= 0 ? 1 : -1;
         const skew = vDir * Math.min(2, vMag * 5);
         bottleStageRef.current.style.transform = `perspective(1200px) translate3d(${(pointerRef.current.x * -6).toFixed(2)}px, ${floatY.toFixed(2)}px, 0) rotateY(${rotY.toFixed(2)}deg) scale(${zoomBell.toFixed(4)}) skewY(${(skew * 0.4).toFixed(2)}deg)`;
-        const wantBlur = vMag > 0.32;
+        const wantBlur = vMag > 0.32 && !lowPower;
         if (wantBlur !== blurOnRef.current) {
           blurOnRef.current = wantBlur;
           bottleStageRef.current.style.filter = wantBlur

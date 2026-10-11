@@ -244,7 +244,9 @@ export default function EssenceFilm({
       if (framesRef.current) {
         const breathe = reduceMotion ? 1 : 1 + 0.012 * Math.sin(performance.now() * 0.0009);
         framesRef.current.style.transform = `perspective(1200px) translate3d(${(pointerRef.current.x * -8).toFixed(2)}px, ${(pointerRef.current.y * -5).toFixed(2)}px, 0) rotateY(${(pointerRef.current.x * 1.4).toFixed(2)}deg) scale(${((1 + p * 0.15) * breathe).toFixed(4)}) skewY(${(skew * 0.4).toFixed(2)}deg)`;
-        const wantBlur = vMag > 0.32;
+        // No live blur on phones: animating a fullscreen blur while
+        // fling-scrolling is a notorious old-iPhone tab killer.
+        const wantBlur = vMag > 0.32 && !lowPower;
         if (wantBlur !== blurOnRef.current) {
           blurOnRef.current = wantBlur;
           framesRef.current.style.filter = wantBlur
