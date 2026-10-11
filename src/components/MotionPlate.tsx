@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function MotionPlate({
   src,
@@ -13,14 +13,6 @@ export default function MotionPlate({
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const inViewRef = useRef(false);
-  const startedRef = useRef(false);
-  const [playing, setPlaying] = useState(false);
-  // Low-power mode: small coarse-pointer screens (phones). Seven autoplaying
-  // videos exhaust a phone tab's memory budget and get it killed, so here
-  // the poster holds until an explicit tap. Desktop keeps full autoplay.
-  const lowPower =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches;
 
   useEffect(() => {
     const video = ref.current;
@@ -41,84 +33,46 @@ export default function MotionPlate({
       video.play().catch(() => undefined);
     };
     const stop = () => video.pause();
-    const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
-    video.addEventListener('play', onPlay);
-    video.addEventListener('pause', onPause);
     let observer: IntersectionObserver | null = null;
     if (typeof IntersectionObserver !== 'undefined') {
       observer = new IntersectionObserver(
         ([entry]) => {
           inViewRef.current = entry.isIntersecting;
-          if (!entry.isIntersecting) {
-            stop();
-            return;
-          }
-          if (!lowPower || startedRef.current) start();
+          if (entry.isIntersecting) start();
+          else stop();
         },
-        { threshold: 0.05, rootMargin: lowPower ? '0px' : '240px' }
+        { threshold: 0.05, rootMargin: '240px' }
       );
       observer.observe(video);
-    } else if (!lowPower) {
+    } else {
       start();
     }
-    // Background tabs keep decoding otherwise — a classic phone-tab killer.
+    // Background tabs keep decoding otherwise — pause on hide, resume if
+    // still in view on return.
     const onVisibility = () => {
-      if (document.hidden) {
-        stop();
-        return;
-      }
-      if (inViewRef.current && (!lowPower || startedRef.current)) start();
+      if (document.hidden) stop();
+      else if (inViewRef.current) start();
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => {
       observer?.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
-      video.removeEventListener('play', onPlay);
-      video.removeEventListener('pause', onPause);
       video.pause();
     };
-  }, [lowPower]);
-
-  const toggle = () => {
-    const video = ref.current;
-    if (!video) return;
-    if (video.paused) {
-      startedRef.current = true;
-      if (video.preload === 'none') {
-        video.preload = 'metadata';
-        video.load();
-      }
-      video.play().catch(() => undefined);
-    } else {
-      video.pause();
-    }
-  };
+  }, []);
 
   return (
-    <>
-      <video
-        ref={ref}
-        className={className}
-        src={src}
-        poster={poster}
-        loop
-        muted
-        playsInline
-        preload="none"
-        disablePictureInPicture
-        aria-label={ariaLabel}
-      />
-      {lowPower && !playing && (
-        <button
-          type="button"
-          className="motion-plate__toggle"
-          onClick={toggle}
-          aria-label={ariaLabel ? `Play video: ${ariaLabel}` : 'Play video'}
-        >
-          <span aria-hidden="true">▶</span>
-        </button>
-      )}
-    </>
+    <video
+      ref={ref}
+      className={className}
+      src={src}
+      poster={poster}
+      loop
+      muted
+      playsInline
+      preload="none"
+      disablePictureInPicture
+      aria-label={ariaLabel}
+    />
   );
 }

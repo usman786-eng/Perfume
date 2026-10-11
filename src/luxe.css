@@ -3076,39 +3076,6 @@ h4,
   }
 }
 
-/* Motion-plate tap affordance (phones): the poster holds until tapped. */
-.motion-plate__toggle {  position: absolute;
-  z-index: 3;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 1px solid var(--lux-gold);
-  background: rgba(8, 7, 10, 0.55);
-  color: var(--lux-gold);
-  font-size: 17px;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  animation: motion-plate-pulse 2.6s ease-in-out infinite;
-}
-.motion-plate__toggle span {
-  transform: translateX(2px);
-}
-@keyframes motion-plate-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.35); }
-  50% { box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .motion-plate__toggle {
-    animation: none;
-  }
-}
-
 /* ==========================================================================
    ·MOBILE GPU RELIEF (≤700px) — fullscreen backdrop blurs can overwhelm old
    phone GPUs (heat, jank, tab kills). The layers keep near-opaque solids so
