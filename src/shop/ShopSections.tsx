@@ -62,6 +62,12 @@ function DayrahCarousel({ items }: { items: Product[] }) {
   const lowPower =
     typeof window !== 'undefined' &&
     window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches;
+  // Static shelf: on phones the 3D ring — even stepped, its fifteen
+  // composited layers persist — still killed the tab at this section. So
+  // phones render the same calm static grid as the collection page (which
+  // never crashes): no 3D, no loops, images lazy as usual. Desktop keeps
+  // the full gliding ring.
+  const staticShelf = lowPower;
   const [near, setNear] = useState(!lowPower);
 
   const syncFront = (value: number) => {
@@ -103,7 +109,7 @@ function DayrahCarousel({ items }: { items: Product[] }) {
      Low-power phones instead step one cell per tick (the GPU idles between
      steps) with a CSS transition smoothing each step. */
   useEffect(() => {
-    if (reduceMotion || !near) return;
+    if (reduceMotion || staticShelf || !near) return;
     const el = wrapRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(([entry]) => { inViewRef.current = entry.isIntersecting; }, { threshold: 0.1 });
@@ -136,7 +142,7 @@ function DayrahCarousel({ items }: { items: Product[] }) {
     };
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); observer.disconnect(); };
-  }, [reduceMotion, step, n, lowPower, near]);
+  }, [reduceMotion, step, n, lowPower, near, staticShelf]);
 
   const go = (direction: 1 | -1) => {
     targetRef.current = Math.round(targetRef.current / step) * step - direction * step;
@@ -168,6 +174,12 @@ function DayrahCarousel({ items }: { items: Product[] }) {
     >
       {!near ? (
         <div className="dayrah-carousel__placeholder" aria-hidden="true"><span>15 COMPOSITIONS</span></div>
+      ) : staticShelf ? (
+        <div className="dayrah-static-wrap" data-gsap-reveal>
+          <div className="shop-grid">
+            {items.map((product) => <ProductCard key={product.slug} product={product} />)}
+          </div>
+        </div>
       ) : (
         <>
       <div className="dayrah-carousel__stage" data-gsap-reveal>

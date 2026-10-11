@@ -3336,4 +3336,49 @@ h4,
   .dayrah-carousel__ring {
     transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
   }
+  /* The essence grain (full-bleed SVG noise + blend over playing video) is
+     needless GPU burn on the approach path — drop it on phones. */
+  .essence-cine__grain {
+    display: none;
+  }
+}
+/* Static phone shelf (no 3D anywhere): side padding lives on the wrapper
+   because the section itself is full-bleed for the desktop ring. */
+.dayrah-static-wrap {
+  padding: 8px 9vw 14px;
+}
+/* Uniform static cards: clamped text + foot-pinned quick-add. */
+.dayrah-static-wrap .product-card {
+  display: flex;
+  flex-direction: column;
+}
+.dayrah-static-wrap .product-card__frame {
+  aspect-ratio: 3 / 4;
+}
+.dayrah-static-wrap .product-card__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.dayrah-static-wrap .product-card__name h3 {
+  min-height: 2.2em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dayrah-static-wrap .product-card__notes {
+  min-height: 2.7em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dayrah-static-wrap .product-card__add {
+  margin-top: auto;
+}
+@media (max-width: 700px) {
+  .dayrah-static-wrap {
+    padding: 6px 20px 12px;
+  }
 }
