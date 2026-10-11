@@ -335,7 +335,47 @@ function reviewsFor(product?: Product): Review[] {
 
 export function ReviewsStrip({ product }: { product?: Product } = {}) {
   const shown = reviewsFor(product);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pauseRef = useRef(false);
+  const inViewRef = useRef(true);
+  /* Auto-rail (tablet/phone): advance one card per tick, wrapping around.
+     Pauses on hover, touch, keyboard focus, hidden tab, or offscreen.
+     Desktop keeps the three-column grid; reduced-motion gets a still rail. */
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const track = trackRef.current;
+    if (!track) return;
+    const observer = new IntersectionObserver(([entry]) => { inViewRef.current = entry.isIntersecting; }, { threshold: 0.15 });
+    observer.observe(track);
+    const id = window.setInterval(() => {
+      if (pauseRef.current || !inViewRef.current || document.hidden) return;
+      // Desktop shows the static grid — only auto-advance the rail layout.
+      if (getComputedStyle(track).display !== 'flex') return;
+      const card = track.querySelector<HTMLElement>('.review-card');
+      const gap = parseFloat(getComputedStyle(track).columnGap || '18') || 18;
+      const step = card ? card.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+      if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 12) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: step, behavior: 'smooth' });
+      }
+    }, 3600);
+    return () => { window.clearInterval(id); observer.disconnect(); };
+  }, [shown.length]);
   if (shown.length === 0) return null;
+
+  const scrollTrack = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const max = track.scrollWidth - track.clientWidth;
+    if (direction === 1 && track.scrollLeft >= max - 12) {
+      track.scrollTo({ left: 0, behavior: 'smooth' });
+    } else if (direction === -1 && track.scrollLeft <= 12) {
+      track.scrollTo({ left: max, behavior: 'smooth' });
+    } else {
+      track.scrollBy({ left: direction * track.clientWidth * 0.8, behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="reviews-strip lux-light" data-gsap-reveal aria-label={product ? `${product.name} reviews` : 'Dayrah reviews'}>
@@ -343,13 +383,27 @@ export function ReviewsStrip({ product }: { product?: Product } = {}) {
         <p className="eyebrow"><span /> WORN & REMEMBERED{product ? ` / ${product.name.toUpperCase()}` : ''}</p>
         <h2>From those<br /><em>who wear it.</em></h2>
       </div>
-      <div className="reviews-strip__grid">
+      <div
+        className="reviews-strip__grid"
+        ref={trackRef}
+        onPointerEnter={() => { pauseRef.current = true; }}
+        onPointerLeave={() => { pauseRef.current = false; }}
+        onPointerDown={() => { pauseRef.current = true; }}
+        onPointerUp={() => { pauseRef.current = false; }}
+        onFocus={() => { pauseRef.current = true; }}
+        onBlur={() => { pauseRef.current = false; }}
+      >
         {shown.map((review) => (
           <blockquote key={`${review.slug}-${review.name}`} className="review-card">
             <p>“{review.quote}”</p>
             <footer><b>{review.name}</b><span>{review.detail}</span></footer>
           </blockquote>
         ))}
+      </div>
+      <div className="shop-carousel__nav reviews-strip__nav" aria-hidden="false">
+        <button type="button" className="shop-carousel__arrow" onClick={() => scrollTrack(-1)} aria-label="Scroll reviews backward">←</button>
+        <span>{shown.length} VOICES — AUTO-SCROLL</span>
+        <button type="button" className="shop-carousel__arrow" onClick={() => scrollTrack(1)} aria-label="Scroll reviews forward">→</button>
       </div>
     </section>
   );

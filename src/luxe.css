@@ -3303,6 +3303,56 @@ h4,
 }
 
 /* ==========================================================================
+   ·REVIEWS RAIL (tablet/phone ≤1020px) — the stacked single column becomes
+   a snap-scroll auto-rail with uniform cards. Desktop keeps its 3-up grid
+   (and never sees the nav row). Product pages reuse the same strip.
+   ========================================================================== */
+.reviews-strip__nav {
+  display: none;
+}
+@media (max-width: 1020px) {
+  .reviews-strip__grid {
+    display: flex;
+    max-width: none;
+    gap: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 9vw;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 -9vw;
+    padding: 4px 9vw 10px;
+  }
+  .reviews-strip__grid::-webkit-scrollbar {
+    display: none;
+  }
+  .reviews-strip__grid .review-card {
+    flex: 0 0 min(78vw, 430px);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+  }
+  .reviews-strip__grid .review-card p {
+    flex: 1;
+  }
+  .reviews-strip__nav {
+    display: flex;
+    margin-top: 28px;
+  }
+}
+@media (max-width: 700px) {
+  .reviews-strip__grid {
+    scroll-padding-inline: 20px;
+    margin: 0 -20px;
+    padding: 4px 20px 20px;
+  }
+  .reviews-strip__nav {
+    padding: 4px 0 0;
+  }
+}
+
+/* ==========================================================================
    ·LOW-POWER RING (small touch screens) — fifteen live-blurred reflections
    plus a 60fps scene is what kills old phone tabs on the shelf section.
    Reflections go, rotation steps (CSS eases each step, GPU idles between).
