@@ -62,12 +62,12 @@ function DayrahCarousel({ items }: { items: Product[] }) {
   const lowPower =
     typeof window !== 'undefined' &&
     window.matchMedia('(pointer: coarse) and (max-width: 760px)').matches;
-  // Static shelf: on phones the 3D ring — even stepped, its fifteen
-  // composited layers persist — still killed the tab at this section. So
-  // phones render the same calm static grid as the collection page (which
-  // never crashes): no 3D, no loops, images lazy as usual. Desktop keeps
-  // the full gliding ring.
-  const staticShelf = lowPower;
+  // Static shelf kill-switch: when true, phones render the calm static grid
+  // instead of the 3D ring. Currently OFF — the ring is retried on phones
+  // now that the true killers are fixed (flat body background, dead decoder
+  // race, tap-to-play video, no canvas FX, no blurs, no engine preload).
+  // If old phones still die at the shelf, flip this back to `lowPower`.
+  const staticShelf = false;
   const [near, setNear] = useState(!lowPower);
 
   const syncFront = (value: number) => {
