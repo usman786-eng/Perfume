@@ -3323,6 +3323,16 @@ h4,
   }
 }
 
+/* iOS RELIEF: background-attachment fixed on body forces the full-page
+   gradient backdrop to repaint every scroll frame — a legendary iOS tab
+   killer on long pages (Android is immune, which is why only iPhones died).
+   Phones get a flat obsidian ground; sections carry their own local glows. */
+@media (pointer: coarse) and (max-width: 760px) {
+  body {
+    background: var(--lux-obsidian);
+  }
+}
+
 /* ==========================================================================
    ·LOW-POWER RING (small touch screens) — fifteen live-blurred reflections
    plus a 60fps scene is what kills old phone tabs on the shelf section.
